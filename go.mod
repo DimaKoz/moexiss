@@ -1,4 +1,4 @@
-module example.com/moexiss
+module github.com/dimakoz/moexiss
 
 go 1.17
 
