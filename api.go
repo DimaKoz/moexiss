@@ -118,7 +118,6 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 	if err != nil {
 		return resp, err
 	}
-	defer resp.Body.Close()
 
 	switch v := v.(type) {
 	case nil:
@@ -136,6 +135,10 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 		if decErr != nil {
 			err = decErr
 		}
+	}
+	err = apiCloseReadCloser(&resp.Body)
+	if err != nil {
+		return nil, err
 	}
 	return resp, err
 }
@@ -174,9 +177,20 @@ func (c *Client) BareDo(ctx context.Context, req *http.Request) (*Response, erro
 
 	err = CheckResponse(resp)
 	if err != nil {
-		defer resp.Body.Close()
+		clErr := apiCloseReadCloser(&resp.Body)
+		if clErr != nil {
+			return nil, fmt.Errorf("got some errors: \n%s \nand \n%s", err.Error(), clErr.Error())
+		}
+		return nil, err
 	}
 	return response, err
+}
+
+func apiCloseReadCloser(closer *io.ReadCloser) error {
+	if closer == nil {
+		return nil
+	}
+	return (*closer).Close()
 }
 
 func CheckResponse(r *http.Response) error {
