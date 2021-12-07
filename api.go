@@ -136,7 +136,7 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 			err = decErr
 		}
 	}
-	err = apiCloseReadCloser(&resp.Body)
+	err = resp.Body.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -177,7 +177,7 @@ func (c *Client) BareDo(ctx context.Context, req *http.Request) (*Response, erro
 
 	err = CheckResponse(resp)
 	if err != nil {
-		clErr := apiCloseReadCloser(&resp.Body)
+		clErr := resp.Body.Close()
 		if clErr != nil {
 			return nil, fmt.Errorf("got some errors: \n%s \nand \n%s", err.Error(), clErr.Error())
 		}
@@ -186,13 +186,9 @@ func (c *Client) BareDo(ctx context.Context, req *http.Request) (*Response, erro
 	return response, err
 }
 
-func apiCloseReadCloser(closer *io.ReadCloser) error {
-	if closer == nil {
-		return nil
-	}
-	return (*closer).Close()
-}
-
+// CheckResponse checks the API response for errors, and returns them if
+// present. A response is considered an error if it has a status code outside
+// the 200 range
 func CheckResponse(r *http.Response) error {
 	if c := r.StatusCode; 200 <= c && c <= 299 {
 		return nil
