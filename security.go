@@ -27,7 +27,6 @@ type Security struct {
 	MarketPriceBoardId string //"15"
 }
 
-
 type SecuritiesRequest struct {
 	Query string //Argument 'q', minimum 3 symbols
 }
@@ -37,7 +36,6 @@ type SecuritiesRequest struct {
 //
 // MoEx ISS API docs: https://iss.moex.com/iss/reference/5
 type SecuritiesService service
-
 
 func (s *SecuritiesService) List(ctx context.Context) (*[]Security, error) {
 	var u string = "securities.json"
@@ -55,12 +53,20 @@ func (s *SecuritiesService) List(ctx context.Context) (*[]Security, error) {
 	if err != nil {
 		return nil, err
 	}
-	bytesSec, dataType, _, err := jsonparser.Get(b.Bytes(), "securities")
+	err = parseSecurities(&securities, b.Bytes())
 	if err != nil {
 		return nil, err
 	}
+	return &securities, nil
+}
+
+func parseSecurities(securities *[]Security, byteData []byte) error {
+	bytesSec, dataType, _, err := jsonparser.Get(byteData, "securities")
+	if err != nil {
+		return err
+	}
 	if dataType != jsonparser.Object {
-		return nil, fmt.Errorf("unknown type of 'securities'")
+		return fmt.Errorf("unknown type of 'securities'")
 	}
 
 	var errInArr error
@@ -71,203 +77,152 @@ func (s *SecuritiesService) List(ctx context.Context) (*[]Security, error) {
 		}
 
 		secItem := &Security{}
-		counter := 0
 
-		var cb = func(ds []byte, dataType jsonparser.ValueType, offset int, err error) {
-			switch counter {
-
-			case 0:
-				res, err := jsonparser.ParseInt(ds)
-				if err == nil {
-					secItem.Id = res
-				} else {
-					errInArr = err
-					break
-				}
-
-			case 1:
-				res, err := jsonparser.ParseString(ds)
-				if err == nil {
-					if res != "null" {
-						secItem.SecId = res
-					}
-				} else {
-					errInArr = err
-					break
-				}
-
-			case 2:
-				res, err := jsonparser.ParseString(ds)
-				if err == nil {
-					if res != "null" {
-						secItem.ShortName = res
-					}
-				} else {
-					errInArr = err
-					break
-				}
-
-			case 3:
-				res, err := jsonparser.ParseString(ds)
-				if err == nil {
-					if res != "null" {
-						secItem.RegNumber = res
-					}
-				} else {
-					errInArr = err
-					break
-				}
-
-			case 4:
-				res, err := jsonparser.ParseString(ds)
-				if err == nil {
-					if res != "null" {
-						secItem.Name = res
-					}
-				} else {
-					errInArr = err
-					break
-				}
-
-			case 5:
-				res, err := jsonparser.ParseString(ds)
-				if err == nil {
-					if res != "null" {
-						secItem.Isin = res
-					}
-				} else {
-					errInArr = err
-					break
-				}
-
-			case 6:
-				res, err := jsonparser.ParseInt(ds)
-				if err == nil {
-					if res == 1 {
-						secItem.IsTraded = true
-					}
-				} else {
-					errInArr = err
-					break
-				}
-
-			case 7:
-				res, err := jsonparser.ParseString(ds)
-				if err == nil {
-					if res != "null" {
-						secItem.EmitentId = res
-					}
-				} else {
-					errInArr = err
-					break
-				}
-
-			case 8:
-				res, err := jsonparser.ParseString(ds)
-				if err == nil {
-					if res != "null" {
-						secItem.EmitentTitle = res
-					}
-				} else {
-					errInArr = err
-					break
-				}
-
-			case 9:
-				res, err := jsonparser.ParseString(ds)
-				if err == nil {
-					if res != "null" {
-						secItem.EmitentInn = res
-					}
-				} else {
-					errInArr = err
-					break
-				}
-
-			case 10:
-				res, err := jsonparser.ParseString(ds)
-				if err == nil {
-					if res != "null" {
-						secItem.EmitentOkpo = res
-					}
-				} else {
-					errInArr = err
-					break
-				}
-
-			case 11:
-				res, err := jsonparser.ParseString(ds)
-				if err == nil {
-					if res != "null" {
-						secItem.GosReg = res
-					}
-				} else {
-					errInArr = err
-					break
-				}
-
-			case 12:
-				res, err := jsonparser.ParseString(ds)
-				if err == nil {
-					if res != "null" {
-						secItem.Type = res
-					}
-				} else {
-					errInArr = err
-					break
-				}
-
-			case 13:
-				res, err := jsonparser.ParseString(ds)
-				if err == nil {
-					if res != "null" {
-						secItem.Group = res
-					}
-				} else {
-					errInArr = err
-					break
-				}
-
-			case 14:
-				res, err := jsonparser.ParseString(ds)
-				if err == nil {
-					if res != "null" {
-						secItem.PrimaryBoardId = res
-					}
-				} else {
-					errInArr = err
-					break
-				}
-
-			case 15:
-				res, err := jsonparser.ParseString(ds)
-				if err == nil {
-					if res != "null" {
-						secItem.MarketPriceBoardId = res
-					}
-				} else {
-					errInArr = err
-					break
-				}
-
-			}
-			counter++
-		}
-
-		_, err = jsonparser.ArrayEach(secItemBytes, cb)
+		errInArr = parseSecurityItem(secItem, secItemBytes)
 		if errInArr != nil {
 			return
 		}
-		if err != nil {
-			errInArr = err
-			return
-		}
 
-		securities = append(securities, *secItem)
+		*securities = append(*securities, *secItem)
 
 	}, "data")
 	if errInArr != nil {
-		return nil, errInArr
+		return errInArr
 	}
-	return &securities, nil
+	return nil
+}
+
+func parseSecurityItem(s *Security, secItemBytes []byte) (err error) {
+	counter := 0
+	var errInArr error
+	var cb = func(fieldData []byte, dataType jsonparser.ValueType, offset int, err error) {
+		switch counter {
+
+		case 0:
+			res, err := jsonparser.ParseInt(fieldData)
+			if err == nil {
+				s.Id = res
+			} else {
+				errInArr = err
+				break
+			}
+
+		case 1:
+			s.SecId, errInArr = parseStringWithDefaultValue(fieldData)
+			if errInArr != nil {
+				break
+			}
+
+		case 2:
+			s.ShortName, errInArr = parseStringWithDefaultValue(fieldData)
+			if errInArr != nil {
+				break
+			}
+
+		case 3:
+			s.RegNumber, errInArr = parseStringWithDefaultValue(fieldData)
+			if errInArr != nil {
+				break
+			}
+
+		case 4:
+			s.Name, errInArr = parseStringWithDefaultValue(fieldData)
+			if errInArr != nil {
+				break
+			}
+
+		case 5:
+			s.Isin, errInArr = parseStringWithDefaultValue(fieldData)
+			if errInArr != nil {
+				break
+			}
+
+		case 6:
+			res, err := jsonparser.ParseInt(fieldData)
+			if err == nil {
+				s.IsTraded = res == 1
+			} else {
+				errInArr = err
+				break
+			}
+
+		case 7:
+			s.EmitentId, errInArr = parseStringWithDefaultValue(fieldData)
+			if errInArr != nil {
+				break
+			}
+
+		case 8:
+			s.EmitentTitle, errInArr = parseStringWithDefaultValue(fieldData)
+			if errInArr != nil {
+				break
+			}
+
+		case 9:
+			s.EmitentInn, errInArr = parseStringWithDefaultValue(fieldData)
+			if errInArr != nil {
+				break
+			}
+
+		case 10:
+			s.EmitentOkpo, errInArr = parseStringWithDefaultValue(fieldData)
+			if errInArr != nil {
+				break
+			}
+
+		case 11:
+			s.GosReg, errInArr = parseStringWithDefaultValue(fieldData)
+			if errInArr != nil {
+				break
+			}
+
+		case 12:
+			s.Type, errInArr = parseStringWithDefaultValue(fieldData)
+			if errInArr != nil {
+				break
+			}
+
+		case 13:
+			s.Group, errInArr = parseStringWithDefaultValue(fieldData)
+			if errInArr != nil {
+				break
+			}
+
+		case 14:
+			s.PrimaryBoardId, errInArr = parseStringWithDefaultValue(fieldData)
+			if errInArr != nil {
+				break
+			}
+
+		case 15:
+			s.MarketPriceBoardId, errInArr = parseStringWithDefaultValue(fieldData)
+			if errInArr != nil {
+				break
+			}
+
+		}
+		counter++
+	}
+
+	_, err = jsonparser.ArrayEach(secItemBytes, cb)
+	if errInArr != nil {
+		return
+	}
+	if err != nil {
+		errInArr = err
+		return
+	}
+
+	return nil
+}
+
+func parseStringWithDefaultValue(fieldValue []byte) (string, error) {
+	res, err := jsonparser.ParseString(fieldValue)
+	if err != nil {
+		return "", err
+	}
+	if res != "null" {
+		return res, nil
+	}
+	return "", nil
 }
