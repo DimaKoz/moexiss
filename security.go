@@ -95,7 +95,7 @@ func parseSecurities(securities *[]Security, bytesSec []byte) (err error) {
 			err = arrayEachErr
 			return
 		}
-		err = fmt.Errorf("got errors: %s and %s", err.Error(), arrayEachErr)
+		err = fmt.Errorf("got errors: \n-%s\n-%s", err.Error(), arrayEachErr)
 	}
 	return
 }
@@ -173,13 +173,13 @@ func parseSecurityItem(s *Security, secItemBytes []byte) (err error) {
 	}
 
 	_, err = jsonparser.ArrayEach(secItemBytes, cb)
-	if err != nil {
-		return
-	}
 	if errInArr != nil {
-		err = errInArr
+		if err == nil {
+			err = errInArr
+			return
+		}
+		err = fmt.Errorf("got errors: \n-%s\n-%s", err.Error(), errInArr)
 	}
-
 	return
 }
 
