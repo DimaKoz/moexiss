@@ -53,43 +53,51 @@ func (s *SecuritiesService) List(ctx context.Context) (*[]Security, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = parseSecurities(&securities, b.Bytes())
+	err = parseSecuritiesResponse(&securities, b.Bytes())
 	if err != nil {
 		return nil, err
 	}
 	return &securities, nil
 }
 
-func parseSecurities(securities *[]Security, byteData []byte) error {
+func parseSecuritiesResponse(securities *[]Security, byteData []byte) (err error) {
 	bytesSec, dataType, _, err := jsonparser.Get(byteData, "securities")
 	if err != nil {
-		return err
+		return
 	}
 	if dataType != jsonparser.Object {
 		return fmt.Errorf("unknown type of 'securities'")
 	}
 
-	var errInArr error
-	_, err = jsonparser.ArrayEach(bytesSec, func(secItemBytes []byte, dataType jsonparser.ValueType, offset int, err error) {
-		if err != nil {
-			errInArr = err
+	err = parseSecurities(securities, bytesSec)
+	return
+}
+
+func parseSecurities(securities *[]Security, bytesSec []byte) (err error) {
+
+	var arrayEachErr error = nil
+	_, err = jsonparser.ArrayEach(bytesSec, func(secItemBytes []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errCb != nil {
+			arrayEachErr = errCb
 			return
 		}
 
 		secItem := &Security{}
-
-		errInArr = parseSecurityItem(secItem, secItemBytes)
-		if errInArr != nil {
+		arrayEachErr = parseSecurityItem(secItem, secItemBytes)
+		if arrayEachErr != nil {
 			return
 		}
-
 		*securities = append(*securities, *secItem)
 
 	}, "data")
-	if errInArr != nil {
-		return errInArr
+	if arrayEachErr != nil {
+		if err == nil {
+			err = arrayEachErr
+			return
+		}
+		err = fmt.Errorf("got errors: %s and %s", err.Error(), arrayEachErr)
 	}
-	return nil
+	return
 }
 
 func parseSecurityItem(s *Security, secItemBytes []byte) (err error) {
@@ -98,7 +106,12 @@ func parseSecurityItem(s *Security, secItemBytes []byte) (err error) {
 	}
 	counter := 0
 	var errInArr error
-	var cb = func(fieldData []byte, dataType jsonparser.ValueType, offset int, err error) {
+	var cb = func(fieldData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errCb != nil {
+			errInArr = errCb
+			return
+		}
+
 		switch counter {
 
 		case 0:
@@ -160,15 +173,14 @@ func parseSecurityItem(s *Security, secItemBytes []byte) (err error) {
 	}
 
 	_, err = jsonparser.ArrayEach(secItemBytes, cb)
-	if errInArr != nil {
-		err = errInArr
-		return
-	}
 	if err != nil {
 		return
 	}
+	if errInArr != nil {
+		err = errInArr
+	}
 
-	return nil
+	return
 }
 
 func parseStringWithDefaultValue(fieldValue []byte) (string, error) {
