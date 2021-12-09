@@ -93,123 +93,78 @@ func parseSecurities(securities *[]Security, byteData []byte) error {
 }
 
 func parseSecurityItem(s *Security, secItemBytes []byte) (err error) {
+	if s == nil {
+		return fmt.Errorf("<nil> pointer passed instead of *Security")
+	}
 	counter := 0
 	var errInArr error
 	var cb = func(fieldData []byte, dataType jsonparser.ValueType, offset int, err error) {
 		switch counter {
 
 		case 0:
-			res, err := jsonparser.ParseInt(fieldData)
-			if err == nil {
-				s.Id = res
-			} else {
-				errInArr = err
-				break
-			}
+			s.Id, errInArr = jsonparser.ParseInt(fieldData)
 
 		case 1:
 			s.SecId, errInArr = parseStringWithDefaultValue(fieldData)
-			if errInArr != nil {
-				break
-			}
 
 		case 2:
 			s.ShortName, errInArr = parseStringWithDefaultValue(fieldData)
-			if errInArr != nil {
-				break
-			}
 
 		case 3:
 			s.RegNumber, errInArr = parseStringWithDefaultValue(fieldData)
-			if errInArr != nil {
-				break
-			}
 
 		case 4:
 			s.Name, errInArr = parseStringWithDefaultValue(fieldData)
-			if errInArr != nil {
-				break
-			}
 
 		case 5:
 			s.Isin, errInArr = parseStringWithDefaultValue(fieldData)
-			if errInArr != nil {
-				break
-			}
 
 		case 6:
-			res, err := jsonparser.ParseInt(fieldData)
-			if err == nil {
+			var res int64
+			if res, errInArr = jsonparser.ParseInt(fieldData); res >= 0 {
 				s.IsTraded = res == 1
-			} else {
-				errInArr = err
-				break
 			}
 
 		case 7:
 			s.EmitentId, errInArr = parseStringWithDefaultValue(fieldData)
-			if errInArr != nil {
-				break
-			}
 
 		case 8:
 			s.EmitentTitle, errInArr = parseStringWithDefaultValue(fieldData)
-			if errInArr != nil {
-				break
-			}
 
 		case 9:
 			s.EmitentInn, errInArr = parseStringWithDefaultValue(fieldData)
-			if errInArr != nil {
-				break
-			}
 
 		case 10:
 			s.EmitentOkpo, errInArr = parseStringWithDefaultValue(fieldData)
-			if errInArr != nil {
-				break
-			}
 
 		case 11:
 			s.GosReg, errInArr = parseStringWithDefaultValue(fieldData)
-			if errInArr != nil {
-				break
-			}
 
 		case 12:
 			s.Type, errInArr = parseStringWithDefaultValue(fieldData)
-			if errInArr != nil {
-				break
-			}
 
 		case 13:
 			s.Group, errInArr = parseStringWithDefaultValue(fieldData)
-			if errInArr != nil {
-				break
-			}
 
 		case 14:
 			s.PrimaryBoardId, errInArr = parseStringWithDefaultValue(fieldData)
-			if errInArr != nil {
-				break
-			}
 
 		case 15:
 			s.MarketPriceBoardId, errInArr = parseStringWithDefaultValue(fieldData)
-			if errInArr != nil {
-				break
-			}
 
+		}
+		if errInArr != nil {
+			return
 		}
 		counter++
 	}
 
 	_, err = jsonparser.ArrayEach(secItemBytes, cb)
 	if errInArr != nil {
+		err = errInArr
 		return
 	}
 	if err != nil {
-		errInArr = err
 		return
 	}
 
