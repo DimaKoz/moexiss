@@ -10,6 +10,16 @@ var secArray = []string{
 	`[414220919, "AA-RM", "Alcoa", null, "Alcoa Corporation", "US0138721065", 1, 1375753, "Alcoa Corporation (Алкоа Корпорэйшн)", "0000005270", null, null, "common_share", "stock_shares", "FQBR", "FQBR"]`,
 }
 
+var dataField = `{ "data": [ ` +
+	secArray[0] +
+	`,` +
+	secArray[1] +
+	`]}`
+
+var omittedSecResp = `{ "securities":` +
+	dataField +
+	`}`
+
 func TestParseStringWithDefaultValueNull(t *testing.T) {
 	var nullValue = []byte("null")
 	expectedValue := ""
@@ -122,5 +132,38 @@ func TestParseSecurityItemNil(t *testing.T) {
 	}
 	if err.Error() != expectedText {
 		t.Fatalf("Error: expecting %v error: \ngot %v  \ninstead", expectedText, err)
+	}
+}
+
+func TestParseSecurities(t *testing.T) {
+	income := dataField
+	securities := make([]Security, 0, 2)
+	err := parseSecurities(&securities, []byte(income))
+	if err != nil {
+		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
+	}
+	if got, expected := len(securities), len(secArray); got != expected {
+		t.Fatalf("Error: expecting %d items \ngot %d items \ninstead", expected, got)
+	}
+}
+
+func TestParseSecuritiesResponse(t *testing.T) {
+	income := omittedSecResp
+	securities := make([]Security, 0, 2)
+	err := parseSecuritiesResponse(&securities, []byte(income))
+	if err != nil {
+		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
+	}
+	if got, expected := len(securities), len(secArray); got != expected {
+		t.Fatalf("Error: expecting %d items \ngot %d items \ninstead", expected, got)
+	}
+}
+
+func TestParseSecuritiesWrongTypeJson(t *testing.T) {
+	income := `{ "securities": [] }`
+	securities := make([]Security, 0, 2)
+	err := parseSecuritiesResponse(&securities, []byte(income))
+	if err == nil {
+		t.Fatalf("Error: expecting non-nil error: got <nil> instead")
 	}
 }
