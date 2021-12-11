@@ -26,17 +26,24 @@ func (s Language) String() string {
 type IndexRequestOptions struct {
 	// Engines details
 	enginesLang Language
+
 	// Markets details
 	marketsLang Language
+
 	// Boards details
 	boardsLang Language
+
 	// BoardGroups details
 	boardGroupsLang     Language
 	boardGroupsEngine   string
 	boardGroupsIsTraded bool
+
 	// Durations details
 	durationsLang Language
 
+	// SecurityTypes details
+	securityTypesLang   Language
+	securityTypesEngine string
 }
 
 //IndexReqOptionsBuilder represents a builder of IndexRequestOptions struct
@@ -132,8 +139,8 @@ func (e *IndexReqOptionsBoardGroupBuilder) IsTraded(isTrading bool) *IndexReqOpt
 	return e
 }
 
-//Engine sets 'boardGroupsEngine' parameter to a request of directories of BoardGroup
-func (e *IndexReqOptionsBoardGroupBuilder) Engine(engine string) *IndexReqOptionsBoardGroupBuilder {
+//WithEngine sets 'boardGroupsEngine' parameter to a request of directories of BoardGroup
+func (e *IndexReqOptionsBoardGroupBuilder) WithEngine(engine string) *IndexReqOptionsBoardGroupBuilder {
 	e.options.boardGroupsEngine = engine
 	return e
 }
@@ -157,3 +164,26 @@ func (e *IndexReqOptionsDurationBuilder) Lang(lang Language) *IndexReqOptionsDur
 	return e
 }
 
+/* Options of SecurityType*/
+
+//IndexReqOptionsSecurityTypeBuilder facet of IndexReqOptionsBuilder
+type IndexReqOptionsSecurityTypeBuilder struct {
+	IndexReqOptionsBuilder
+}
+
+//SecurityType chains to type *IndexReqOptionsBuilder and returns *IndexReqOptionsSecurityTypeBuilder
+func (b *IndexReqOptionsBuilder) SecurityType() *IndexReqOptionsSecurityTypeBuilder {
+	return &IndexReqOptionsSecurityTypeBuilder{*b}
+}
+
+//Lang sets 'securityTypesLang' parameter to a request of directories of SecurityType
+func (e *IndexReqOptionsSecurityTypeBuilder) Lang(lang Language) *IndexReqOptionsSecurityTypeBuilder {
+	e.options.securityTypesLang = lang
+	return e
+}
+
+//WithEngine sets 'boardGroupsEngine' parameter to a request of directories of SecurityType
+func (e *IndexReqOptionsSecurityTypeBuilder) WithEngine(engine string) *IndexReqOptionsSecurityTypeBuilder {
+	e.options.securityTypesEngine = engine
+	return e
+}

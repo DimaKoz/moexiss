@@ -80,6 +80,7 @@ func TestIndexReqOptionsBuilder_LangRuEn(t *testing.T) {
 		boardsLang:      RusLanguage,
 		boardGroupsLang: EngLanguage,
 		durationsLang: EngLanguage,
+		securityTypesLang: RusLanguage,
 	}
 	bld := NewIndexReqOptionsBuilder()
 	bld.
@@ -87,7 +88,8 @@ func TestIndexReqOptionsBuilder_LangRuEn(t *testing.T) {
 		Engine().Lang(EngLanguage).
 		Board().Lang(RusLanguage).
 		BoardGroup().Lang(EngLanguage).
-		Duration().Lang(EngLanguage)
+		Duration().Lang(EngLanguage).
+		SecurityType().Lang(RusLanguage)
 	result := bld.Build()
 	if result == nil {
 		t.Fatalf("Error: expecting non-nil *IndexRequestOptions: got <nil> instead")
@@ -107,6 +109,9 @@ func TestIndexReqOptionsBuilder_LangRuEn(t *testing.T) {
 	if got, expected := result.durationsLang, expectStruct.durationsLang; got != expected {
 		t.Fatalf("Error: expecting `%s` Lang \ngot `%s` Lang \ninstead", expected, got)
 	}
+	if got, expected := result.securityTypesLang, expectStruct.securityTypesLang; got != expected {
+		t.Fatalf("Error: expecting `%s` Lang \ngot `%s` Lang \ninstead", expected, got)
+	}
 
 }
 
@@ -116,7 +121,7 @@ func TestIndexReqOptionsBoardGroupBuilderAllOptions(t *testing.T) {
 		boardGroupsEngine:   "stock",
 		boardGroupsIsTraded: true}
 	bld := NewIndexReqOptionsBuilder()
-	bld.BoardGroup().Lang(RusLanguage).Engine("stock").IsTraded(true)
+	bld.BoardGroup().Lang(RusLanguage).WithEngine("stock").IsTraded(true)
 	result := bld.Build()
 	if result == nil {
 		t.Fatalf("Error: expecting non-nil *IndexRequestOptions: got <nil> instead")
@@ -126,6 +131,25 @@ func TestIndexReqOptionsBoardGroupBuilderAllOptions(t *testing.T) {
 	}
 	if got, expected := result.boardGroupsIsTraded, expectStruct.boardGroupsIsTraded; got != expected {
 		t.Fatalf("Error: expecting boardGroupsIsTraded :\n`%t`  \ngot \n`%t` \ninstead", expected, got)
+	}
+	if got, expected := result.boardGroupsLang, expectStruct.boardGroupsLang; got != expected {
+		t.Fatalf("Error: expecting boardGroupsLang `%s` \ngot \n`%s` \ninstead", expected, got)
+	}
+
+}
+
+func TestIndexReqOptionsSecurityTypesBuilderAllOptions(t *testing.T) {
+	expectStruct := &IndexRequestOptions{
+		securityTypesLang:     EngLanguage,
+		securityTypesEngine:   "stock"}
+	bld := NewIndexReqOptionsBuilder()
+	bld.SecurityType().Lang(EngLanguage).WithEngine("stock")
+	result := bld.Build()
+	if result == nil {
+		t.Fatalf("Error: expecting non-nil *IndexRequestOptions: got <nil> instead")
+	}
+	if got, expected := result.boardGroupsEngine, expectStruct.boardGroupsEngine; got != expected {
+		t.Fatalf("Error: expecting boardGroupsEngine :\n`%s` \ngot \n`%s` \ninstead", expected, got)
 	}
 	if got, expected := result.boardGroupsLang, expectStruct.boardGroupsLang; got != expected {
 		t.Fatalf("Error: expecting boardGroupsLang `%s` \ngot \n`%s` \ninstead", expected, got)
