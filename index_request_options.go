@@ -34,6 +34,9 @@ type IndexRequestOptions struct {
 	boardGroupsLang     Language
 	boardGroupsEngine   string
 	boardGroupsIsTraded bool
+	// Durations details
+	durationsLang Language
+
 }
 
 //IndexReqOptionsBuilder represents a builder of IndexRequestOptions struct
@@ -76,7 +79,7 @@ type IndexReqOptionsMarketBuilder struct {
 	IndexReqOptionsBuilder
 }
 
-//Engine chains to type *IndexReqOptionsBuilder and returns *IndexReqOptionsMarketBuilder
+//Market chains to type *IndexReqOptionsBuilder and returns *IndexReqOptionsMarketBuilder
 func (b *IndexReqOptionsBuilder) Market() *IndexReqOptionsMarketBuilder {
 	return &IndexReqOptionsMarketBuilder{*b}
 }
@@ -134,3 +137,23 @@ func (e *IndexReqOptionsBoardGroupBuilder) Engine(engine string) *IndexReqOption
 	e.options.boardGroupsEngine = engine
 	return e
 }
+
+/* Options of Duration*/
+
+//IndexReqOptionsDurationBuilder facet of IndexReqOptionsBuilder
+type IndexReqOptionsDurationBuilder struct {
+	IndexReqOptionsBuilder
+}
+
+//Duration chains to type *IndexReqOptionsBuilder and returns *IndexReqOptionsDurationBuilder
+func (b *IndexReqOptionsBuilder) Duration() *IndexReqOptionsDurationBuilder {
+	return &IndexReqOptionsDurationBuilder{*b}
+}
+
+//Lang sets 'durationsLang' parameter to a request of directories of Duration
+//and returns *IndexReqOptionsDurationBuilder
+func (e *IndexReqOptionsDurationBuilder) Lang(lang Language) *IndexReqOptionsDurationBuilder {
+	e.options.durationsLang = lang
+	return e
+}
+
