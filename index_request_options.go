@@ -42,18 +42,15 @@ func NewIndexReqOptionsBuilder() *IndexReqOptionsBuilder {
 	return &IndexReqOptionsBuilder{options: &IndexRequestOptions{}}
 }
 
+//Build builds IndexRequestOptions from IndexReqOptionsBuilder
+func (b *IndexReqOptionsBuilder) Build() *IndexRequestOptions {
+	return b.options
+}
+
+/* Options of Engine*/
+
 //IndexReqOptionsEngineBuilder facet of IndexReqOptionsBuilder
 type IndexReqOptionsEngineBuilder struct {
-	IndexReqOptionsBuilder
-}
-
-//IndexReqOptionsMarketBuilder facet of IndexReqOptionsBuilder
-type IndexReqOptionsMarketBuilder struct {
-	IndexReqOptionsBuilder
-}
-
-//IndexReqOptionsBoardBuilder facet of IndexReqOptionsBuilder
-type IndexReqOptionsBoardBuilder struct {
 	IndexReqOptionsBuilder
 }
 
@@ -62,20 +59,22 @@ func (b *IndexReqOptionsBuilder) Engine() *IndexReqOptionsEngineBuilder {
 	return &IndexReqOptionsEngineBuilder{*b}
 }
 
-//Engine chains to type *IndexReqOptionsBuilder and returns a *IndexReqOptionsMarketBuilder
-func (b *IndexReqOptionsBuilder) Market() *IndexReqOptionsMarketBuilder {
-	return &IndexReqOptionsMarketBuilder{*b}
-}
-
-//Engine chains to type *IndexReqOptionsBuilder and returns a *IndexReqOptionsBoardBuilder
-func (b *IndexReqOptionsBuilder) Board() *IndexReqOptionsBoardBuilder {
-	return &IndexReqOptionsBoardBuilder{*b}
-}
-
 //Lang sets 'enginesLang' parameter to a request of directories of Engine
 func (e *IndexReqOptionsEngineBuilder) Lang(lang Language) *IndexReqOptionsEngineBuilder {
 	e.options.enginesLang = lang
 	return e
+}
+
+/* Options of Market*/
+
+//IndexReqOptionsMarketBuilder facet of IndexReqOptionsBuilder
+type IndexReqOptionsMarketBuilder struct {
+	IndexReqOptionsBuilder
+}
+
+//Engine chains to type *IndexReqOptionsBuilder and returns a *IndexReqOptionsMarketBuilder
+func (b *IndexReqOptionsBuilder) Market() *IndexReqOptionsMarketBuilder {
+	return &IndexReqOptionsMarketBuilder{*b}
 }
 
 //Lang sets 'marketsLang' parameter to a request of directories of Market
@@ -84,14 +83,20 @@ func (e *IndexReqOptionsMarketBuilder) Lang(lang Language) *IndexReqOptionsMarke
 	return e
 }
 
+/* Options of Board*/
+
+//IndexReqOptionsBoardBuilder facet of IndexReqOptionsBuilder
+type IndexReqOptionsBoardBuilder struct {
+	IndexReqOptionsBuilder
+}
+
+//Engine chains to type *IndexReqOptionsBuilder and returns a *IndexReqOptionsBoardBuilder
+func (b *IndexReqOptionsBuilder) Board() *IndexReqOptionsBoardBuilder {
+	return &IndexReqOptionsBoardBuilder{*b}
+}
+
 //Lang sets 'boardsLang' parameter to a request of directories of Board
 func (e *IndexReqOptionsBoardBuilder) Lang(lang Language) *IndexReqOptionsBoardBuilder {
 	e.options.boardsLang = lang
 	return e
-}
-
-
-//Build builds IndexRequestOptions from IndexReqOptionsBuilder
-func (b *IndexReqOptionsBuilder) Build() *IndexRequestOptions {
-	return b.options
 }
