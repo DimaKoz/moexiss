@@ -9,6 +9,7 @@ const (
 	RusLanguage       Language = "ru"
 )
 
+//string representations of Language values
 func (s Language) String() string {
 	switch s {
 	case EngLanguage:
@@ -20,6 +21,8 @@ func (s Language) String() string {
 	}
 }
 
+//IndexRequestOptions contains options which using as arguments
+//for building requests of 'Index'
 type IndexRequestOptions struct {
 	// Engines details
 	enginesLang Language
@@ -27,7 +30,7 @@ type IndexRequestOptions struct {
 	marketsLang Language
 }
 
-//DirReqOptBuilder represents a builder of IndexRequestOptions struct
+//IndexReqOptionsBuilder represents a builder of IndexRequestOptions struct
 type IndexReqOptionsBuilder struct {
 	options *IndexRequestOptions
 }
