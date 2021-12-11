@@ -61,15 +61,17 @@ func TestIndexReqOptionsMarketBuilder_Lang(t *testing.T) {
 
 func TestIndexReqOptionsBuilder_LangRuEn(t *testing.T) {
 	expectStruct := &IndexRequestOptions{
-		enginesLang: EngLanguage,
-		marketsLang: RusLanguage,
-		boardsLang:  RusLanguage,
+		enginesLang:     EngLanguage,
+		marketsLang:     RusLanguage,
+		boardsLang:      RusLanguage,
+		boardGroupsLang: EngLanguage,
 	}
 	bld := NewIndexReqOptionsBuilder()
 	bld.
 		Market().Lang(RusLanguage).
 		Engine().Lang(EngLanguage).
-		Board().Lang(RusLanguage)
+		Board().Lang(RusLanguage).
+		BoardGroup().Lang(EngLanguage)
 	result := bld.Build()
 	if result == nil {
 		t.Fatalf("Error: expecting non-nil *IndexRequestOptions: got <nil> instead")
@@ -82,6 +84,32 @@ func TestIndexReqOptionsBuilder_LangRuEn(t *testing.T) {
 	}
 	if got, expected := result.boardsLang, expectStruct.boardsLang; got != expected {
 		t.Fatalf("Error: expecting `%s` Lang \ngot `%s` Lang \ninstead", expected, got)
+	}
+	if got, expected := result.boardGroupsLang, expectStruct.boardGroupsLang; got != expected {
+		t.Fatalf("Error: expecting `%s` Lang \ngot `%s` Lang \ninstead", expected, got)
+	}
+
+}
+
+func TestIndexReqOptionsBoardGroupBuilderAllOptions(t *testing.T) {
+	expectStruct := &IndexRequestOptions{
+		boardGroupsLang:     RusLanguage,
+		boardGroupsEngine:   "stock",
+		boardGroupsIsTraded: true}
+	bld := NewIndexReqOptionsBuilder()
+	bld.BoardGroup().Lang(RusLanguage).Engine("stock").IsTraded(true)
+	result := bld.Build()
+	if result == nil {
+		t.Fatalf("Error: expecting non-nil *IndexRequestOptions: got <nil> instead")
+	}
+	if got, expected := result.boardGroupsEngine, expectStruct.boardGroupsEngine; got != expected {
+		t.Fatalf("Error: expecting boardGroupsEngine :\n`%s` \ngot \n`%s` \ninstead", expected, got)
+	}
+	if got, expected := result.boardGroupsIsTraded, expectStruct.boardGroupsIsTraded; got != expected {
+		t.Fatalf("Error: expecting boardGroupsIsTraded :\n`%t`  \ngot \n`%t` \ninstead", expected, got)
+	}
+	if got, expected := result.boardGroupsLang, expectStruct.boardGroupsLang; got != expected {
+		t.Fatalf("Error: expecting boardGroupsLang `%s` \ngot \n`%s` \ninstead", expected, got)
 	}
 
 }

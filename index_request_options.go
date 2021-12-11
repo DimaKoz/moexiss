@@ -30,6 +30,10 @@ type IndexRequestOptions struct {
 	marketsLang Language
 	// Boards details
 	boardsLang Language
+	// BoardGroups details
+	boardGroupsLang     Language
+	boardGroupsEngine   string
+	boardGroupsIsTraded bool
 }
 
 //IndexReqOptionsBuilder represents a builder of IndexRequestOptions struct
@@ -54,7 +58,7 @@ type IndexReqOptionsEngineBuilder struct {
 	IndexReqOptionsBuilder
 }
 
-//Engine chains to type *IndexReqOptionsBuilder and returns a *IndexReqOptionsEngineBuilder
+//Engine chains to type *IndexReqOptionsBuilder and returns *IndexReqOptionsEngineBuilder
 func (b *IndexReqOptionsBuilder) Engine() *IndexReqOptionsEngineBuilder {
 	return &IndexReqOptionsEngineBuilder{*b}
 }
@@ -72,7 +76,7 @@ type IndexReqOptionsMarketBuilder struct {
 	IndexReqOptionsBuilder
 }
 
-//Engine chains to type *IndexReqOptionsBuilder and returns a *IndexReqOptionsMarketBuilder
+//Engine chains to type *IndexReqOptionsBuilder and returns *IndexReqOptionsMarketBuilder
 func (b *IndexReqOptionsBuilder) Market() *IndexReqOptionsMarketBuilder {
 	return &IndexReqOptionsMarketBuilder{*b}
 }
@@ -90,7 +94,7 @@ type IndexReqOptionsBoardBuilder struct {
 	IndexReqOptionsBuilder
 }
 
-//Engine chains to type *IndexReqOptionsBuilder and returns a *IndexReqOptionsBoardBuilder
+//Engine chains to type *IndexReqOptionsBuilder and returns *IndexReqOptionsBoardBuilder
 func (b *IndexReqOptionsBuilder) Board() *IndexReqOptionsBoardBuilder {
 	return &IndexReqOptionsBoardBuilder{*b}
 }
@@ -98,5 +102,35 @@ func (b *IndexReqOptionsBuilder) Board() *IndexReqOptionsBoardBuilder {
 //Lang sets 'boardsLang' parameter to a request of directories of Board
 func (e *IndexReqOptionsBoardBuilder) Lang(lang Language) *IndexReqOptionsBoardBuilder {
 	e.options.boardsLang = lang
+	return e
+}
+
+/* Options of BoardGroup*/
+
+//IndexReqOptionsBoardGroupBuilder facet of IndexReqOptionsBuilder
+type IndexReqOptionsBoardGroupBuilder struct {
+	IndexReqOptionsBuilder
+}
+
+//BoardGroup chains to type *IndexReqOptionsBuilder and returns *IndexReqOptionsBoardGroupBuilder
+func (b *IndexReqOptionsBuilder) BoardGroup() *IndexReqOptionsBoardGroupBuilder {
+	return &IndexReqOptionsBoardGroupBuilder{*b}
+}
+
+//Lang sets 'enginesLang' parameter to a request of directories of BoardGroup
+func (e *IndexReqOptionsBoardGroupBuilder) Lang(lang Language) *IndexReqOptionsBoardGroupBuilder {
+	e.options.boardGroupsLang = lang
+	return e
+}
+
+//IsTraded sets 'boardGroupsIsTraded' parameter to a request of directories of BoardGroup
+func (e *IndexReqOptionsBoardGroupBuilder) IsTraded(isTrading bool) *IndexReqOptionsBoardGroupBuilder {
+	e.options.boardGroupsIsTraded = isTrading
+	return e
+}
+
+//Engine sets 'boardGroupsEngine' parameter to a request of directories of BoardGroup
+func (e *IndexReqOptionsBoardGroupBuilder) Engine(engine string) *IndexReqOptionsBoardGroupBuilder {
+	e.options.boardGroupsEngine = engine
 	return e
 }
