@@ -129,10 +129,10 @@ func TestIndexReqOptionsBuilder_LangRuEn(t *testing.T) {
 func TestIndexReqOptionsBoardGroupBuilderAllOptions(t *testing.T) {
 	expectStruct := &IndexRequestOptions{
 		boardGroupsLang:     LangRu,
-		boardGroupsEngine:   "stock",
+		boardGroupsEngine:   EngineStock,
 		boardGroupsIsTraded: true}
 	bld := NewIndexReqOptionsBuilder()
-	bld.BoardGroup().Lang(LangRu).WithEngine("stock").IsTraded(true)
+	bld.BoardGroup().Lang(LangRu).WithEngine(EngineStock).IsTraded(true)
 	result := bld.Build()
 	if result == nil {
 		t.Fatalf("Error: expecting non-nil *IndexRequestOptions: got <nil> instead")
@@ -152,9 +152,9 @@ func TestIndexReqOptionsBoardGroupBuilderAllOptions(t *testing.T) {
 func TestIndexReqOptionsSecurityTypesBuilderAllOptions(t *testing.T) {
 	expectStruct := &IndexRequestOptions{
 		securityTypesLang:   LangEn,
-		securityTypesEngine: "stock"}
+		securityTypesEngine: EngineStock}
 	bld := NewIndexReqOptionsBuilder()
-	bld.SecurityType().Lang(LangEn).WithEngine("stock")
+	bld.SecurityType().Lang(LangEn).WithEngine(EngineStock)
 	result := bld.Build()
 	if result == nil {
 		t.Fatalf("Error: expecting non-nil *IndexRequestOptions: got <nil> instead")
@@ -171,11 +171,11 @@ func TestIndexReqOptionsSecurityTypesBuilderAllOptions(t *testing.T) {
 func TestIndexReqOptionsSecurityGroupsBuilderAllOptions(t *testing.T) {
 	expectStruct := &IndexRequestOptions{
 		securityGroupsLang:         LangRu,
-		securityGroupsEngine:       "stock",
+		securityGroupsEngine:       EngineStock,
 		securityGroupsHideInactive: true,
 	}
 	bld := NewIndexReqOptionsBuilder()
-	bld.SecurityGroup().Lang(LangRu).WithEngine("stock").HideInactive(true)
+	bld.SecurityGroup().Lang(LangRu).WithEngine(EngineStock).HideInactive(true)
 	result := bld.Build()
 	if result == nil {
 		t.Fatalf("Error: expecting non-nil *IndexRequestOptions: got <nil> instead")
@@ -197,10 +197,10 @@ func TestAddIndexRequestOptions(t *testing.T) {
 		Engine().Lang(LangEn).
 		Market().Lang(LangEn).
 		Board().Lang(LangEn).
-		BoardGroup().Lang(LangEn).WithEngine("currency").IsTraded(true).
+		BoardGroup().Lang(LangEn).WithEngine(EngineCurrency).IsTraded(true).
 		Duration().Lang(LangEn).
-		SecurityType().Lang(LangEn).WithEngine("futures").
-		SecurityGroup().Lang(LangRu).WithEngine("stock").HideInactive(true).
+		SecurityType().Lang(LangEn).WithEngine(EngineFutures).
+		SecurityGroup().Lang(LangRu).WithEngine(EngineStock).HideInactive(true).
 		SecurityCollection().Lang(LangRu).
 		Build()
 	c := NewClient(nil)

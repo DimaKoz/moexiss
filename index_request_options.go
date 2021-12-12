@@ -2,7 +2,7 @@ package moexiss
 
 import "net/url"
 
-//Language represents of the language of answers of MoEx ISS API
+//Language represents a language of answers of MoEx ISS API
 type Language string
 
 const (
@@ -37,21 +37,21 @@ type IndexRequestOptions struct {
 	boardsLang Language //`boards.lang` query parameter in url.URL
 
 	// BoardGroups details
-	boardGroupsLang     Language //`boardgroups.lang` query parameter in url.URL
-	boardGroupsEngine   string   //`boardgroups.engine` query parameter in url.URL
-	boardGroupsIsTraded bool     //`boardgroups.is_traded` query parameter in url.URL
+	boardGroupsLang     Language   //`boardgroups.lang` query parameter in url.URL
+	boardGroupsEngine   EngineName //`boardgroups.engine` query parameter in url.URL
+	boardGroupsIsTraded bool       //`boardgroups.is_traded` query parameter in url.URL
 
 	// Durations details
 	durationsLang Language //`durations.lang` query parameter in url.URL
 
 	// SecurityTypes details
-	securityTypesLang   Language //`securitytypes.lang` query parameter in url.URL
-	securityTypesEngine string   //`securitytypes.engine` query parameter in url.URL
+	securityTypesLang   Language   //`securitytypes.lang` query parameter in url.URL
+	securityTypesEngine EngineName //`securitytypes.engine` query parameter in url.URL
 
 	// SecurityGroups details
-	securityGroupsLang         Language //`securitygroups.lang` query parameter in url.URL
-	securityGroupsEngine       string   //`securitygroups.trade_engine` query parameter in url.URL
-	securityGroupsHideInactive bool     //`securitygroups.hide_inactive` query parameter in url.URL
+	securityGroupsLang         Language   //`securitygroups.lang` query parameter in url.URL
+	securityGroupsEngine       EngineName //`securitygroups.trade_engine` query parameter in url.URL
+	securityGroupsHideInactive bool       //`securitygroups.hide_inactive` query parameter in url.URL
 
 	// SecurityCollections details
 	securityCollectionsLang Language //`securitycollections.lang` query parameter in url.URL
@@ -152,7 +152,7 @@ func (e *IndexReqOptionsBoardGroupBuilder) IsTraded(isTrading bool) *IndexReqOpt
 }
 
 //WithEngine sets 'boardGroupsEngine' parameter to a request of directories of BoardGroup
-func (e *IndexReqOptionsBoardGroupBuilder) WithEngine(engine string) *IndexReqOptionsBoardGroupBuilder {
+func (e *IndexReqOptionsBoardGroupBuilder) WithEngine(engine EngineName) *IndexReqOptionsBoardGroupBuilder {
 	e.options.boardGroupsEngine = engine
 	return e
 }
@@ -195,7 +195,7 @@ func (e *IndexReqOptionsSecurityTypeBuilder) Lang(lang Language) *IndexReqOption
 }
 
 //WithEngine sets 'securityTypesEngine' parameter to a request of directories of SecurityType
-func (e *IndexReqOptionsSecurityTypeBuilder) WithEngine(engine string) *IndexReqOptionsSecurityTypeBuilder {
+func (e *IndexReqOptionsSecurityTypeBuilder) WithEngine(engine EngineName) *IndexReqOptionsSecurityTypeBuilder {
 	e.options.securityTypesEngine = engine
 	return e
 }
@@ -225,7 +225,7 @@ func (e *IndexReqOptionsSecurityGroupBuilder) HideInactive(isHiding bool) *Index
 }
 
 //WithEngine sets 'securityGroupsEngine' parameter to a request of directories of SecurityGroup
-func (e *IndexReqOptionsSecurityGroupBuilder) WithEngine(engine string) *IndexReqOptionsSecurityGroupBuilder {
+func (e *IndexReqOptionsSecurityGroupBuilder) WithEngine(engine EngineName) *IndexReqOptionsSecurityGroupBuilder {
 	e.options.securityGroupsEngine = engine
 	return e
 }
@@ -264,8 +264,8 @@ func addIndexRequestOptions(url *url.URL, options IndexRequestOptions) *url.URL 
 	if options.boardGroupsLang != LangUndefined {
 		q.Set("boardgroups.lang", options.boardGroupsLang.String())
 	}
-	if options.boardGroupsEngine != "" {
-		q.Set("boardgroups.engine", options.boardGroupsEngine)
+	if options.boardGroupsEngine != EngineUndefined {
+		q.Set("boardgroups.engine", options.boardGroupsEngine.String())
 	}
 	if options.boardGroupsIsTraded {
 		q.Set("boardgroups.is_traded", "1")
@@ -276,8 +276,8 @@ func addIndexRequestOptions(url *url.URL, options IndexRequestOptions) *url.URL 
 	if options.securityTypesLang != LangUndefined {
 		q.Set("securitytypes.lang", options.securityTypesLang.String())
 	}
-	if options.securityTypesEngine != "" {
-		q.Set("securitytypes.engine", options.securityTypesEngine)
+	if options.securityTypesEngine != EngineUndefined {
+		q.Set("securitytypes.engine", options.securityTypesEngine.String())
 	}
 	if options.securityTypesLang != LangUndefined {
 		q.Set("securitytypes.lang", options.securityTypesLang.String())
@@ -285,8 +285,8 @@ func addIndexRequestOptions(url *url.URL, options IndexRequestOptions) *url.URL 
 	if options.securityGroupsLang != LangUndefined {
 		q.Set("securitygroups.lang", options.securityGroupsLang.String())
 	}
-	if options.securityGroupsEngine != "" {
-		q.Set("securitygroups.trade_engine", options.securityGroupsEngine)
+	if options.securityGroupsEngine != EngineUndefined {
+		q.Set("securitygroups.trade_engine", options.securityGroupsEngine.String())
 	}
 	if options.securityGroupsHideInactive {
 		q.Set("securitygroups.hide_inactive", "1")
