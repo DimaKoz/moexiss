@@ -49,6 +49,10 @@ type IndexRequestOptions struct {
 	securityGroupsLang         Language
 	securityGroupsEngine       string
 	securityGroupsHideInactive bool
+
+	// SecurityCollections details
+	securityCollectionsLang Language
+
 }
 
 //IndexReqOptionsBuilder represents a builder of IndexRequestOptions struct
@@ -109,7 +113,7 @@ type IndexReqOptionsBoardBuilder struct {
 	IndexReqOptionsBuilder
 }
 
-//Engine chains to type *IndexReqOptionsBuilder and returns *IndexReqOptionsBoardBuilder
+//Board chains to type *IndexReqOptionsBuilder and returns *IndexReqOptionsBoardBuilder
 func (b *IndexReqOptionsBuilder) Board() *IndexReqOptionsBoardBuilder {
 	return &IndexReqOptionsBoardBuilder{*b}
 }
@@ -222,3 +226,22 @@ func (e *IndexReqOptionsSecurityGroupBuilder) WithEngine(engine string) *IndexRe
 	e.options.securityGroupsEngine = engine
 	return e
 }
+
+/* Options of SecurityCollection*/
+
+//IndexReqOptionsSecurityCollectionBuilder facet of IndexReqOptionsBuilder
+type IndexReqOptionsSecurityCollectionBuilder struct {
+	IndexReqOptionsBuilder
+}
+
+//SecurityCollection chains to type *IndexReqOptionsBuilder and returns *IndexReqOptionsSecurityCollectionBuilder
+func (b *IndexReqOptionsBuilder) SecurityCollection() *IndexReqOptionsSecurityCollectionBuilder {
+	return &IndexReqOptionsSecurityCollectionBuilder{*b}
+}
+
+//Lang sets 'securityCollectionsLang' parameter to a request of directories of SecurityCollection
+func (e *IndexReqOptionsSecurityCollectionBuilder) Lang(lang Language) *IndexReqOptionsSecurityCollectionBuilder {
+	e.options.securityCollectionsLang = lang
+	return e
+}
+
