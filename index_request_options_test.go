@@ -59,7 +59,6 @@ func TestIndexReqOptionsDurationBuilder_Lang(t *testing.T) {
 	}
 }
 
-
 func TestIndexReqOptionsMarketBuilder_Lang(t *testing.T) {
 	expectStruct := &IndexRequestOptions{marketsLang: RusLanguage}
 	bld := NewIndexReqOptionsBuilder()
@@ -75,12 +74,13 @@ func TestIndexReqOptionsMarketBuilder_Lang(t *testing.T) {
 
 func TestIndexReqOptionsBuilder_LangRuEn(t *testing.T) {
 	expectStruct := &IndexRequestOptions{
-		enginesLang:     EngLanguage,
-		marketsLang:     RusLanguage,
-		boardsLang:      RusLanguage,
-		boardGroupsLang: EngLanguage,
-		durationsLang: EngLanguage,
-		securityTypesLang: RusLanguage,
+		enginesLang:        EngLanguage,
+		marketsLang:        RusLanguage,
+		boardsLang:         RusLanguage,
+		boardGroupsLang:    EngLanguage,
+		durationsLang:      EngLanguage,
+		securityTypesLang:  RusLanguage,
+		securityGroupsLang: EngLanguage,
 	}
 	bld := NewIndexReqOptionsBuilder()
 	bld.
@@ -89,7 +89,8 @@ func TestIndexReqOptionsBuilder_LangRuEn(t *testing.T) {
 		Board().Lang(RusLanguage).
 		BoardGroup().Lang(EngLanguage).
 		Duration().Lang(EngLanguage).
-		SecurityType().Lang(RusLanguage)
+		SecurityType().Lang(RusLanguage).
+		SecurityGroup().Lang(EngLanguage)
 	result := bld.Build()
 	if result == nil {
 		t.Fatalf("Error: expecting non-nil *IndexRequestOptions: got <nil> instead")
@@ -110,6 +111,9 @@ func TestIndexReqOptionsBuilder_LangRuEn(t *testing.T) {
 		t.Fatalf("Error: expecting `%s` Lang \ngot `%s` Lang \ninstead", expected, got)
 	}
 	if got, expected := result.securityTypesLang, expectStruct.securityTypesLang; got != expected {
+		t.Fatalf("Error: expecting `%s` Lang \ngot `%s` Lang \ninstead", expected, got)
+	}
+	if got, expected := result.securityGroupsLang, expectStruct.securityGroupsLang; got != expected {
 		t.Fatalf("Error: expecting `%s` Lang \ngot `%s` Lang \ninstead", expected, got)
 	}
 
@@ -140,8 +144,8 @@ func TestIndexReqOptionsBoardGroupBuilderAllOptions(t *testing.T) {
 
 func TestIndexReqOptionsSecurityTypesBuilderAllOptions(t *testing.T) {
 	expectStruct := &IndexRequestOptions{
-		securityTypesLang:     EngLanguage,
-		securityTypesEngine:   "stock"}
+		securityTypesLang:   EngLanguage,
+		securityTypesEngine: "stock"}
 	bld := NewIndexReqOptionsBuilder()
 	bld.SecurityType().Lang(EngLanguage).WithEngine("stock")
 	result := bld.Build()
@@ -153,6 +157,30 @@ func TestIndexReqOptionsSecurityTypesBuilderAllOptions(t *testing.T) {
 	}
 	if got, expected := result.boardGroupsLang, expectStruct.boardGroupsLang; got != expected {
 		t.Fatalf("Error: expecting boardGroupsLang `%s` \ngot \n`%s` \ninstead", expected, got)
+	}
+
+}
+
+func TestIndexReqOptionsSecurityGroupsBuilderAllOptions(t *testing.T) {
+	expectStruct := &IndexRequestOptions{
+		securityGroupsLang:         RusLanguage,
+		securityGroupsEngine:       "stock",
+		securityGroupsHideInactive: true,
+	}
+	bld := NewIndexReqOptionsBuilder()
+	bld.SecurityGroup().Lang(RusLanguage).WithEngine("stock").HideInactive(true)
+	result := bld.Build()
+	if result == nil {
+		t.Fatalf("Error: expecting non-nil *IndexRequestOptions: got <nil> instead")
+	}
+	if got, expected := result.securityGroupsEngine, expectStruct.securityGroupsEngine; got != expected {
+		t.Fatalf("Error: expecting securityGroupsEngine :\n`%s` \ngot \n`%s` \ninstead", expected, got)
+	}
+	if got, expected := result.securityGroupsLang, expectStruct.securityGroupsLang; got != expected {
+		t.Fatalf("Error: expecting securityGroupsLang `%s` \ngot \n`%s` \ninstead", expected, got)
+	}
+	if got, expected := result.securityGroupsHideInactive, expectStruct.securityGroupsHideInactive; got != expected {
+		t.Fatalf("Error: expecting securityGroupsHideInactive :\n`%t`  \ngot \n`%t` \ninstead", expected, got)
 	}
 
 }

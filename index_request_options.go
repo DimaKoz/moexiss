@@ -44,6 +44,11 @@ type IndexRequestOptions struct {
 	// SecurityTypes details
 	securityTypesLang   Language
 	securityTypesEngine string
+
+	// SecurityGroups details
+	securityGroupsLang         Language
+	securityGroupsEngine       string
+	securityGroupsHideInactive bool
 }
 
 //IndexReqOptionsBuilder represents a builder of IndexRequestOptions struct
@@ -127,7 +132,7 @@ func (b *IndexReqOptionsBuilder) BoardGroup() *IndexReqOptionsBoardGroupBuilder 
 	return &IndexReqOptionsBoardGroupBuilder{*b}
 }
 
-//Lang sets 'enginesLang' parameter to a request of directories of BoardGroup
+//Lang sets 'boardGroupsLang' parameter to a request of directories of BoardGroup
 func (e *IndexReqOptionsBoardGroupBuilder) Lang(lang Language) *IndexReqOptionsBoardGroupBuilder {
 	e.options.boardGroupsLang = lang
 	return e
@@ -182,8 +187,38 @@ func (e *IndexReqOptionsSecurityTypeBuilder) Lang(lang Language) *IndexReqOption
 	return e
 }
 
-//WithEngine sets 'boardGroupsEngine' parameter to a request of directories of SecurityType
+//WithEngine sets 'securityTypesEngine' parameter to a request of directories of SecurityType
 func (e *IndexReqOptionsSecurityTypeBuilder) WithEngine(engine string) *IndexReqOptionsSecurityTypeBuilder {
 	e.options.securityTypesEngine = engine
+	return e
+}
+
+/* Options of SecurityGroup*/
+
+//IndexReqOptionsSecurityGroupBuilder facet of IndexReqOptionsBuilder
+type IndexReqOptionsSecurityGroupBuilder struct {
+	IndexReqOptionsBuilder
+}
+
+//SecurityGroup chains to type *IndexReqOptionsBuilder and returns *IndexReqOptionsSecurityGroupBuilder
+func (b *IndexReqOptionsBuilder) SecurityGroup() *IndexReqOptionsSecurityGroupBuilder {
+	return &IndexReqOptionsSecurityGroupBuilder{*b}
+}
+
+//Lang sets 'securityGroupsLang' parameter to a request of directories of SecurityGroup
+func (e *IndexReqOptionsSecurityGroupBuilder) Lang(lang Language) *IndexReqOptionsSecurityGroupBuilder {
+	e.options.securityGroupsLang = lang
+	return e
+}
+
+//HideInactive sets 'securityGroupsHideInactive' parameter to a request of directories of SecurityGroup
+func (e *IndexReqOptionsSecurityGroupBuilder) HideInactive(isHiding bool) *IndexReqOptionsSecurityGroupBuilder {
+	e.options.securityGroupsHideInactive = isHiding
+	return e
+}
+
+//WithEngine sets 'securityGroupsEngine' parameter to a request of directories of SecurityGroup
+func (e *IndexReqOptionsSecurityGroupBuilder) WithEngine(engine string) *IndexReqOptionsSecurityGroupBuilder {
+	e.options.securityGroupsEngine = engine
 	return e
 }
