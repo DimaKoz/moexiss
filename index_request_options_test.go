@@ -1,6 +1,8 @@
 package moexiss
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestLanguage_String(t *testing.T) {
 	if got, expected := EngLanguage.String(), "en"; got != expected {
@@ -188,4 +190,35 @@ func TestIndexReqOptionsSecurityGroupsBuilderAllOptions(t *testing.T) {
 		t.Fatalf("Error: expecting securityGroupsHideInactive :\n`%t`  \ngot \n`%t` \ninstead", expected, got)
 	}
 
+}
+
+func TestAddIndexRequestOptions(t *testing.T) {
+	income := NewIndexReqOptionsBuilder().
+		Engine().Lang(EngLanguage).
+		Market().Lang(EngLanguage).
+		Board().Lang(EngLanguage).
+		BoardGroup().Lang(EngLanguage).WithEngine("currency").IsTraded(true).
+		Duration().Lang(EngLanguage).
+		SecurityType().Lang(EngLanguage).WithEngine("futures").
+		SecurityGroup().Lang(RusLanguage).WithEngine("stock").HideInactive(true).
+		SecurityCollection().Lang(RusLanguage).
+		Build()
+	c := NewClient(nil)
+	url, _ := c.BaseURL.Parse("index.json?iss.meta=off")
+	gotUrl := addIndexRequestOptions(url, *income)
+
+	expected := `https://iss.moex.com/iss/index.json?` +
+		`boardgroups.engine=currency&boardgroups.is_traded=1&boardgroups.lang=en&` +
+		`boards.lang=en&` +
+		`durations.lang=en&` +
+		`engines.lang=en&` +
+		`iss.meta=off&` +
+		`markets.lang=en&` +
+		`securitycollections.lang=ru&` +
+		`securitygroups.hide_inactive=1&securitygroups.lang=ru&securitygroups.trade_engine=stock&` +
+		`securitytypes.engine=futures&securitytypes.lang=en`
+
+	if got := gotUrl.String(); got != expected {
+		t.Fatalf("Error: expecting url :\n`%s`  \ngot \n`%s` \ninstead", expected, got)
+	}
 }

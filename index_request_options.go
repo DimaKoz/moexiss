@@ -1,5 +1,7 @@
 package moexiss
 
+import "net/url"
+
 //Language represents of the language of answers of MoEx ISS API
 type Language string
 
@@ -23,35 +25,36 @@ func (s Language) String() string {
 
 //IndexRequestOptions contains options which using as arguments
 //for building requests of 'Index'
+//MoEx ISS API docs: https://iss.moex.com/iss/reference/28
 type IndexRequestOptions struct {
 	// Engines details
-	enginesLang Language
+	enginesLang Language //`engines.lang` query parameter in url.URL
 
 	// Markets details
-	marketsLang Language
+	marketsLang Language //`markets.lang` query parameter in url.URL
 
 	// Boards details
-	boardsLang Language
+	boardsLang Language //`boards.lang` query parameter in url.URL
 
 	// BoardGroups details
-	boardGroupsLang     Language
-	boardGroupsEngine   string
-	boardGroupsIsTraded bool
+	boardGroupsLang     Language //`boardgroups.lang` query parameter in url.URL
+	boardGroupsEngine   string   //`boardgroups.engine` query parameter in url.URL
+	boardGroupsIsTraded bool     //`boardgroups.is_traded` query parameter in url.URL
 
 	// Durations details
-	durationsLang Language
+	durationsLang Language //`durations.lang` query parameter in url.URL
 
 	// SecurityTypes details
-	securityTypesLang   Language
-	securityTypesEngine string
+	securityTypesLang   Language //`securitytypes.lang` query parameter in url.URL
+	securityTypesEngine string   //`securitytypes.engine` query parameter in url.URL
 
 	// SecurityGroups details
-	securityGroupsLang         Language
-	securityGroupsEngine       string
-	securityGroupsHideInactive bool
+	securityGroupsLang         Language //`securitygroups.lang` query parameter in url.URL
+	securityGroupsEngine       string   //`securitygroups.trade_engine` query parameter in url.URL
+	securityGroupsHideInactive bool     //`securitygroups.hide_inactive` query parameter in url.URL
 
 	// SecurityCollections details
-	securityCollectionsLang Language
+	securityCollectionsLang Language //`securitycollections.lang` query parameter in url.URL
 
 }
 
@@ -245,3 +248,53 @@ func (e *IndexReqOptionsSecurityCollectionBuilder) Lang(lang Language) *IndexReq
 	return e
 }
 
+//addIndexRequestOptions sets parameters into *url.URL
+//from IndexRequestOptions struct and returns it back
+func addIndexRequestOptions(url *url.URL, options IndexRequestOptions) *url.URL {
+	q := url.Query()
+	if options.enginesLang != UndefinedLanguage {
+		q.Set("engines.lang", options.enginesLang.String())
+	}
+	if options.marketsLang != UndefinedLanguage {
+		q.Set("markets.lang", options.marketsLang.String())
+	}
+	if options.boardsLang != UndefinedLanguage {
+		q.Set("boards.lang", options.boardsLang.String())
+	}
+	if options.boardGroupsLang != UndefinedLanguage {
+		q.Set("boardgroups.lang", options.boardGroupsLang.String())
+	}
+	if options.boardGroupsEngine != "" {
+		q.Set("boardgroups.engine", options.boardGroupsEngine)
+	}
+	if options.boardGroupsIsTraded {
+		q.Set("boardgroups.is_traded", "1")
+	}
+	if options.durationsLang != UndefinedLanguage {
+		q.Set("durations.lang", options.durationsLang.String())
+	}
+	if options.securityTypesLang != UndefinedLanguage {
+		q.Set("securitytypes.lang", options.securityTypesLang.String())
+	}
+	if options.securityTypesEngine != "" {
+		q.Set("securitytypes.engine", options.securityTypesEngine)
+	}
+	if options.securityTypesLang != UndefinedLanguage {
+		q.Set("securitytypes.lang", options.securityTypesLang.String())
+	}
+	if options.securityGroupsLang != UndefinedLanguage {
+		q.Set("securitygroups.lang", options.securityGroupsLang.String())
+	}
+	if options.securityGroupsEngine != "" {
+		q.Set("securitygroups.trade_engine", options.securityGroupsEngine)
+	}
+	if options.securityGroupsHideInactive {
+		q.Set("securitygroups.hide_inactive", "1")
+	}
+	if options.securityCollectionsLang != UndefinedLanguage {
+		q.Set("securitycollections.lang", options.securityCollectionsLang.String())
+	}
+
+	url.RawQuery = q.Encode()
+	return url
+}
