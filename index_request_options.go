@@ -6,20 +6,20 @@ import "net/url"
 type Language string
 
 const (
-	UndefinedLanguage Language = ""
-	EngLanguage       Language = "en"
-	RusLanguage       Language = "ru"
+	LangUndefined Language = ""
+	LangEn        Language = "en"
+	LangRu        Language = "ru"
 )
 
 //string representations of Language values
 func (s Language) String() string {
 	switch s {
-	case EngLanguage:
-		return string(EngLanguage)
-	case RusLanguage:
-		return string(RusLanguage)
+	case LangEn:
+		return string(LangEn)
+	case LangRu:
+		return string(LangRu)
 	default:
-		return string(UndefinedLanguage)
+		return string(LangUndefined)
 	}
 }
 
@@ -252,16 +252,16 @@ func (e *IndexReqOptionsSecurityCollectionBuilder) Lang(lang Language) *IndexReq
 //from IndexRequestOptions struct and returns it back
 func addIndexRequestOptions(url *url.URL, options IndexRequestOptions) *url.URL {
 	q := url.Query()
-	if options.enginesLang != UndefinedLanguage {
+	if options.enginesLang != LangUndefined {
 		q.Set("engines.lang", options.enginesLang.String())
 	}
-	if options.marketsLang != UndefinedLanguage {
+	if options.marketsLang != LangUndefined {
 		q.Set("markets.lang", options.marketsLang.String())
 	}
-	if options.boardsLang != UndefinedLanguage {
+	if options.boardsLang != LangUndefined {
 		q.Set("boards.lang", options.boardsLang.String())
 	}
-	if options.boardGroupsLang != UndefinedLanguage {
+	if options.boardGroupsLang != LangUndefined {
 		q.Set("boardgroups.lang", options.boardGroupsLang.String())
 	}
 	if options.boardGroupsEngine != "" {
@@ -270,19 +270,19 @@ func addIndexRequestOptions(url *url.URL, options IndexRequestOptions) *url.URL 
 	if options.boardGroupsIsTraded {
 		q.Set("boardgroups.is_traded", "1")
 	}
-	if options.durationsLang != UndefinedLanguage {
+	if options.durationsLang != LangUndefined {
 		q.Set("durations.lang", options.durationsLang.String())
 	}
-	if options.securityTypesLang != UndefinedLanguage {
+	if options.securityTypesLang != LangUndefined {
 		q.Set("securitytypes.lang", options.securityTypesLang.String())
 	}
 	if options.securityTypesEngine != "" {
 		q.Set("securitytypes.engine", options.securityTypesEngine)
 	}
-	if options.securityTypesLang != UndefinedLanguage {
+	if options.securityTypesLang != LangUndefined {
 		q.Set("securitytypes.lang", options.securityTypesLang.String())
 	}
-	if options.securityGroupsLang != UndefinedLanguage {
+	if options.securityGroupsLang != LangUndefined {
 		q.Set("securitygroups.lang", options.securityGroupsLang.String())
 	}
 	if options.securityGroupsEngine != "" {
@@ -291,7 +291,7 @@ func addIndexRequestOptions(url *url.URL, options IndexRequestOptions) *url.URL 
 	if options.securityGroupsHideInactive {
 		q.Set("securitygroups.hide_inactive", "1")
 	}
-	if options.securityCollectionsLang != UndefinedLanguage {
+	if options.securityCollectionsLang != LangUndefined {
 		q.Set("securitycollections.lang", options.securityCollectionsLang.String())
 	}
 

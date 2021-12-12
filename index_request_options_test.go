@@ -5,13 +5,13 @@ import (
 )
 
 func TestLanguage_String(t *testing.T) {
-	if got, expected := EngLanguage.String(), "en"; got != expected {
+	if got, expected := LangEn.String(), "en"; got != expected {
 		t.Fatalf("Error: expecting `%s` Lang \ngot `%s` Lang \ninstead", expected, got)
 	}
-	if got, expected := RusLanguage.String(), "ru"; got != expected {
+	if got, expected := LangRu.String(), "ru"; got != expected {
 		t.Fatalf("Error: expecting `%s` Lang \ngot `%s` Lang \ninstead", expected, got)
 	}
-	if got, expected := UndefinedLanguage.String(), ""; got != expected {
+	if got, expected := LangUndefined.String(), ""; got != expected {
 		t.Fatalf("Error: expecting `%s` Lang \ngot `%s` Lang \ninstead", expected, got)
 	}
 }
@@ -36,9 +36,9 @@ func TestIndexReqOptionsBuilder_Build(t *testing.T) {
 }
 
 func TestIndexReqOptionsEngineBuilder_Lang(t *testing.T) {
-	expectStruct := &IndexRequestOptions{enginesLang: EngLanguage}
+	expectStruct := &IndexRequestOptions{enginesLang: LangEn}
 	bld := NewIndexReqOptionsBuilder()
-	bld.Engine().Lang(EngLanguage)
+	bld.Engine().Lang(LangEn)
 	result := bld.Build()
 	if result == nil {
 		t.Fatalf("Error: expecting non-nil *IndexRequestOptions: got <nil> instead")
@@ -49,9 +49,9 @@ func TestIndexReqOptionsEngineBuilder_Lang(t *testing.T) {
 }
 
 func TestIndexReqOptionsDurationBuilder_Lang(t *testing.T) {
-	expectStruct := &IndexRequestOptions{durationsLang: RusLanguage}
+	expectStruct := &IndexRequestOptions{durationsLang: LangRu}
 	bld := NewIndexReqOptionsBuilder()
-	bld.Duration().Lang(RusLanguage)
+	bld.Duration().Lang(LangRu)
 	result := bld.Build()
 	if result == nil {
 		t.Fatalf("Error: expecting non-nil *IndexRequestOptions: got <nil> instead")
@@ -62,9 +62,9 @@ func TestIndexReqOptionsDurationBuilder_Lang(t *testing.T) {
 }
 
 func TestIndexReqOptionsMarketBuilder_Lang(t *testing.T) {
-	expectStruct := &IndexRequestOptions{marketsLang: RusLanguage}
+	expectStruct := &IndexRequestOptions{marketsLang: LangRu}
 	bld := NewIndexReqOptionsBuilder()
-	bld.Market().Lang(RusLanguage)
+	bld.Market().Lang(LangRu)
 	result := bld.Build()
 	if result == nil {
 		t.Fatalf("Error: expecting non-nil *IndexRequestOptions: got <nil> instead")
@@ -76,25 +76,25 @@ func TestIndexReqOptionsMarketBuilder_Lang(t *testing.T) {
 
 func TestIndexReqOptionsBuilder_LangRuEn(t *testing.T) {
 	expectStruct := &IndexRequestOptions{
-		enginesLang:             EngLanguage,
-		marketsLang:             RusLanguage,
-		boardsLang:              RusLanguage,
-		boardGroupsLang:         EngLanguage,
-		durationsLang:           EngLanguage,
-		securityTypesLang:       RusLanguage,
-		securityGroupsLang:      EngLanguage,
-		securityCollectionsLang: RusLanguage,
+		enginesLang:             LangEn,
+		marketsLang:             LangRu,
+		boardsLang:              LangRu,
+		boardGroupsLang:         LangEn,
+		durationsLang:           LangEn,
+		securityTypesLang:       LangRu,
+		securityGroupsLang:      LangEn,
+		securityCollectionsLang: LangRu,
 	}
 	bld := NewIndexReqOptionsBuilder()
 	bld.
-		Market().Lang(RusLanguage).
-		Engine().Lang(EngLanguage).
-		Board().Lang(RusLanguage).
-		BoardGroup().Lang(EngLanguage).
-		Duration().Lang(EngLanguage).
-		SecurityType().Lang(RusLanguage).
-		SecurityGroup().Lang(EngLanguage).
-		SecurityCollection().Lang(RusLanguage)
+		Market().Lang(LangRu).
+		Engine().Lang(LangEn).
+		Board().Lang(LangRu).
+		BoardGroup().Lang(LangEn).
+		Duration().Lang(LangEn).
+		SecurityType().Lang(LangRu).
+		SecurityGroup().Lang(LangEn).
+		SecurityCollection().Lang(LangRu)
 	result := bld.Build()
 	if result == nil {
 		t.Fatalf("Error: expecting non-nil *IndexRequestOptions: got <nil> instead")
@@ -128,11 +128,11 @@ func TestIndexReqOptionsBuilder_LangRuEn(t *testing.T) {
 
 func TestIndexReqOptionsBoardGroupBuilderAllOptions(t *testing.T) {
 	expectStruct := &IndexRequestOptions{
-		boardGroupsLang:     RusLanguage,
+		boardGroupsLang:     LangRu,
 		boardGroupsEngine:   "stock",
 		boardGroupsIsTraded: true}
 	bld := NewIndexReqOptionsBuilder()
-	bld.BoardGroup().Lang(RusLanguage).WithEngine("stock").IsTraded(true)
+	bld.BoardGroup().Lang(LangRu).WithEngine("stock").IsTraded(true)
 	result := bld.Build()
 	if result == nil {
 		t.Fatalf("Error: expecting non-nil *IndexRequestOptions: got <nil> instead")
@@ -151,10 +151,10 @@ func TestIndexReqOptionsBoardGroupBuilderAllOptions(t *testing.T) {
 
 func TestIndexReqOptionsSecurityTypesBuilderAllOptions(t *testing.T) {
 	expectStruct := &IndexRequestOptions{
-		securityTypesLang:   EngLanguage,
+		securityTypesLang:   LangEn,
 		securityTypesEngine: "stock"}
 	bld := NewIndexReqOptionsBuilder()
-	bld.SecurityType().Lang(EngLanguage).WithEngine("stock")
+	bld.SecurityType().Lang(LangEn).WithEngine("stock")
 	result := bld.Build()
 	if result == nil {
 		t.Fatalf("Error: expecting non-nil *IndexRequestOptions: got <nil> instead")
@@ -170,12 +170,12 @@ func TestIndexReqOptionsSecurityTypesBuilderAllOptions(t *testing.T) {
 
 func TestIndexReqOptionsSecurityGroupsBuilderAllOptions(t *testing.T) {
 	expectStruct := &IndexRequestOptions{
-		securityGroupsLang:         RusLanguage,
+		securityGroupsLang:         LangRu,
 		securityGroupsEngine:       "stock",
 		securityGroupsHideInactive: true,
 	}
 	bld := NewIndexReqOptionsBuilder()
-	bld.SecurityGroup().Lang(RusLanguage).WithEngine("stock").HideInactive(true)
+	bld.SecurityGroup().Lang(LangRu).WithEngine("stock").HideInactive(true)
 	result := bld.Build()
 	if result == nil {
 		t.Fatalf("Error: expecting non-nil *IndexRequestOptions: got <nil> instead")
@@ -194,14 +194,14 @@ func TestIndexReqOptionsSecurityGroupsBuilderAllOptions(t *testing.T) {
 
 func TestAddIndexRequestOptions(t *testing.T) {
 	income := NewIndexReqOptionsBuilder().
-		Engine().Lang(EngLanguage).
-		Market().Lang(EngLanguage).
-		Board().Lang(EngLanguage).
-		BoardGroup().Lang(EngLanguage).WithEngine("currency").IsTraded(true).
-		Duration().Lang(EngLanguage).
-		SecurityType().Lang(EngLanguage).WithEngine("futures").
-		SecurityGroup().Lang(RusLanguage).WithEngine("stock").HideInactive(true).
-		SecurityCollection().Lang(RusLanguage).
+		Engine().Lang(LangEn).
+		Market().Lang(LangEn).
+		Board().Lang(LangEn).
+		BoardGroup().Lang(LangEn).WithEngine("currency").IsTraded(true).
+		Duration().Lang(LangEn).
+		SecurityType().Lang(LangEn).WithEngine("futures").
+		SecurityGroup().Lang(LangRu).WithEngine("stock").HideInactive(true).
+		SecurityCollection().Lang(LangRu).
 		Build()
 	c := NewClient(nil)
 	url, _ := c.BaseURL.Parse("index.json?iss.meta=off")
