@@ -159,6 +159,14 @@ func TestParseSecuritiesResponse(t *testing.T) {
 	}
 }
 
+func TestParseSecuritiesResponseKeyPathNotFoundError(t *testing.T) {
+	income := `{ "securities; }`
+	securities := make([]Security, 0, 2)
+	if got, expected := parseSecuritiesResponse(&securities, []byte(income)), jsonparser.KeyPathNotFoundError; got != expected {
+		t.Fatalf("Error: expecting %v error: got %v instead", got, expected)
+	}
+}
+
 func TestParseSecuritiesWrongTypeJson(t *testing.T) {
 	income := `{ "securities": [] }`
 	securities := make([]Security, 0, 2)

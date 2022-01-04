@@ -44,8 +44,8 @@ func TestNewClientCustomHttpClient(t *testing.T) {
 func TestCheckResponseError(t *testing.T) {
 	resp := http.Response{StatusCode: 404, Status: "Not found"}
 
-	if got, expected := CheckResponse(&resp), errors.New("status:[404] Not found"); got.Error() != expected.Error() {
-		t.Fatalf("Error: expecting error with: %s \ngot %s  \ninstead", expected.Error(), got.Error())
+	if got, expected := CheckResponse(&resp), errors.New("status:[404] Not found"); got == nil || got.Error() != expected.Error() {
+		t.Fatalf("Error: expecting error with: %s \ngot %v  \ninstead", expected.Error(), got)
 	}
 
 }
