@@ -204,8 +204,8 @@ func TestAddIndexRequestOptions(t *testing.T) {
 		SecurityCollection().Lang(LangRu).
 		Build()
 	c := NewClient(nil)
-	url, _ := c.BaseURL.Parse("index.json?iss.meta=off")
-	gotUrl := addIndexRequestOptions(url, *income)
+	url, _ := c.BaseURL.Parse(indexPartsUrl)
+	gotUrl := addIndexRequestOptions(url, income)
 
 	expected := `https://iss.moex.com/iss/index.json?` +
 		`boardgroups.engine=currency&boardgroups.is_traded=1&boardgroups.lang=en&` +
@@ -220,5 +220,17 @@ func TestAddIndexRequestOptions(t *testing.T) {
 
 	if got := gotUrl.String(); got != expected {
 		t.Fatalf("Error: expecting url :\n`%s`  \ngot \n`%s` \ninstead", expected, got)
+	}
+}
+
+func TestAddIndexRequestOptionsNilOptions(t *testing.T) {
+	var income *IndexRequestOptions = nil
+	c := NewClient(nil)
+	url, _ := c.BaseURL.Parse("index.json")
+	gotUrl := addIndexRequestOptions(url, income)
+
+	expected := `https://iss.moex.com/iss/index.json`
+	if got := gotUrl.String(); got != expected {
+		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
 	}
 }

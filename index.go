@@ -1,8 +1,12 @@
 package moexiss
 
 import (
+	"bufio"
+	"bytes"
 	"context"
 )
+
+const indexPartsUrl = "index.json?iss.meta=off"
 
 //GeneralFields it contains general fields of some other structures
 type GeneralFields struct {

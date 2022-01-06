@@ -250,7 +250,10 @@ func (e *IndexReqOptionsSecurityCollectionBuilder) Lang(lang Language) *IndexReq
 
 //addIndexRequestOptions sets parameters into *url.URL
 //from IndexRequestOptions struct and returns it back
-func addIndexRequestOptions(url *url.URL, options IndexRequestOptions) *url.URL {
+func addIndexRequestOptions(url *url.URL, options *IndexRequestOptions) *url.URL {
+	if options == nil {
+		return url
+	}
 	q := url.Query()
 	if options.enginesLang != LangUndefined {
 		q.Set("engines.lang", options.enginesLang.String())
