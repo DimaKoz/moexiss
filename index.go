@@ -4,9 +4,37 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"errors"
+	"github.com/buger/jsonparser"
+	"log"
 )
 
-const indexPartsUrl = "index.json?iss.meta=off"
+const (
+	indexPartsUrl = "index.json?iss.meta=off"
+
+	keyEngines             = "engines"
+	keyMarkets             = "markets"
+	keyBoards              = "boards"
+	keyBoardGroups         = "boardgroups"
+	keyDurations           = "durations"
+	keySecurityTypes       = "securitytypes"
+	keySecurityGroups      = "securitygroups"
+	keySecurityCollections = "securitycollections"
+)
+
+var indexKeys = []string{
+	keyEngines,
+	keyMarkets,
+	keyBoards,
+	keyBoardGroups,
+	keyDurations,
+	keySecurityTypes,
+	keySecurityGroups,
+	keySecurityCollections,
+}
+
+var errUnexpectedDataType = errors.New("unexpected data type")
+var errNilPointer = errors.New("nil pointer error")
 
 //GeneralFields it contains general fields of some other structures
 type GeneralFields struct {
@@ -97,7 +125,110 @@ type Index struct {
 type IndexService service
 
 //TODO
-func (s *IndexService) List(ctx context.Context) (*Index, error) {
+func (s *IndexService) List(ctx context.Context, opt *IndexRequestOptions) (*Index, error) {
 	//TODO
+	url := s.getUrl(opt)
+	req, err := s.client.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var b bytes.Buffer
+	w := bufio.NewWriter(&b)
+
+	_, err = s.client.Do(ctx, req, w)
+	if err != nil {
+		return nil, err
+	}
+
 	return nil, nil
+}
+
+//getUrl provides an url for a request of the index with parameters from IndexRequestOptions
+//opt *IndexRequestOptions can be nil, it is safe
+func (s *IndexService) getUrl(opt *IndexRequestOptions) string {
+	url, _ := s.client.BaseURL.Parse(indexPartsUrl)
+	gotUrl := addIndexRequestOptions(url, opt)
+	return gotUrl.String()
+}
+
+func parseIndexResponse(byteData []byte, index *Index) (err error) {
+	if index == nil {
+		err = errNilPointer
+		return
+	}
+	for _, key := range indexKeys {
+		bytes, dataType, _, err := jsonparser.Get(byteData, key)
+		if err != nil {
+			if err != jsonparser.KeyPathNotFoundError {
+				return err
+			} else {
+				log.Println(err.Error(), "for the key:", key)
+				continue
+			}
+
+		}
+		if dataType != jsonparser.Object {
+			return errUnexpectedDataType
+		}
+		var usingFunc = func(byteData []byte, index *Index) (err error) { return }
+		switch key {
+		case keyEngines:
+			usingFunc = parseEngines
+		case keyMarkets:
+			usingFunc = parseMarkets
+		case keyBoards:
+			usingFunc = parseBoards
+		case keyBoardGroups:
+			usingFunc = parseBoardGroups
+		case keyDurations:
+			usingFunc = parseDuration
+		case keySecurityTypes:
+			usingFunc = parseSecurityTypes
+		case keySecurityGroups:
+			usingFunc = parseSecurityGroups
+		case keySecurityCollections:
+			usingFunc = parseSecurityCollections
+		default:
+			log.Println("unknown key:", key)
+		}
+		err = usingFunc(bytes, index)
+		if err != nil {
+			return err
+		}
+	}
+
+	return
+}
+
+var parseEngines = func(byteData []byte, index *Index) (err error) {
+	return nil
+}
+
+var parseMarkets = func(byteData []byte, index *Index) (err error) {
+	return nil
+}
+
+var parseBoards = func(byteData []byte, index *Index) (err error) {
+	return nil
+}
+
+var parseBoardGroups = func(byteData []byte, index *Index) (err error) {
+	return nil
+}
+
+var parseDuration = func(byteData []byte, index *Index) (err error) {
+	return nil
+}
+
+var parseSecurityTypes = func(byteData []byte, index *Index) (err error) {
+	return nil
+}
+
+var parseSecurityGroups = func(byteData []byte, index *Index) (err error) {
+	return nil
+}
+
+var parseSecurityCollections = func(byteData []byte, index *Index) (err error) {
+	return nil
 }
