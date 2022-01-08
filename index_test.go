@@ -198,3 +198,26 @@ func TestIndexParseEngines(t *testing.T) {
 		t.Fatalf("Error: expecting items: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
+
+func TestIndexParseMarkets(t *testing.T) {
+	var incomeJson = `{
+	"columns": ["id", "trade_engine_id", "trade_engine_name", "trade_engine_title", "market_name", "market_title", "market_id", "marketplace"], 
+	"data": [
+		[51, 9, "agro", "Агро", "sugar", "Торги сахаром", 51, null],
+		[5, 1, "stock", "Фондовый рынок и рынок депозитов", "index", "Индексы фондового рынка", 5, "INDICES"],
+		[21, 3, "currency", "Валютный рынок", "basket", "Бивалютная корзина", 21, null],
+		[12, 4, "futures", "Срочный рынок", "main", "Срочные инструменты", 12, null],
+		[23, 1, "stock", "Фондовый рынок и рынок депозитов", "standard", "Standard", 23, null],
+		[25, 1, "stock", "Фондовый рынок и рынок депозитов", "classica", "Classica", 25, null]
+	]
+}
+	`
+	var index = NewIndex()
+	err := parseMarkets([]byte(incomeJson), index)
+	if err != nil {
+		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
+	}
+	if got, expected := len(index.Markets), 6; got != expected {
+		t.Fatalf("Error: expecting items: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
