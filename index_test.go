@@ -221,3 +221,22 @@ func TestIndexParseMarkets(t *testing.T) {
 		t.Fatalf("Error: expecting items: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
+
+func TestIndexParseBoards(t *testing.T) {
+	var incomeJson = `{
+	"columns": ["id", "board_group_id", "engine_id", "market_id", "boardid", "board_title", "is_traded", "has_candles", "is_primary"], 
+	"data": [
+		[177, 57, 1, 1, "TQIF", "Т+: Паи - безадрес.", 1, 1, 1],
+		[244, 72, 1, 33, "MXBD", "MOEX Board", 1, 0, 1]
+	]
+}
+	`
+	var index = NewIndex()
+	err := parseBoards([]byte(incomeJson), index)
+	if err != nil {
+		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
+	}
+	if got, expected := len(index.Boards), 2; got != expected {
+		t.Fatalf("Error: expecting items: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}

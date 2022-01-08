@@ -268,7 +268,7 @@ func parseEngine(engine *Engine, engineItemBytes []byte) (err error) {
 }
 
 var parseMarkets = func(byteData []byte, index *Index) (err error) {
-	_, err = jsonparser.ArrayEach(byteData, func(marketItemBytes []byte, dataType jsonparser.ValueType, offset int, errCb error)  {
+	_, err = jsonparser.ArrayEach(byteData, func(marketItemBytes []byte, dataType jsonparser.ValueType, offset int, errCb error) {
 		if errCb != nil {
 			err = errCb
 			return
@@ -330,7 +330,71 @@ func parseMarket(market *Market, marketItemBytes []byte) (err error) {
 }
 
 var parseBoards = func(byteData []byte, index *Index) (err error) {
+	_, err = jsonparser.ArrayEach(byteData, func(boardItemBytes []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errCb != nil {
+			err = errCb
+			return
+		}
+		boardItem := &Board{}
+		err = parseBoard(boardItem, boardItemBytes)
+		if err != nil {
+			return
+		}
+		index.Boards = append(index.Boards, *boardItem)
+	}, keyData)
+
 	return nil
+}
+
+func parseBoard(board *Board, boardItemBytes []byte) (err error) {
+
+	counter := 0
+	var cb = func(fieldData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errCb != nil {
+			err = errCb
+			return
+		}
+
+		switch counter {
+
+		case 0:
+			board.Id, err = jsonparser.ParseInt(fieldData)
+
+		case 1:
+			board.BoardGroupId, err = jsonparser.ParseInt(fieldData)
+
+		case 2:
+			board.EngineId, err = jsonparser.ParseInt(fieldData)
+
+		case 3:
+			board.MarketId, err = jsonparser.ParseInt(fieldData)
+
+		case 4:
+			board.BoardId, err = parseStringWithDefaultValue(fieldData)
+
+		case 5:
+			board.BoardTitle, err = parseStringWithDefaultValue(fieldData)
+
+		case 6:
+			board.IsTraded = string(fieldData) == "1"
+
+		case 7:
+			board.HasCandles = string(fieldData) == "1"
+
+		case 8:
+			board.IsPrimary = string(fieldData) == "1"
+
+		}
+		if err != nil {
+			return
+		}
+		counter++
+	}
+
+	_, err = jsonparser.ArrayEach(boardItemBytes, cb)
+
+	return
+
 }
 
 var parseBoardGroups = func(byteData []byte, index *Index) (err error) {
