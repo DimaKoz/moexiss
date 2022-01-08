@@ -17,21 +17,48 @@ func TestIndexGetUrl(t *testing.T) {
 	}
 }
 
+
+var funcCallingCounter uint32
+
+var parseEngOrigin = parseEngines
+var parseMarketsOrigin = parseMarkets
+var parseBoardsOrigin = parseBoards
+var parseBoardGroupsOrigin = parseBoardGroups
+var parseDurationOrigin = parseDuration
+var parseSecurityTypesOrigin = parseSecurityTypes
+var parseSecurityGroupsOrigin = parseSecurityGroups
+var parseSecurityCollectionsOrigin = parseSecurityCollections
+
+var funcCounter = func(byteData []byte, index *Index) (err error) {
+	atomic.AddUint32(&funcCallingCounter, 1)
+	return nil
+}
+
+func overrideParseFunctions() {
+	parseEngines = funcCounter
+	parseMarkets = funcCounter
+	parseBoards = funcCounter
+	parseBoardGroups = funcCounter
+	parseDuration = funcCounter
+	parseSecurityTypes = funcCounter
+	parseSecurityGroups = funcCounter
+	parseSecurityCollections = funcCounter
+}
+
+func restoreOverriddenFunctions() {
+	parseEngines = parseEngOrigin
+	parseMarkets = parseMarketsOrigin
+	parseBoards = parseBoardsOrigin
+	parseBoardGroups = parseBoardGroupsOrigin
+	parseDuration = parseDurationOrigin
+	parseSecurityTypes = parseSecurityTypesOrigin
+	parseSecurityGroups = parseSecurityGroupsOrigin
+	parseSecurityCollections = parseSecurityCollectionsOrigin
+}
+
 func TestParseIndexResponse(t *testing.T) {
 
-	var funcCallingCounter uint32
-
-	parseEngines = func(byteData []byte, index *Index) (err error) {
-		atomic.AddUint32(&funcCallingCounter, 1)
-		return nil
-	}
-	parseMarkets = parseEngines
-	parseBoards = parseEngines
-	parseBoardGroups = parseEngines
-	parseDuration = parseEngines
-	parseSecurityTypes = parseEngines
-	parseSecurityGroups = parseEngines
-	parseSecurityCollections = parseEngines
+	overrideParseFunctions()
 	var incomeJson = `{
 "engines": {},
 "markets": {},
@@ -44,6 +71,10 @@ func TestParseIndexResponse(t *testing.T) {
 `
 	index := &Index{}
 	err := parseIndexResponse([]byte(incomeJson), index)
+
+	//restore functions
+	restoreOverriddenFunctions()
+
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
 	}
@@ -104,7 +135,9 @@ Key path not found for the key: securitycollections
 	log.SetFlags(0)
 	log.SetOutput(buf)
 	var index = &Index{}
+	overrideParseFunctions()
 	_ = parseIndexResponse([]byte(incomeJson), index)
+	restoreOverriddenFunctions()
 	b := buf.Bytes()
 	if got := string(b); got != expected {
 		t.Fatalf("Error: expecting : \n%v \ngot:\n %v \ninstead", expected, got)
@@ -131,9 +164,37 @@ func TestParseIndexResponseUnknownKey(t *testing.T) {
 	log.SetFlags(0)
 	log.SetOutput(buf)
 	var index = &Index{}
+	overrideParseFunctions()
 	_ = parseIndexResponse([]byte(incomeJson), index)
+	restoreOverriddenFunctions()
+	indexKeys = indexKeys[0 : len(indexKeys)-1]
 	b := buf.Bytes()
 	if got := string(b); got != expected {
 		t.Fatalf("Error: expecting : \n%v \ngot:\n%v\ninstead", expected, got)
+	}
+}
+
+func TestIndexParseEngines(t *testing.T) {
+	var incomeJson = `{
+	"columns": ["id", "name", "title"], 
+	"data": [
+		[1, "stock", "Фондовый рынок и рынок депозитов"],
+		[2, "state", "Рынок ГЦБ (размещение)"],
+		[3, "currency", "Валютный рынок"],
+		[4, "futures", "Срочный рынок"],
+		[5, "commodity", "Товарный рынок"],
+		[6, "interventions", "Товарные интервенции"],
+		[7, "offboard", "ОТС-система"],
+		[9, "agro", "Агро"]
+	]
+}
+	`
+	var index = NewIndex()
+	err := parseEngines([]byte(incomeJson), index)
+	if err != nil {
+		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
+	}
+	if got, expected := len(index.Engines), 8; got != expected {
+		t.Fatalf("Error: expecting items: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }

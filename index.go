@@ -20,6 +20,7 @@ const (
 	keySecurityTypes       = "securitytypes"
 	keySecurityGroups      = "securitygroups"
 	keySecurityCollections = "securitycollections"
+	keyData                = "data"
 )
 
 var indexKeys = []string{
@@ -118,6 +119,20 @@ type Index struct {
 	SecurityCollections []SecurityCollection
 }
 
+func NewIndex() *Index {
+	result := &Index{
+		Engines:             make([]Engine, 0),
+		Markets:             make([]Market, 0),
+		Boards:              make([]Board, 0),
+		BoardGroups:         make([]BoardGroup, 0),
+		Durations:           make([]Duration, 0),
+		SecurityTypes:       make([]SecurityType, 0),
+		SecurityGroups:      make([]SecurityGroup, 0),
+		SecurityCollections: make([]SecurityCollection, 0),
+	}
+	return result
+}
+
 // IndexService provides access to the index related functions
 // in the MoEx ISS API.
 //
@@ -202,7 +217,54 @@ func parseIndexResponse(byteData []byte, index *Index) (err error) {
 }
 
 var parseEngines = func(byteData []byte, index *Index) (err error) {
-	return nil
+
+	_, err = jsonparser.ArrayEach(byteData, func(engineItemBytes []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errCb != nil {
+			err = errCb
+			return
+		}
+		engineItem := &Engine{}
+		err = parseEngine(engineItem, engineItemBytes)
+		if err != nil {
+			return
+		}
+		index.Engines = append(index.Engines, *engineItem)
+	}, keyData)
+
+	return
+}
+
+func parseEngine(engine *Engine, engineItemBytes []byte) (err error) {
+
+	counter := 0
+	var cb = func(fieldData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errCb != nil {
+			err = errCb
+			return
+		}
+
+		switch counter {
+
+		case 0:
+			engine.Id, err = jsonparser.ParseInt(fieldData)
+
+		case 1:
+			engine.Name, err = parseStringWithDefaultValue(fieldData)
+
+		case 2:
+			engine.Title, err = parseStringWithDefaultValue(fieldData)
+
+		}
+		if err != nil {
+			return
+		}
+		counter++
+	}
+
+	_, err = jsonparser.ArrayEach(engineItemBytes, cb)
+
+	return
+
 }
 
 var parseMarkets = func(byteData []byte, index *Index) (err error) {
