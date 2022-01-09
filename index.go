@@ -412,7 +412,81 @@ func parseBoard(board *Board, boardItemBytes []byte) (err error) {
 }
 
 var parseBoardGroups = func(byteData []byte, index *Index) (err error) {
-	return nil
+	var errInCb error
+	_, err = jsonparser.ArrayEach(byteData, func(boardItemBytes []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errCb != nil {
+			errInCb = errCb
+			return
+		}
+		boardGroupItem := &BoardGroup{}
+		errInCb = parseBoardGroup(boardGroupItem, boardItemBytes)
+		if errInCb != nil {
+			return
+		}
+		index.BoardGroups = append(index.BoardGroups, *boardGroupItem)
+	}, keyData)
+	if err == nil && errInCb != nil {
+		err = errInCb
+	}
+	return
+
+}
+
+func parseBoardGroup(bg *BoardGroup, boardGroupItemData []byte) (err error) {
+	var errInCb error
+	counter := 0
+	var cb = func(fieldData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errCb != nil {
+			errInCb = errCb
+			return
+		}
+
+		switch counter {
+
+		case 0:
+			bg.Id, errInCb = jsonparser.ParseInt(fieldData)
+
+		case 1:
+			bg.Engine.Id, errInCb = jsonparser.ParseInt(fieldData)
+
+		case 2:
+			bg.Engine.Name, errInCb = parseStringWithDefaultValue(fieldData)
+
+		case 3:
+			bg.Engine.Title, errInCb = parseStringWithDefaultValue(fieldData)
+
+		case 4:
+			bg.MarketId, errInCb = jsonparser.ParseInt(fieldData)
+
+		case 5:
+			bg.MarketName, errInCb = parseStringWithDefaultValue(fieldData)
+
+		case 6:
+			bg.Name, errInCb = parseStringWithDefaultValue(fieldData)
+
+		case 7:
+			bg.Title, errInCb = parseStringWithDefaultValue(fieldData)
+
+		case 8:
+			bg.IsDefault = string(fieldData) == "1"
+
+		//case 9: Nothing to do
+		case 10:
+			bg.IsTraded = string(fieldData) == "1"
+
+		}
+		if errInCb != nil {
+			return
+		}
+		counter++
+	}
+
+	_, err = jsonparser.ArrayEach(boardGroupItemData, cb)
+	if err == nil && errInCb != nil {
+		return errInCb
+	}
+	return
+
 }
 
 var parseDuration = func(byteData []byte, index *Index) (err error) {

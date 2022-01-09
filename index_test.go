@@ -318,3 +318,50 @@ func TestIndexParseBoardsUnknownValueTypeError(t *testing.T) {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
+
+func TestIndexParseBoardGroups(t *testing.T) {
+	var incomeJson = `{
+	"columns": ["id", "trade_engine_id", "trade_engine_name", "trade_engine_title", "market_id", "market_name", "name", "title", "is_default", "board_group_id", "is_traded"], 
+	"data": [
+		[9, 1, "stock", "Фондовый рынок и рынок депозитов", 5, "index", "stock_index", "Индексы", 1, 9, 1],
+		[104, 1, "stock", "Фондовый рынок и рынок депозитов", 5, "index", "stock_index_inav", "INAV", 0, 104, 1],
+		[15, 4, "futures", "Срочный рынок", 12, "main", "futures", "Срочные инструменты", 1, 15, 0]
+	]
+}
+	`
+	var index = NewIndex()
+	err := parseBoardGroups([]byte(incomeJson), index)
+	if err != nil {
+		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
+	}
+	if got, expected := len(index.BoardGroups), 3; got != expected {
+		t.Fatalf("Error: expecting items: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+
+func TestIndexParseBoardGroupsMalformedArrayError(t *testing.T) {
+	var incomeJson = `{
+	"data": [
+		[51;
+	]
+}
+	`
+	var index = NewIndex()
+	if got, expected := parseBoardGroups([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
+
+
+func TestIndexParseBoardGroupsUnknownValueTypeError(t *testing.T) {
+	var incomeJson = `{
+	"data": [
+		{}
+	]
+}
+	`
+	var index = NewIndex()
+	if got, expected := parseBoardGroups([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
