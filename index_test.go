@@ -240,3 +240,42 @@ func TestIndexParseBoards(t *testing.T) {
 		t.Fatalf("Error: expecting items: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
+
+func TestIndexParseBoardsError(t *testing.T) {
+	var incomeJson = `{
+	"data": [
+		[177;
+	]
+}
+	`
+	var index = NewIndex()
+	if got, expected := parseBoards([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
+
+func TestIndexParseEnginesError(t *testing.T) {
+	var incomeJson = `{
+		"data": [
+		[1;
+	]
+}
+	`
+	var index = NewIndex()
+	if got, expected := parseEngines([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
+
+func TestIndexParseMarketsError(t *testing.T) {
+	var incomeJson = `{
+	"data": [
+		[51;
+	]
+}
+	`
+	var index = NewIndex()
+	if got, expected := parseMarkets([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
