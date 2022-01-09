@@ -197,7 +197,7 @@ func parseIndexResponse(byteData []byte, index *Index) (err error) {
 		case keyBoardGroups:
 			usingFunc = parseBoardGroups
 		case keyDurations:
-			usingFunc = parseDuration
+			usingFunc = parseDurations
 		case keySecurityTypes:
 			usingFunc = parseSecurityTypes
 		case keySecurityGroups:
@@ -413,13 +413,13 @@ func parseBoard(board *Board, boardItemBytes []byte) (err error) {
 
 var parseBoardGroups = func(byteData []byte, index *Index) (err error) {
 	var errInCb error
-	_, err = jsonparser.ArrayEach(byteData, func(boardItemBytes []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+	_, err = jsonparser.ArrayEach(byteData, func(bgItemData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
 		if errCb != nil {
 			errInCb = errCb
 			return
 		}
 		boardGroupItem := &BoardGroup{}
-		errInCb = parseBoardGroup(boardGroupItem, boardItemBytes)
+		errInCb = parseBoardGroup(boardGroupItem, bgItemData)
 		if errInCb != nil {
 			return
 		}
@@ -489,8 +489,63 @@ func parseBoardGroup(bg *BoardGroup, boardGroupItemData []byte) (err error) {
 
 }
 
-var parseDuration = func(byteData []byte, index *Index) (err error) {
-	return nil
+var parseDurations = func(byteData []byte, index *Index) (err error) {
+	var errInCb error
+	_, err = jsonparser.ArrayEach(byteData, func(durationData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errCb != nil {
+			errInCb = errCb
+			return
+		}
+		durationItem := &Duration{}
+		errInCb = parseDuration(durationItem, durationData)
+		if errInCb != nil {
+			return
+		}
+		index.Durations = append(index.Durations, *durationItem)
+	}, keyData)
+	if err == nil && errInCb != nil {
+		err = errInCb
+	}
+	return
+
+}
+
+func parseDuration(d *Duration, durationData []byte) (err error) {
+	var errInCb error
+	counter := 0
+	var cb = func(fieldData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errCb != nil {
+			errInCb = errCb
+			return
+		}
+
+		switch counter {
+
+		case 0:
+			d.Interval, errInCb = jsonparser.ParseInt(fieldData)
+
+		case 1:
+			d.Duration, errInCb = jsonparser.ParseInt(fieldData)
+
+		//case 2: Do nothing for 2 value
+		case 3:
+			d.Title, errInCb = parseStringWithDefaultValue(fieldData)
+
+		case 4:
+			d.Hint, errInCb = parseStringWithDefaultValue(fieldData)
+
+		}
+		if errInCb != nil {
+			return
+		}
+		counter++
+	}
+
+	_, err = jsonparser.ArrayEach(durationData, cb)
+	if err == nil && errInCb != nil {
+		return errInCb
+	}
+	return
 }
 
 var parseSecurityTypes = func(byteData []byte, index *Index) (err error) {
