@@ -549,7 +549,69 @@ func parseDuration(d *Duration, durationData []byte) (err error) {
 }
 
 var parseSecurityTypes = func(byteData []byte, index *Index) (err error) {
-	return nil
+	var errInCb error
+	_, err = jsonparser.ArrayEach(byteData, func(stData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errCb != nil {
+			errInCb = errCb
+			return
+		}
+		securityTypeItem := &SecurityType{}
+		errInCb = parseSecurityType(securityTypeItem, stData)
+		if errInCb != nil {
+			return
+		}
+		index.SecurityTypes = append(index.SecurityTypes, *securityTypeItem)
+	}, keyData)
+	if err == nil && errInCb != nil {
+		err = errInCb
+	}
+	return
+}
+
+func parseSecurityType(st *SecurityType, stData []byte) (err error) {
+	var errInCb error
+	counter := 0
+	var cb = func(fieldData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errCb != nil {
+			errInCb = errCb
+			return
+		}
+
+		switch counter {
+
+		case 0:
+			st.Id, errInCb = jsonparser.ParseInt(fieldData)
+
+		case 1:
+			st.Engine.Id, errInCb = jsonparser.ParseInt(fieldData)
+
+		case 2:
+			st.Engine.Name, errInCb = parseStringWithDefaultValue(fieldData)
+
+		case 3:
+			st.Engine.Title, errInCb = parseStringWithDefaultValue(fieldData)
+
+		case 4:
+			st.Name, errInCb = parseStringWithDefaultValue(fieldData)
+
+		case 5:
+			st.Title, errInCb = parseStringWithDefaultValue(fieldData)
+
+		case 6:
+			st.SecurityGroupName, errInCb = parseStringWithDefaultValue(fieldData)
+
+		}
+		if errInCb != nil {
+			return
+		}
+		counter++
+	}
+
+	_, err = jsonparser.ArrayEach(stData, cb)
+	if err == nil && errInCb != nil {
+		return errInCb
+	}
+	return
 }
 
 var parseSecurityGroups = func(byteData []byte, index *Index) (err error) {
