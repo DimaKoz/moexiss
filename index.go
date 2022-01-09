@@ -217,163 +217,175 @@ func parseIndexResponse(byteData []byte, index *Index) (err error) {
 }
 
 var parseEngines = func(byteData []byte, index *Index) (err error) {
-
+	var errInCb error
 	_, err = jsonparser.ArrayEach(byteData, func(engineItemBytes []byte, dataType jsonparser.ValueType, offset int, errCb error) {
 		if errCb != nil {
-			err = errCb
+			errInCb = errCb
 			return
 		}
 		engineItem := &Engine{}
-		err = parseEngine(engineItem, engineItemBytes)
-		if err != nil {
+		errInCb = parseEngine(engineItem, engineItemBytes)
+		if errInCb != nil {
 			return
 		}
 		index.Engines = append(index.Engines, *engineItem)
 	}, keyData)
-
+	if err == nil && errInCb != nil {
+		return errInCb
+	}
 	return
 }
 
 func parseEngine(engine *Engine, engineItemBytes []byte) (err error) {
-
+	var errInCb error
 	counter := 0
 	var cb = func(fieldData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
 		if errCb != nil {
-			err = errCb
+			errInCb = errCb
 			return
 		}
 
 		switch counter {
 
 		case 0:
-			engine.Id, err = jsonparser.ParseInt(fieldData)
+			engine.Id, errInCb = jsonparser.ParseInt(fieldData)
 
 		case 1:
-			engine.Name, err = parseStringWithDefaultValue(fieldData)
+			engine.Name, errInCb = parseStringWithDefaultValue(fieldData)
 
 		case 2:
-			engine.Title, err = parseStringWithDefaultValue(fieldData)
+			engine.Title, errInCb = parseStringWithDefaultValue(fieldData)
 
 		}
-		if err != nil {
+		if errInCb != nil {
 			return
 		}
 		counter++
 	}
 
 	_, err = jsonparser.ArrayEach(engineItemBytes, cb)
-
+	if err == nil && errInCb != nil {
+		return errInCb
+	}
 	return
 
 }
 
 var parseMarkets = func(byteData []byte, index *Index) (err error) {
+	var errInCb error
 	_, err = jsonparser.ArrayEach(byteData, func(marketItemBytes []byte, dataType jsonparser.ValueType, offset int, errCb error) {
 		if errCb != nil {
-			err = errCb
+			errInCb = errCb
 			return
 		}
 		marketItem := &Market{}
-		err = parseMarket(marketItem, marketItemBytes)
-		if err != nil {
+		errInCb = parseMarket(marketItem, marketItemBytes)
+		if errInCb != nil {
 			return
 		}
 		index.Markets = append(index.Markets, *marketItem)
 	}, keyData)
-
+	if err == nil && errInCb != nil {
+		return errInCb
+	}
 	return
 }
 
 func parseMarket(market *Market, marketItemBytes []byte) (err error) {
-
+	var errInCb error
 	counter := 0
 	var cb = func(fieldData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
 		if errCb != nil {
-			err = errCb
+			errInCb = errCb
 			return
 		}
 
 		switch counter {
 
 		case 0:
-			market.Id, err = jsonparser.ParseInt(fieldData)
+			market.Id, errInCb = jsonparser.ParseInt(fieldData)
 
 		case 1:
-			market.Engine.Id, err = jsonparser.ParseInt(fieldData)
+			market.Engine.Id, errInCb = jsonparser.ParseInt(fieldData)
 
 		case 2:
-			market.Engine.Name, err = parseStringWithDefaultValue(fieldData)
+			market.Engine.Name, errInCb = parseStringWithDefaultValue(fieldData)
 
 		case 3:
-			market.Engine.Title, err = parseStringWithDefaultValue(fieldData)
+			market.Engine.Title, errInCb = parseStringWithDefaultValue(fieldData)
 
 		case 4:
-			market.Name, err = parseStringWithDefaultValue(fieldData)
+			market.Name, errInCb = parseStringWithDefaultValue(fieldData)
 
 		case 5:
-			market.Title, err = parseStringWithDefaultValue(fieldData)
+			market.Title, errInCb = parseStringWithDefaultValue(fieldData)
 		//case 6:
 		//already presents in market.Id
 		case 7:
-			market.MarketPlace, err = parseStringWithDefaultValue(fieldData)
+			market.MarketPlace, errInCb = parseStringWithDefaultValue(fieldData)
 		}
-		if err != nil {
+		if errInCb != nil {
 			return
 		}
 		counter++
 	}
 
 	_, err = jsonparser.ArrayEach(marketItemBytes, cb)
-
+	if err == nil && errInCb != nil {
+		return errInCb
+	}
 	return
 
 }
 
 var parseBoards = func(byteData []byte, index *Index) (err error) {
+	var errInCb error
 	_, err = jsonparser.ArrayEach(byteData, func(boardItemBytes []byte, dataType jsonparser.ValueType, offset int, errCb error) {
 		if errCb != nil {
-			err = errCb
+			errInCb = errCb
 			return
 		}
 		boardItem := &Board{}
-		err = parseBoard(boardItem, boardItemBytes)
-		if err != nil {
+		errInCb = parseBoard(boardItem, boardItemBytes)
+		if errInCb != nil {
 			return
 		}
 		index.Boards = append(index.Boards, *boardItem)
 	}, keyData)
-
-	return nil
+	if err == nil && errInCb != nil {
+		err = errInCb
+	}
+	return
 }
 
 func parseBoard(board *Board, boardItemBytes []byte) (err error) {
-
+	var errInCb error
 	counter := 0
 	var cb = func(fieldData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
 		if errCb != nil {
-			err = errCb
+			errInCb = errCb
 			return
 		}
 
 		switch counter {
 
 		case 0:
-			board.Id, err = jsonparser.ParseInt(fieldData)
+			board.Id, errInCb = jsonparser.ParseInt(fieldData)
 
 		case 1:
-			board.BoardGroupId, err = jsonparser.ParseInt(fieldData)
+			board.BoardGroupId, errInCb = jsonparser.ParseInt(fieldData)
 
 		case 2:
-			board.EngineId, err = jsonparser.ParseInt(fieldData)
+			board.EngineId, errInCb = jsonparser.ParseInt(fieldData)
 
 		case 3:
-			board.MarketId, err = jsonparser.ParseInt(fieldData)
+			board.MarketId, errInCb = jsonparser.ParseInt(fieldData)
 
 		case 4:
-			board.BoardId, err = parseStringWithDefaultValue(fieldData)
+			board.BoardId, errInCb = parseStringWithDefaultValue(fieldData)
 
 		case 5:
-			board.BoardTitle, err = parseStringWithDefaultValue(fieldData)
+			board.BoardTitle, errInCb = parseStringWithDefaultValue(fieldData)
 
 		case 6:
 			board.IsTraded = string(fieldData) == "1"
@@ -385,14 +397,16 @@ func parseBoard(board *Board, boardItemBytes []byte) (err error) {
 			board.IsPrimary = string(fieldData) == "1"
 
 		}
-		if err != nil {
+		if errInCb != nil {
 			return
 		}
 		counter++
 	}
 
 	_, err = jsonparser.ArrayEach(boardItemBytes, cb)
-
+	if err == nil && errInCb != nil {
+		return errInCb
+	}
 	return
 
 }
