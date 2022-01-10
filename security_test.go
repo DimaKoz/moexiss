@@ -189,3 +189,17 @@ func TestIndexParseSecurityMalformedArrayError(t *testing.T) {
 		t.Fatalf("Error: expecting:\n'%v'\ngot:\n'%v'\ninstead", expected, got)
 	}
 }
+
+func TestIndexParseSecurityUnknownValueTypeError(t *testing.T) {
+	var incomeJson = `{
+		"data": [
+		[5444,]
+	]
+}
+	`
+
+	securities := make([]Security, 0, 2)
+	if got, expected := parseSecurities(&securities, []byte(incomeJson)), jsonparser.UnknownValueTypeError; got == nil || got != expected {
+		t.Fatalf("Error: expecting:\n'%v'\ngot:\n'%v'\ninstead", expected, got)
+	}
+}

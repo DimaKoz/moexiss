@@ -170,12 +170,9 @@ func parseSecurityItem(s *Security, secItemBytes []byte) (err error) {
 	}
 
 	_, err = jsonparser.ArrayEach(secItemBytes, cb)
-	if errInArr != nil {
-		if err == nil {
-			err = errInArr
-			return
-		}
-		err = fmt.Errorf("got errors: \n-%s\n-%s", err.Error(), errInArr)
+	if err == nil && errInArr != nil {
+		err = errInArr
+		return
 	}
 	return
 }
