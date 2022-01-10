@@ -477,7 +477,7 @@ func TestIndexParseSecurityGroups(t *testing.T) {
 	]
 }
 	`
-	expectedSt := SecurityGroup{
+	expectedSg := SecurityGroup{
 		GeneralFields: GeneralFields{Id: 22, Name: "stock_mortgage", Title: "Ипотечный сертификат"},
 		IsHidden:      true,
 	}
@@ -489,7 +489,7 @@ func TestIndexParseSecurityGroups(t *testing.T) {
 	if got, expected := len(index.SecurityGroups), 3; got != expected {
 		t.Fatalf("Error: expecting items: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
-	if got, expected := index.SecurityGroups[2], expectedSt; expected != got {
+	if got, expected := index.SecurityGroups[2], expectedSg; expected != got {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
@@ -516,6 +516,58 @@ func TestIndexParseSecurityGroupsUnknownValueTypeError(t *testing.T) {
 	`
 	var index = NewIndex()
 	if got, expected := parseSecurityGroups([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
+
+func TestIndexParseSecurityCollections(t *testing.T) {
+	var incomeJson = `{
+	"columns": ["id", "name", "title", "security_group_id"], 
+	"data": [
+		[72, "stock_index_all", "Все индексы", 12],
+		[255, "currency_futures_delivery_eur", "EUR\/RUB поставочный ФЬЮЧЕРС", 28]
+	]
+}
+	`
+	expectedSc := SecurityCollection{
+		GeneralFields:   GeneralFields{Id: 72, Name: "stock_index_all", Title: "Все индексы"},
+		SecurityGroupId: 12,
+	}
+	var index = NewIndex()
+	err := parseSecurityCollections([]byte(incomeJson), index)
+	if err != nil {
+		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
+	}
+	if got, expected := len(index.SecurityCollections), 2; got != expected {
+		t.Fatalf("Error: expecting items: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+	if got, expected := index.SecurityCollections[0], expectedSc; expected != got {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+
+func TestIndexParseSecurityCollectionsMalformedArrayError(t *testing.T) {
+	var incomeJson = `{
+	"data": [
+		[51;
+	]
+}
+	`
+	var index = NewIndex()
+	if got, expected := parseSecurityCollections([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
+
+func TestIndexParseSecurityCollectionsUnknownValueTypeError(t *testing.T) {
+	var incomeJson = `{
+	"data": [
+		{}
+	]
+}
+	`
+	var index = NewIndex()
+	if got, expected := parseSecurityCollections([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }

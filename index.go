@@ -672,5 +672,59 @@ func parseSecurityGroup(sg *SecurityGroup, sgData []byte) (err error) {
 }
 
 var parseSecurityCollections = func(byteData []byte, index *Index) (err error) {
-	return nil
+	var errInCb error
+	_, err = jsonparser.ArrayEach(byteData, func(scData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errCb != nil {
+			errInCb = errCb
+			return
+		}
+		scItem := &SecurityCollection{}
+		errInCb = parseSecurityCollection(scItem, scData)
+		if errInCb != nil {
+			return
+		}
+		index.SecurityCollections = append(index.SecurityCollections, *scItem)
+	}, keyData)
+	if err == nil && errInCb != nil {
+		err = errInCb
+	}
+	return
+
+}
+
+func parseSecurityCollection(sc *SecurityCollection, scData []byte) (err error) {
+	var errInCb error
+	counter := 0
+	var cb = func(fieldData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errCb != nil {
+			errInCb = errCb
+			return
+		}
+
+		switch counter {
+
+		case 0:
+			sc.Id, errInCb = jsonparser.ParseInt(fieldData)
+
+		case 1:
+			sc.Name, errInCb = parseStringWithDefaultValue(fieldData)
+
+		case 2:
+			sc.Title, errInCb = parseStringWithDefaultValue(fieldData)
+
+		case 3:
+			sc.SecurityGroupId, errInCb = jsonparser.ParseInt(fieldData)
+
+		}
+		if errInCb != nil {
+			return
+		}
+		counter++
+	}
+
+	_, err = jsonparser.ArrayEach(scData, cb)
+	if err == nil && errInCb != nil {
+		return errInCb
+	}
+	return
 }
