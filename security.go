@@ -90,12 +90,9 @@ func parseSecurities(securities *[]Security, bytesSec []byte) (err error) {
 		*securities = append(*securities, *secItem)
 
 	}, "data")
-	if arrayEachErr != nil {
-		if err == nil {
-			err = arrayEachErr
-			return
-		}
-		err = fmt.Errorf("got errors: \n-%s\n-%s", err.Error(), arrayEachErr)
+	if err == nil && arrayEachErr != nil {
+		err = arrayEachErr
+		return
 	}
 	return
 }
