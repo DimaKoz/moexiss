@@ -139,9 +139,9 @@ func NewIndex() *Index {
 // MoEx ISS API docs: https://iss.moex.com/iss/reference/28
 type IndexService service
 
-//TODO
+//List provides a list of references of MoEx ISS
 func (s *IndexService) List(ctx context.Context, opt *IndexRequestOptions) (*Index, error) {
-	//TODO
+
 	url := s.getUrl(opt)
 	req, err := s.client.NewRequest("GET", url, nil)
 	if err != nil {
@@ -155,8 +155,12 @@ func (s *IndexService) List(ctx context.Context, opt *IndexRequestOptions) (*Ind
 	if err != nil {
 		return nil, err
 	}
-
-	return nil, nil
+	index := NewIndex()
+	err = parseIndexResponse(b.Bytes(), index)
+	if err != nil {
+		return nil, err
+	}
+	return index, nil
 }
 
 //getUrl provides an url for a request of the index with parameters from IndexRequestOptions
