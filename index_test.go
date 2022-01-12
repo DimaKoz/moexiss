@@ -2,8 +2,16 @@ package moexiss
 
 import (
 	"bytes"
+	"context"
+	"fmt"
 	"github.com/buger/jsonparser"
+	"io/ioutil"
 	"log"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"os"
+	"path/filepath"
 	"sync/atomic"
 	"testing"
 )
@@ -569,5 +577,91 @@ func TestIndexParseSecurityCollectionsUnknownValueTypeError(t *testing.T) {
 	var index = NewIndex()
 	if got, expected := parseSecurityCollections([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
+
+//A handler to return expected results
+//TestingIndexHandler emulates an external server
+func TestingIndexHandler(w http.ResponseWriter, _ *http.Request) {
+	log.Println("IndexHandler")
+	//getting test data
+	fullPath := filepath.Join("testdata", "index.json")
+	jsonFile, err := os.Open(fullPath)
+	// if we os.Open returns an error then handle it
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("Successfully Opened index.json")
+	// defer the closing of our jsonFile so that we can parse it later on
+	defer jsonFile.Close()
+
+	byteValueResult, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write(byteValueResult)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+}
+
+func TestGetIndexList(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(TestingIndexHandler))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+	c.BaseURL, _ = url.Parse(srv.URL + "/")
+	result, err := c.Index.List(context.Background(), nil)
+	if err != nil {
+		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
+	}
+	if got, expected := len(result.SecurityCollections), 103; got != expected {
+		t.Fatalf("Error: expecting: \n %v items\ngot:\n %v items\ninstead", expected, got)
+	}
+}
+
+func TestGetIndexListBaseUrl(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(TestingIndexHandler))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+
+	c.BaseURL, _ = url.Parse(srv.URL)
+	_, err := c.Index.List(context.Background(), nil)
+	if got, expected := err, "BaseURL must have a trailing slash, but \""+srv.URL+"\" does not"; got == nil || got.Error() != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
+
+func TestGetIndexListKeyPathNotFound(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte("{\"engines\":{}"))
+	}))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+
+	c.BaseURL, _ = url.Parse(srv.URL + "/")
+	_, err := c.Index.List(context.Background(), nil)
+	if got, expected := err, jsonparser.KeyPathNotFoundError; got == nil || got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
+	}
+}
+
+func TestGetIndexListNilContextError(t *testing.T) {
+	c := NewClient(nil)
+	_, err := c.Index.List(nil, nil)
+	if got, expected := err, errNonNilContext; got == nil || got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
 	}
 }
