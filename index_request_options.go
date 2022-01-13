@@ -23,7 +23,7 @@ func (s Language) String() string {
 	}
 }
 
-//IndexRequestOptions contains options which using as arguments
+//IndexRequestOptions contains options which can be used as arguments
 //for building requests of 'Index'
 //MoEx ISS API docs: https://iss.moex.com/iss/reference/28
 type IndexRequestOptions struct {
