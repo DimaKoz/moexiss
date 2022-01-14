@@ -5,6 +5,20 @@ import (
 	"time"
 )
 
+//turnoverBlock represents a type of turnovers block of MoEx ISS API
+type turnoverBlock string
+
+const (
+	turnoversBlockUndefined turnoverBlock = ""
+	turnoversBlock          turnoverBlock = "turnovers"
+	turnoversPrevDateBlock  turnoverBlock = "turnoversprevdate"
+)
+
+//string representations of turnoverBlock values
+func (tb turnoverBlock) String() string {
+	return string(tb)
+}
+
 //TurnoverRequestOptions contains options which can be used as arguments
 //for building requests to get current turnover on all the markets.
 //MoEx ISS API docs: https://iss.moex.com/iss/reference/24
@@ -52,10 +66,12 @@ func (b *TurnoverReqOptionsBuilder) Date(date time.Time) *TurnoverReqOptionsBuil
 
 //addTurnoverRequestOptions sets parameters into *url.URL
 //from TurnoverRequestOptions struct and returns it back
-func addTurnoverRequestOptions(url *url.URL, options *TurnoverRequestOptions, onlyBlock string) *url.URL {
+func addTurnoverRequestOptions(url *url.URL, options *TurnoverRequestOptions, onlyBlock turnoverBlock) *url.URL {
 	q := url.Query()
 	q.Set("iss.meta", "off")
-	q.Set("iss.only", onlyBlock)
+	if onlyBlock != turnoversBlockUndefined {
+		q.Set("iss.only", onlyBlock.String())
+	}
 	q.Set("iss.json", "extended")
 	if options == nil {
 		url.RawQuery = q.Encode()

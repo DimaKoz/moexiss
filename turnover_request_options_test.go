@@ -61,9 +61,9 @@ func TestAddTurnoverRequestOptionsNilOptions(t *testing.T) {
 	var income *TurnoverRequestOptions = nil
 	c := NewClient(nil)
 	url, _ := c.BaseURL.Parse("turnovers.json")
-	gotUrl := addTurnoverRequestOptions(url, income, "")
+	gotUrl := addTurnoverRequestOptions(url, income, turnoversPrevDateBlock)
 
-	expected := `https://iss.moex.com/iss/turnovers.json?iss.json=extended&iss.meta=off&iss.only=`
+	expected := `https://iss.moex.com/iss/turnovers.json?iss.json=extended&iss.meta=off&iss.only=turnoversprevdate`
 	if got := gotUrl.String(); got != expected {
 		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
 	}
@@ -76,7 +76,7 @@ func TestAddTurnoverRequestOptions(t *testing.T) {
 		IsTonightSession(true).Build()
 	c := NewClient(nil)
 	url, _ := c.BaseURL.Parse("turnovers.json")
-	gotUrl := addTurnoverRequestOptions(url, incomeOptions, "turnovers")
+	gotUrl := addTurnoverRequestOptions(url, incomeOptions, turnoversBlock)
 
 	expected := `https://iss.moex.com/iss/turnovers.json?date=2021-02-24&is_tonight_session=1&iss.json=extended&iss.meta=off&iss.only=turnovers&lang=en`
 	if got := gotUrl.String(); got != expected {
