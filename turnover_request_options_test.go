@@ -56,3 +56,30 @@ func TestNewTurnoverReqOptionsBuilder(t *testing.T) {
 	}
 
 }
+
+func TestAddTurnoverRequestOptionsNilOptions(t *testing.T) {
+	var income *TurnoverRequestOptions = nil
+	c := NewClient(nil)
+	url, _ := c.BaseURL.Parse("turnovers.json")
+	gotUrl := addTurnoverRequestOptions(url, income, "")
+
+	expected := `https://iss.moex.com/iss/turnovers.json?iss.json=extended&iss.meta=off&iss.only=`
+	if got := gotUrl.String(); got != expected {
+		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
+	}
+}
+
+func TestAddTurnoverRequestOptions(t *testing.T) {
+	var incomeOptions = NewTurnoverReqOptionsBuilder().
+		Lang(LangEn).
+		Date(time.Date(2021, 2, 24, 12, 0, 0, 0, time.UTC)).
+		IsTonightSession(true).Build()
+	c := NewClient(nil)
+	url, _ := c.BaseURL.Parse("turnovers.json")
+	gotUrl := addTurnoverRequestOptions(url, incomeOptions, "turnovers")
+
+	expected := `https://iss.moex.com/iss/turnovers.json?date=2021-02-24&is_tonight_session=1&iss.json=extended&iss.meta=off&iss.only=turnovers&lang=en`
+	if got := gotUrl.String(); got != expected {
+		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
+	}
+}
