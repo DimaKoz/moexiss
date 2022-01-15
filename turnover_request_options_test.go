@@ -46,9 +46,9 @@ func TestTurnoverReqOptionsBuilder_Date(t *testing.T) {
 func TestNewTurnoverReqOptionsBuilder(t *testing.T) {
 	date := time.Now()
 	expectStruct := TurnoverRequestOptions{
-		lang: LangRu,
+		lang:             LangRu,
 		isTonightSession: true,
-		date: date}
+		date:             date}
 	bld := NewTurnoverReqOptionsBuilder()
 	bld.Date(date).Lang(LangRu).IsTonightSession(true)
 	if got, expected := bld.Build(), expectStruct; got == nil || *got != expected {
@@ -81,5 +81,30 @@ func TestAddTurnoverRequestOptions(t *testing.T) {
 	expected := `https://iss.moex.com/iss/turnovers.json?date=2021-02-24&is_tonight_session=1&iss.json=extended&iss.meta=off&iss.only=turnovers&lang=en`
 	if got := gotUrl.String(); got != expected {
 		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
+	}
+}
+
+func TestTurnoverBlock_String(t *testing.T) {
+	type Case struct {
+		income   turnoverBlock
+		expected string
+	}
+
+	cases := []Case{
+		{
+			income:   turnoversBlockUndefined,
+			expected: ""},
+		{
+			income:   turnoversBlock,
+			expected: "turnovers"},
+		{
+			income:   turnoversPrevDateBlock,
+			expected: "turnoversprevdate"},
+	}
+
+	for _, c := range cases{
+		if got := c.income.String(); got != c.expected {
+			t.Fatalf("Error: expecting :\n`%s` \ngot \n`%s` \ninstead", c.expected, got)
+		}
 	}
 }
