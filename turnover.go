@@ -1,6 +1,7 @@
 package moexiss
 
 import (
+	"context"
 	"github.com/buger/jsonparser"
 )
 
@@ -16,6 +17,8 @@ type Turnover struct {
 }
 
 const (
+	turnoverPartsUrl = "turnovers.json"
+
 	turnoverKeyName        = "NAME"
 	turnoverKeyId          = "ID"
 	turnoverKeyValToday    = "VALTODAY"
@@ -24,6 +27,20 @@ const (
 	turnoverKeyUpdateTime  = "UPDATETIME"
 	turnoverKeyTitle       = "TITLE"
 )
+
+// TurnoverService gets turnovers on all the markets
+// in the MoEx ISS API.
+//
+// MoEx ISS API docs: https://iss.moex.com/iss/reference/24
+type TurnoverService service
+
+//getUrl provides an url for a request of the turnovers with parameters from TurnoverRequestOptions
+//opt *TurnoverRequestOptions can be nil, it is safe
+func (s *TurnoverService) getUrl(opt *TurnoverRequestOptions, onlyBlock turnoverBlock) string {
+	url, _ := s.client.BaseURL.Parse(turnoverPartsUrl)
+	gotUrl := addTurnoverRequestOptions(url, opt, onlyBlock)
+	return gotUrl.String()
+}
 
 func parseTurnoverResponse(byteData []byte, turnovers *[]Turnover) error {
 	var err error

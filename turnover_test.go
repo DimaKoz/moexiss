@@ -213,3 +213,12 @@ func TestParseTurnoverErrCases(t *testing.T) {
 
 	}
 }
+
+func TestTurnoversGetUrl(t *testing.T) {
+	var income *TurnoverRequestOptions = nil
+	c := NewClient(nil)
+
+	if got, expected := c.Turnovers.getUrl(income, turnoversBlock), `https://iss.moex.com/iss/turnovers.json?iss.json=extended&iss.meta=off&iss.only=turnovers`; got != expected {
+		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
+	}
+}
