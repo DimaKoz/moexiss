@@ -23,6 +23,29 @@ const (
 	turnoverKeyTitle       = "TITLE"
 )
 
+func parseTurnovers(byteData []byte, turnovers *[]Turnover) (err error) {
+	var errInCb error
+	_, err = jsonparser.ArrayEach(byteData, func(turnoverItemData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if dataType != jsonparser.Object {
+			errInCb = errUnexpectedDataType
+			return
+		}
+
+		turnover := Turnover{}
+		errInCb = parseTurnover(turnoverItemData, &turnover)
+		if errInCb != nil {
+			return
+		}
+		*turnovers = append(*turnovers, turnover)
+
+	})
+	if err == nil && errInCb != nil {
+		err = errInCb
+	}
+	return
+}
+
+
 func parseTurnover(data []byte, t *Turnover) (err error) {
 	nullValueData := "null"
 	nameData, _, _, err := jsonparser.Get(data, turnoverKeyName)
