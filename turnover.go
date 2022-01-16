@@ -1,6 +1,8 @@
 package moexiss
 
-import "github.com/buger/jsonparser"
+import (
+	"github.com/buger/jsonparser"
+)
 
 //Turnover struct represents market turnovers
 type Turnover struct {
@@ -23,6 +25,31 @@ const (
 	turnoverKeyTitle       = "TITLE"
 )
 
+func parseTurnoverResponse(byteData []byte, turnovers *[]Turnover) error {
+	var err error
+	if turnovers == nil {
+		err = errNilPointer
+		return err
+	}
+	var errInCb error
+	_, err = jsonparser.ArrayEach(byteData, func(turnoversBytes []byte, _ jsonparser.ValueType, offset int, errCb error) {
+		var bytes []byte
+		var dataType jsonparser.ValueType
+		bytes, dataType, _, errInCb = jsonparser.Get(turnoversBytes, "turnovers")
+		if errInCb == nil && bytes != nil && dataType == jsonparser.Array {
+			errInCb = parseTurnovers(bytes, turnovers)
+			if errInCb != nil {
+				return
+			}
+		}
+
+	})
+	if err == nil && errInCb != nil {
+		err = errInCb
+	}
+	return err
+}
+
 func parseTurnovers(byteData []byte, turnovers *[]Turnover) (err error) {
 	var errInCb error
 	_, err = jsonparser.ArrayEach(byteData, func(turnoverItemData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
@@ -44,7 +71,6 @@ func parseTurnovers(byteData []byte, turnovers *[]Turnover) (err error) {
 	}
 	return
 }
-
 
 func parseTurnover(data []byte, t *Turnover) (err error) {
 	nullValueData := "null"
