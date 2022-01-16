@@ -102,7 +102,7 @@ func TestTurnoverBlock_String(t *testing.T) {
 			expected: "turnoversprevdate"},
 	}
 
-	for _, c := range cases{
+	for _, c := range cases {
 		if got := c.income.String(); got != c.expected {
 			t.Fatalf("Error: expecting :\n`%s` \ngot \n`%s` \ninstead", c.expected, got)
 		}
