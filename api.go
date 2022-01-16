@@ -126,7 +126,8 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 	case io.Writer:
 		_, err = io.Copy(v, resp.Body)
 	default:
-		b, err := io.ReadAll(resp.Body)
+		var b []byte
+		b, err = io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -137,6 +138,9 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 		if decErr != nil {
 			err = decErr
 		}
+	}
+	if err != nil {
+		return nil, err
 	}
 	err = resp.Body.Close()
 	if err != nil {
