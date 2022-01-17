@@ -1,6 +1,8 @@
 package moexiss
 
 import (
+	"bufio"
+	"bytes"
 	"context"
 	"github.com/buger/jsonparser"
 )
@@ -34,6 +36,31 @@ const (
 // MoEx ISS API docs: https://iss.moex.com/iss/reference/24
 type TurnoverService service
 
+//Turnovers provides a list of turnovers of markets of MoEx ISS
+func (s *TurnoverService) Turnovers(ctx context.Context, opt *TurnoverRequestOptions) (*[]Turnover, error) {
+
+	url := s.getUrl(opt, turnoversBlock)
+	req, err := s.client.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var b bytes.Buffer
+	w := bufio.NewWriter(&b)
+
+	_, err = s.client.Do(ctx, req, w)
+	if err != nil {
+		return nil, err
+	}
+	t := make([]Turnover, 0)
+	err = parseTurnoverResponse(b.Bytes(), &t)
+	if err != nil {
+		return nil, err
+	}
+	return &t, nil
+
+}
+
 //getUrl provides an url for a request of the turnovers with parameters from TurnoverRequestOptions
 //opt *TurnoverRequestOptions can be nil, it is safe
 func (s *TurnoverService) getUrl(opt *TurnoverRequestOptions, onlyBlock turnoverBlock) string {
@@ -50,11 +77,11 @@ func parseTurnoverResponse(byteData []byte, turnovers *[]Turnover) error {
 	}
 	var errInCb error
 	_, err = jsonparser.ArrayEach(byteData, func(turnoversBytes []byte, _ jsonparser.ValueType, offset int, errCb error) {
-		var bytes []byte
+		var data []byte
 		var dataType jsonparser.ValueType
-		bytes, dataType, _, errInCb = jsonparser.Get(turnoversBytes, "turnovers")
-		if errInCb == nil && bytes != nil && dataType == jsonparser.Array {
-			errInCb = parseTurnovers(bytes, turnovers)
+		data, dataType, _, errInCb = jsonparser.Get(turnoversBytes, "turnovers")
+		if errInCb == nil && data != nil && dataType == jsonparser.Array {
+			errInCb = parseTurnovers(data, turnovers)
 			if errInCb != nil {
 				return
 			}

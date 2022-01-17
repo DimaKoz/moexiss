@@ -1,7 +1,15 @@
 package moexiss
 
 import (
+	"context"
+	"fmt"
 	"github.com/buger/jsonparser"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -220,5 +228,99 @@ func TestTurnoversGetUrl(t *testing.T) {
 
 	if got, expected := c.Turnovers.getUrl(income, turnoversBlock), `https://iss.moex.com/iss/turnovers.json?iss.json=extended&iss.meta=off&iss.only=turnovers`; got != expected {
 		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
+	}
+}
+
+//A handler to return expected results
+//TestingTurnoverHandler emulates an external server
+func TestingTurnoverHandler(w http.ResponseWriter, _ *http.Request) {
+
+	//getting test data
+	fullPath := filepath.Join("testdata", "turnover.json")
+	jsonFile, err := os.Open(fullPath)
+	// if we os.Open returns an error then handle it
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("Successfully Opened turnover.json")
+	// defer the closing of our jsonFile so that we can parse it later on
+	defer jsonFile.Close()
+
+	byteValueResult, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write(byteValueResult)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+}
+
+func TestTurnoverService_Turnovers(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(TestingTurnoverHandler))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+	c.BaseURL, _ = url.Parse(srv.URL + "/")
+	result, err := c.Turnovers.Turnovers(context.Background(), nil)
+	if err != nil {
+		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
+	}
+	if got, expected := len(*result), 5; got != expected {
+		t.Fatalf("Error: expecting: \n %v items\ngot:\n %v items\ninstead", expected, got)
+	}
+}
+
+func TestTurnoverService_TurnoversBaseUrl(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(TestingTurnoverHandler))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+
+	c.BaseURL, _ = url.Parse(srv.URL)
+	_, err := c.Turnovers.Turnovers(context.Background(), nil)
+	if got, expected := err, "BaseURL must have a trailing slash, but \""+srv.URL+"\" does not"; got == nil || got.Error() != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
+
+func TestTurnoversNilContextError(t *testing.T) {
+	c := NewClient(nil)
+	var ctx context.Context = nil
+	//lint:ignore SA1012 we have to check the right behaviour when nil passed instead of context, so it is not a bug
+	_, err := c.Turnovers.Turnovers(ctx, nil)
+	if got, expected := err, errNonNilContext; got == nil || got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
+	}
+}
+
+func TestTurnoversKeyPathNotFound(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		str := `[
+  {
+    "turnovers": [
+      { "ID": null, "VALTODAY": 4157103.05631, "VALTODAY_USD": 56189.7489881, "NUMTRADES": 4315419, "UPDATETIME": "2021-02-24 23:50:29", "TITLE": "Total on Moscow Exchange"}]}
+]
+`
+		_, _ = w.Write([]byte(str))
+	}))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+
+	c.BaseURL, _ = url.Parse(srv.URL + "/")
+	_, err := c.Turnovers.Turnovers(context.Background(), nil)
+	if got, expected := err, jsonparser.KeyPathNotFoundError; got == nil || got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
 	}
 }
