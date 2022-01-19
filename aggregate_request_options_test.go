@@ -5,28 +5,28 @@ import (
 	"time"
 )
 
-func TestAggregatesReqOptionsBuilder_Build(t *testing.T) {
-	expectStruct := AggregatesRequestOptions{}
-	bld := NewAggregatesReqOptionsBuilder()
+func TestAggregateReqOptionsBuilder_Build(t *testing.T) {
+	expectStruct := AggregateRequestOptions{}
+	bld := NewAggregateReqOptionsBuilder()
 
 	if got, expected := *bld.Build(), expectStruct; got != expected {
-		t.Fatalf("Error: expecting `%v` AggregatesRequestOptions \ngot `%v` AggregatesRequestOptions \ninstead", expected, got)
+		t.Fatalf("Error: expecting `%v` AggregateRequestOptions \ngot `%v` AggregateRequestOptions \ninstead", expected, got)
 	}
 }
 
-func TestAggregatesReqOptionsBuilder_Lang(t *testing.T) {
-	expectStruct := AggregatesRequestOptions{lang: LangEn}
-	bld := NewAggregatesReqOptionsBuilder()
+func TestAggregateReqOptionsBuilder_Lang(t *testing.T) {
+	expectStruct := AggregateRequestOptions{lang: LangEn}
+	bld := NewAggregateReqOptionsBuilder()
 	bld.Lang(LangEn)
 	if got, expected := *bld.Build(), expectStruct; got != expected {
 		t.Fatalf("Error: expecting `%v` \ngot `%v` \ninstead", expected, got)
 	}
 }
 
-func TestAggregatesReqOptionsBuilder_Date(t *testing.T) {
+func TestAggregateReqOptionsBuilder_Date(t *testing.T) {
 	date := time.Now()
-	expectStruct := AggregatesRequestOptions{date: date}
-	bld := NewAggregatesReqOptionsBuilder()
+	expectStruct := AggregateRequestOptions{date: date}
+	bld := NewAggregateReqOptionsBuilder()
 	bld.Date(date)
 	if got, expected := *bld.Build(), expectStruct; got != expected {
 		t.Fatalf("Error: expecting `%v` \ngot `%v` \ninstead", expected, got)
@@ -34,12 +34,12 @@ func TestAggregatesReqOptionsBuilder_Date(t *testing.T) {
 
 }
 
-func TestNewAggregatesReqOptionsBuilder(t *testing.T) {
+func TestNewAggregateReqOptionsBuilder(t *testing.T) {
 	date := time.Now()
-	expectStruct := AggregatesRequestOptions{
+	expectStruct := AggregateRequestOptions{
 		lang:             LangRu,
 		date:             date}
-	bld := NewAggregatesReqOptionsBuilder()
+	bld := NewAggregateReqOptionsBuilder()
 	bld.Date(date).Lang(LangRu)
 	if got, expected := *bld.Build(), expectStruct; got != expected {
 		t.Fatalf("Error: expecting `%v` \ngot `%v` \ninstead", expected, got)
@@ -47,11 +47,11 @@ func TestNewAggregatesReqOptionsBuilder(t *testing.T) {
 
 }
 
-func TestAddAggregatesRequestOptionsNilOptions(t *testing.T) {
-	var income *AggregatesRequestOptions = nil
+func TestAddAggregateRequestOptionsNilOptions(t *testing.T) {
+	var income *AggregateRequestOptions = nil
 	c := NewClient(nil)
 	url, _ := c.BaseURL.Parse("aggregates.json")
-	gotUrl := addAggregatesRequestOptions(url, income)
+	gotUrl := addAggregateRequestOptions(url, income)
 
 	expected := `https://iss.moex.com/iss/aggregates.json?iss.json=extended&iss.meta=off`
 	if got := gotUrl.String(); got != expected {
@@ -59,14 +59,14 @@ func TestAddAggregatesRequestOptionsNilOptions(t *testing.T) {
 	}
 }
 
-func TestAddAggregatesRequestOptions(t *testing.T) {
-	var incomeOptions = NewAggregatesReqOptionsBuilder().
+func TestAddAggregateRequestOptions(t *testing.T) {
+	var incomeOptions = NewAggregateReqOptionsBuilder().
 		Lang(LangEn).
 		Date(time.Date(2021, 2, 24, 12, 0, 0, 0, time.UTC)).
 		Build()
 	c := NewClient(nil)
 	url, _ := c.BaseURL.Parse("aggregates.json")
-	gotUrl := addAggregatesRequestOptions(url, incomeOptions)
+	gotUrl := addAggregateRequestOptions(url, incomeOptions)
 
 	expected := `https://iss.moex.com/iss/aggregates.json?date=2021-02-24&iss.json=extended&iss.meta=off&lang=en`
 	if got := gotUrl.String(); got != expected {
