@@ -37,8 +37,8 @@ func TestAggregateReqOptionsBuilder_Date(t *testing.T) {
 func TestNewAggregateReqOptionsBuilder(t *testing.T) {
 	date := time.Now()
 	expectStruct := AggregateRequestOptions{
-		lang:             LangRu,
-		date:             date}
+		lang: LangRu,
+		date: date}
 	bld := NewAggregateReqOptionsBuilder()
 	bld.Date(date).Lang(LangRu)
 	if got, expected := *bld.Build(), expectStruct; got != expected {

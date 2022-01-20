@@ -9,8 +9,8 @@ import (
 //for building requests to get aggregated trading results for the date by market.
 //MoEx ISS API docs: https://iss.moex.com/iss/reference/214
 type AggregateRequestOptions struct {
-	lang Language //`lang` query parameter in url.URL
-	date time.Time //`date` query parameter in url.URL
+	lang Language  // `lang` query parameter in url.URL
+	date time.Time // `date` query parameter in url.URL
 }
 
 //AggregateReqOptionsBuilder represents a builder of AggregateRequestOptions struct
