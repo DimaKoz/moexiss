@@ -52,6 +52,7 @@ type Client struct {
 	Securities *SecuritiesService
 	Index      *IndexService
 	Turnovers  *TurnoverService
+	Aggregates *AggregateService
 }
 
 func NewClient(httpClient *http.Client) *Client {
@@ -66,6 +67,7 @@ func NewClient(httpClient *http.Client) *Client {
 	c.Securities = (*SecuritiesService)(&c.common)
 	c.Index = (*IndexService)(&c.common)
 	c.Turnovers = (*TurnoverService)(&c.common)
+	c.Aggregates = (*AggregateService)(&c.common)
 	return c
 }
 
