@@ -11,3 +11,27 @@ func TestAggregatesGetUrl(t *testing.T) {
 	}
 }
 
+func TestParseAggregate(t *testing.T) {
+	expectedStruct := Aggregate{
+		MarketName:   "shares",
+		MarketTitle:  "Рынок акций",
+		Engine:       "stock",
+		TradeDate:    "2022-01-19",
+		SecurityId:   "SBERP",
+		Value:        9833418828.24,
+		Volume:       42115503,
+		NumberTrades: 144467,
+		UpdatedAt:    "2022-01-20 09:00:14",
+	}
+	var incomeJson = `
+      {"market_name": "shares", "market_title": "Рынок акций", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": 9833418828.24, "volume": 42115503, "numtrades": 144467, "updated_at": "2022-01-20 09:00:14"}
+`
+	aggregate := Aggregate{}
+	err := parseAggregate([]byte(incomeJson), &aggregate)
+	if err != nil {
+		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
+	}
+	if got, expected := aggregate, expectedStruct; got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
