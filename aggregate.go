@@ -1,7 +1,29 @@
 package moexiss
 
-import "path"
+import (
+	"path"
+)
 
+//Aggregate struct represents aggregated trading results
+//for the date by the security by markets
+type Aggregate struct {
+	MarketName   string  // "market_name"
+	MarketTitle  string  // "market_title"
+	Engine       string  // "engine"
+	TradeDate    string  // "tradedate"
+	SecurityId   string  // "secid"
+	Value        float64 // "value"
+	Volume       int64   // "volume"
+	NumberTrades int64   // "numtrades"
+	UpdatedAt    string  // "updated_at"
+}
+
+//AggregatesResponse struct represents a response with aggregated trading results
+type AggregatesResponse struct {
+	Aggregates []Aggregate
+	DatesFrom  string //
+	DatesTill  string
+}
 
 const (
 	aggregatesPartsUrl = "aggregates.json"
