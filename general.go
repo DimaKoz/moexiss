@@ -13,3 +13,32 @@ func parseStringWithDefaultValue(fieldValue []byte) (string, error) {
 	return "", nil
 }
 
+func parseFloatWithDefaultValue(fieldValue []byte, key string) (float64, error) {
+	valueData, _, _, err := jsonparser.Get(fieldValue, key)
+	if string(valueData) == "null" {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, err
+	}
+	value, err := jsonparser.ParseFloat(valueData)
+	if err != nil {
+		return 0, err
+	}
+	return value, nil
+}
+
+func parseIntWithDefaultValue(fieldValue []byte, key string) (int64, error) {
+	valueData, _, _, err := jsonparser.Get(fieldValue, key)
+	if string(valueData) == "null" {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, err
+	}
+	value, err := jsonparser.ParseInt(valueData)
+	if err != nil {
+		return 0, err
+	}
+	return value, nil
+}

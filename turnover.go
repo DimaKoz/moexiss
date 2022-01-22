@@ -117,7 +117,6 @@ func parseTurnovers(byteData []byte, turnovers *[]Turnover) (err error) {
 }
 
 func parseTurnover(data []byte, t *Turnover) (err error) {
-	nullValueData := "null"
 	nameData, _, _, err := jsonparser.Get(data, turnoverKeyName)
 	if err != nil {
 		return
@@ -126,51 +125,27 @@ func parseTurnover(data []byte, t *Turnover) (err error) {
 	if err != nil {
 		return
 	}
-	idData, _, _, err := jsonparser.Get(data, turnoverKeyId)
 
-	if string(idData) == nullValueData {
-		idData = []byte("0")
-	}
+	id, err := parseIntWithDefaultValue(data, turnoverKeyId)
 	if err != nil {
 		return
 	}
-	id, err := jsonparser.ParseInt(idData)
+
+	valToday, err := parseFloatWithDefaultValue(data, turnoverKeyValToday)
 	if err != nil {
 		return
 	}
-	valTodayData, _, _, err := jsonparser.Get(data, turnoverKeyValToday)
-	if string(valTodayData) == nullValueData {
-		valTodayData = []byte("0")
-	}
+
+	valTodayUsd, err := parseFloatWithDefaultValue(data, turnoverKeyValTodayUsd)
 	if err != nil {
 		return
 	}
-	valToday, err := jsonparser.ParseFloat(valTodayData)
+
+	numTrades, err := parseIntWithDefaultValue(data, turnoverKeyNumTrades)
 	if err != nil {
 		return
 	}
-	valTodayUsdData, _, _, err := jsonparser.Get(data, turnoverKeyValTodayUsd)
-	if string(valTodayUsdData) == nullValueData {
-		valTodayUsdData = []byte("0")
-	}
-	if err != nil {
-		return
-	}
-	valTodayUsd, err := jsonparser.ParseFloat(valTodayUsdData)
-	if err != nil {
-		return
-	}
-	numTradesData, _, _, err := jsonparser.Get(data, turnoverKeyNumTrades)
-	if string(numTradesData) == nullValueData {
-		numTradesData = []byte("0")
-	}
-	if err != nil {
-		return
-	}
-	numTrades, err := jsonparser.ParseInt(numTradesData)
-	if err != nil {
-		return
-	}
+
 	updateTimeData, _, _, err := jsonparser.Get(data, turnoverKeyUpdateTime)
 	if err != nil {
 		return

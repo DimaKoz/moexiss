@@ -20,7 +20,6 @@ var omittedSecResp = `{ "securities":` +
 	dataField +
 	`}`
 
-
 func TestParseSecurityItem(t *testing.T) {
 	expected := Security{
 		Id:                 5444,

@@ -176,4 +176,3 @@ func parseSecurityItem(s *Security, secItemBytes []byte) (err error) {
 	}
 	return
 }
-

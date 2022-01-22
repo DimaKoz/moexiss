@@ -57,7 +57,6 @@ func (s *AggregateService) getUrl(security string, opt *AggregateRequestOptions)
 }
 
 func parseAggregate(data []byte, a *Aggregate) (err error) {
-	nullValueData := "null"
 
 	marketNameData, _, _, err := jsonparser.Get(data, aggKeyMarketName)
 	if err != nil {
@@ -104,38 +103,17 @@ func parseAggregate(data []byte, a *Aggregate) (err error) {
 		return
 	}
 
-	valueData, _, _, err := jsonparser.Get(data, aggKeyValue)
-	if string(valueData) == nullValueData {
-		valueData = []byte("0")
-	}
-	if err != nil {
-		return
-	}
-	value, err := jsonparser.ParseFloat(valueData)
+	value, err := parseFloatWithDefaultValue(data, aggKeyValue)
 	if err != nil {
 		return
 	}
 
-	volumeData, _, _, err := jsonparser.Get(data, aggKeyVolume)
-	if err != nil {
-		return
-	}
-	if string(volumeData) == nullValueData {
-		volumeData = []byte("0")
-	}
-	volume, err := jsonparser.ParseInt(volumeData)
+	volume, err := parseIntWithDefaultValue(data, aggKeyVolume)
 	if err != nil {
 		return
 	}
 
-	numTradesData, _, _, err := jsonparser.Get(data, aggKeyNumberTrades)
-	if err != nil {
-		return
-	}
-	if string(numTradesData) == nullValueData {
-		volumeData = []byte("0")
-	}
-	numTrades, err := jsonparser.ParseInt(numTradesData)
+	numTrades, err := parseIntWithDefaultValue(data, aggKeyNumberTrades)
 	if err != nil {
 		return
 	}
