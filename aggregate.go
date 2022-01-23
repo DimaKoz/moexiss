@@ -38,6 +38,8 @@ const (
 	aggKeyVolume       = "volume"
 	aggKeyNumberTrades = "numtrades"
 	aggKeyUpdatedAt    = "updated_at"
+
+	aggregatesKey = "aggregates"
 )
 
 // AggregateService gets aggregated trading results
@@ -54,6 +56,30 @@ func (s *AggregateService) getUrl(security string, opt *AggregateRequestOptions)
 	url.Path = path.Join(url.Path, security, aggregatesPartsUrl)
 	gotUrl := addAggregateRequestOptions(url, opt)
 	return gotUrl.String()
+}
+
+func parseAggregateResponse(byteData []byte, aggregatesResponse *AggregatesResponse) error {
+	var err error
+	if aggregatesResponse == nil {
+		err = errNilPointer
+		return err
+	}
+	var errInCb error
+	_, err = jsonparser.ArrayEach(byteData, func(aggregatesBytes []byte, _ jsonparser.ValueType, offset int, errCb error) {
+		var data []byte
+		var dataType jsonparser.ValueType
+		data, dataType, _, errInCb = jsonparser.Get(aggregatesBytes, aggregatesKey)
+		if errInCb == nil && data != nil && dataType == jsonparser.Array {
+			errInCb = parseAggregates(data, &aggregatesResponse.Aggregates)
+			if errInCb != nil {
+				return
+			}
+		}
+	})
+	if err == nil && errInCb != nil {
+		err = errInCb
+	}
+	return err
 }
 
 func parseAggregates(byteData []byte, aggregates *[]Aggregate) (err error) {
@@ -77,7 +103,6 @@ func parseAggregates(byteData []byte, aggregates *[]Aggregate) (err error) {
 	}
 	return
 }
-
 
 func parseAggregate(data []byte, a *Aggregate) (err error) {
 

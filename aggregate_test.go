@@ -5,6 +5,58 @@ import (
 	"testing"
 )
 
+func TestParseAggregateResponse(t *testing.T) {
+	var incomeJson = `
+[
+{"charsetinfo": {"name": "utf-8"}},
+{
+"aggregates": [
+{"market_name": "shares", "market_title": "Рынок акций", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": 9833418828.24, "volume": 42115503, "numtrades": 144467, "updated_at": "2022-01-21 09:00:15"},
+{"market_name": "moexboard", "market_title": "MOEX Board", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": null, "volume": null, "numtrades": 0, "updated_at": "2022-01-21 09:00:15"}],
+"agregates.dates": [
+{"from": "2011-11-21", "till": "2022-01-21"}]}
+]
+`
+	expectedResponse := AggregatesResponse{
+		Aggregates: []Aggregate{
+			{
+				MarketName:   "shares",
+				MarketTitle:  "Рынок акций",
+				Engine:       "stock",
+				TradeDate:    "2022-01-19",
+				SecurityId:   "SBERP",
+				Value:        9833418828.24,
+				Volume:       42115503,
+				NumberTrades: 144467,
+				UpdatedAt:    "2022-01-21 09:00:15"},
+			{
+				MarketName:   "moexboard",
+				MarketTitle:  "MOEX Board",
+				Engine:       "stock",
+				TradeDate:    "2022-01-19",
+				SecurityId:   "SBERP",
+				Value:        0,
+				Volume:       0,
+				NumberTrades: 0,
+				UpdatedAt:    "2022-01-21 09:00:15"},
+		},
+	}
+	aggregatesR := AggregatesResponse{}
+	var err error = nil
+	if got, expected := parseAggregateResponse([]byte(incomeJson), &aggregatesR), err; got != expected {
+		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+	if got, expected := len(aggregatesR.Aggregates), len(expectedResponse.Aggregates); got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+	for i, gotItem := range aggregatesR.Aggregates {
+		if got, expected := gotItem, expectedResponse.Aggregates[i]; got != expected {
+			t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+		}
+	}
+
+}
+
 func TestAggregatesGetUrl(t *testing.T) {
 	var income *AggregateRequestOptions = nil
 	c := NewClient(nil)
@@ -136,4 +188,3 @@ func TestParseAggregatesError(t *testing.T) {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
-
