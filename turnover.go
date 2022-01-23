@@ -117,11 +117,7 @@ func parseTurnovers(byteData []byte, turnovers *[]Turnover) (err error) {
 }
 
 func parseTurnover(data []byte, t *Turnover) (err error) {
-	nameData, _, _, err := jsonparser.Get(data, turnoverKeyName)
-	if err != nil {
-		return
-	}
-	name, err := parseStringWithDefaultValue(nameData)
+	name, err := parseStringWithDefaultValueByKey(data, turnoverKeyName, "")
 	if err != nil {
 		return
 	}
@@ -146,19 +142,12 @@ func parseTurnover(data []byte, t *Turnover) (err error) {
 		return
 	}
 
-	updateTimeData, _, _, err := jsonparser.Get(data, turnoverKeyUpdateTime)
+	updateTime, err := parseStringWithDefaultValueByKey(data, turnoverKeyUpdateTime, "")
 	if err != nil {
 		return
 	}
-	updateTime, err := parseStringWithDefaultValue(updateTimeData)
-	if err != nil {
-		return
-	}
-	titleData, _, _, err := jsonparser.Get(data, turnoverKeyTitle)
-	if err != nil {
-		return
-	}
-	title, err := parseStringWithDefaultValue(titleData)
+
+	title, err := parseStringWithDefaultValueByKey(data, turnoverKeyTitle, "")
 	if err != nil {
 		return
 	}
