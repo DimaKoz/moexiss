@@ -91,3 +91,49 @@ func TestParseAggregateErrCases(t *testing.T) {
 
 	}
 }
+
+func TestParseAggregates(t *testing.T) {
+
+	var incomeJson = `
+[
+      {"market_name": "shares", "market_title": "Рынок акций", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": 9833418828.24, "volume": 42115503, "numtrades": 144467, "updated_at": "2022-01-20 09:00:14"},
+      {"market_name": "ndm", "market_title": "Режим переговорных сделок", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": 179995527.30, "volume": 751890, "numtrades": 3, "updated_at": "2022-01-20 09:00:14"},
+      {"market_name": "otc", "market_title": "ОТС", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": 20456116.30, "volume": 87020, "numtrades": 2, "updated_at": "2022-01-20 09:00:14"},
+      {"market_name": "repo", "market_title": "Рынок сделок РЕПО", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": 9397389429.44, "volume": 46971852, "numtrades": 3320, "updated_at": "2022-01-20 09:00:14"},
+      {"market_name": "moexboard", "market_title": "MOEX Board", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": null, "volume": null, "numtrades": 0, "updated_at": "2022-01-20 09:00:14"}
+]
+`
+	aggregates := make([]Aggregate, 0)
+	err := parseAggregates([]byte(incomeJson), &aggregates)
+	if err != nil {
+		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
+	}
+	if got, expected := len(aggregates), 5; got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+
+func TestParseAggregatesUnexpectedDataTypeError(t *testing.T) {
+
+	var incomeJson = `
+[
+      []
+]`
+	aggregates := make([]Aggregate, 0)
+	if got, expected := parseAggregates([]byte(incomeJson), &aggregates), errUnexpectedDataType; got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+
+func TestParseAggregatesError(t *testing.T) {
+
+	var incomeJson = `
+[
+      {"market_name1": "repo", "market_title": "Рынок сделок РЕПО", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": 9397389429.44, "volume": 46971852, "numtrades": 3320, "updated_at": "2022-01-20 09:00:14"}
+]`
+	aggregates := make([]Aggregate, 0)
+	if got, expected := parseAggregates([]byte(incomeJson), &aggregates), jsonparser.KeyPathNotFoundError; got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+

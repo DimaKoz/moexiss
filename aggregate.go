@@ -1,6 +1,7 @@
 package moexiss
 
 import (
+	"github.com/buger/jsonparser"
 	"path"
 )
 
@@ -54,6 +55,29 @@ func (s *AggregateService) getUrl(security string, opt *AggregateRequestOptions)
 	gotUrl := addAggregateRequestOptions(url, opt)
 	return gotUrl.String()
 }
+
+func parseAggregates(byteData []byte, aggregates *[]Aggregate) (err error) {
+	var errInCb error
+	_, err = jsonparser.ArrayEach(byteData, func(aggregateItemData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if dataType != jsonparser.Object {
+			errInCb = errUnexpectedDataType
+			return
+		}
+
+		aggregate := Aggregate{}
+		errInCb = parseAggregate(aggregateItemData, &aggregate)
+		if errInCb != nil {
+			return
+		}
+		*aggregates = append(*aggregates, aggregate)
+
+	})
+	if err == nil && errInCb != nil {
+		err = errInCb
+	}
+	return
+}
+
 
 func parseAggregate(data []byte, a *Aggregate) (err error) {
 
