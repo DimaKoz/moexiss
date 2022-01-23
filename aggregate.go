@@ -85,6 +85,9 @@ func parseAggregateResponse(byteData []byte, aggregatesResponse *AggregatesRespo
 func parseAggregates(byteData []byte, aggregates *[]Aggregate) (err error) {
 	var errInCb error
 	_, err = jsonparser.ArrayEach(byteData, func(aggregateItemData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errInCb != nil {
+			return
+		}
 		if dataType != jsonparser.Object {
 			errInCb = errUnexpectedDataType
 			return
