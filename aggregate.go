@@ -1,7 +1,6 @@
 package moexiss
 
 import (
-	"github.com/buger/jsonparser"
 	"path"
 )
 
@@ -58,47 +57,27 @@ func (s *AggregateService) getUrl(security string, opt *AggregateRequestOptions)
 
 func parseAggregate(data []byte, a *Aggregate) (err error) {
 
-	marketNameData, _, _, err := jsonparser.Get(data, aggKeyMarketName)
-	if err != nil {
-		return
-	}
-	marketName, err := parseStringWithDefaultValue(marketNameData)
+	marketName, err := parseStringWithDefaultValueByKey(data, aggKeyMarketName, "")
 	if err != nil {
 		return
 	}
 
-	marketTitleData, _, _, err := jsonparser.Get(data, aggKeyMarketTitle)
-	if err != nil {
-		return
-	}
-	marketTitle, err := parseStringWithDefaultValue(marketTitleData)
+	marketTitle, err := parseStringWithDefaultValueByKey(data, aggKeyMarketTitle, "")
 	if err != nil {
 		return
 	}
 
-	engineData, _, _, err := jsonparser.Get(data, aggKeyEngine)
-	if err != nil {
-		return
-	}
-	engine, err := parseStringWithDefaultValue(engineData)
+	engine, err := parseStringWithDefaultValueByKey(data, aggKeyEngine, "")
 	if err != nil {
 		return
 	}
 
-	tradeDateData, _, _, err := jsonparser.Get(data, aggKeyTradeDate)
-	if err != nil {
-		return
-	}
-	tradeDate, err := parseStringWithDefaultValue(tradeDateData)
+	tradeDate, err := parseStringWithDefaultValueByKey(data, aggKeyTradeDate, "")
 	if err != nil {
 		return
 	}
 
-	secIdData, _, _, err := jsonparser.Get(data, aggKeySecurityId)
-	if err != nil {
-		return
-	}
-	secId, err := parseStringWithDefaultValue(secIdData)
+	secId, err := parseStringWithDefaultValueByKey(data, aggKeySecurityId, "")
 	if err != nil {
 		return
 	}
@@ -118,11 +97,7 @@ func parseAggregate(data []byte, a *Aggregate) (err error) {
 		return
 	}
 
-	updateAtData, _, _, err := jsonparser.Get(data, aggKeyUpdatedAt)
-	if err != nil {
-		return
-	}
-	updateAt, err := parseStringWithDefaultValue(updateAtData)
+	updateAt, err := parseStringWithDefaultValueByKey(data, aggKeyUpdatedAt, "")
 	if err != nil {
 		return
 	}

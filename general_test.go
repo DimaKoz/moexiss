@@ -44,6 +44,21 @@ func TestParseStringWithDefaultValue(t *testing.T) {
 	}
 }
 
+func TestParseStringWithDefaultValueByKeyBadString(t *testing.T) {
+	var incomeJson = `
+      {"market_name": null}
+`
+	expectedDefaultValue := "expectedDefaultValue"
+	result, err := parseStringWithDefaultValueByKey([]byte(incomeJson), aggKeyMarketName, expectedDefaultValue)
+	if err != nil {
+		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
+	}
+
+	if got, expected := result, expectedDefaultValue; got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+
 func TestParseIntWithDefaultValueBadInt(t *testing.T) {
 	var incomeJson = `
       {"market_name": "shares", "market_title": "Рынок акций", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": 9833418828.24, "volume": 42115503.d, "numtrades": 144467, "updated_at": "2022-01-20 09:00:14"}
