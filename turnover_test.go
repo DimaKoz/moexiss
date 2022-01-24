@@ -38,7 +38,8 @@ func TestParseTurnoverResponseError(t *testing.T) {
 {"charsetinfo": {"name": "utf-8"}},
   {
     "turnovers": [
-      {"NAME": "stock", "ID": 1, , "VALTODAY_USD": 26876.4019428, "NUMTRADES": 2214956, "UPDATETIME": "2021-02-24 23:50:29", "TITLE": "Securities Market"}]}
+      {"NAME": "stock", "ID": 1, , "VALTODAY_USD": 26876.4019428, "NUMTRADES": 2214956, "UPDATETIME": "2021-02-24 23:50:29", "TITLE": "Securities Market"},
+      {"NAME": "currency", "ID": 3, "VALTODAY": 1517369.23013, "VALTODAY_USD": 20509.6181183, "NUMTRADES": 481765, "UPDATETIME": "2021-02-24 23:49:59", "TITLE": "FX Market"}]}
 ]
 
 `

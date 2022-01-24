@@ -97,6 +97,9 @@ func parseTurnoverResponse(byteData []byte, turnovers *[]Turnover) error {
 func parseTurnovers(byteData []byte, turnovers *[]Turnover) (err error) {
 	var errInCb error
 	_, err = jsonparser.ArrayEach(byteData, func(turnoverItemData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errInCb != nil {
+			return
+		}
 		if dataType != jsonparser.Object {
 			errInCb = errUnexpectedDataType
 			return
