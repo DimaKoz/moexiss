@@ -1,7 +1,11 @@
 package moexiss
 
 import (
+	"context"
 	"github.com/buger/jsonparser"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
 	"testing"
 )
 
@@ -276,5 +280,35 @@ func TestParseAggregatesError(t *testing.T) {
 	aggregates := make([]Aggregate, 0)
 	if got, expected := parseAggregates([]byte(incomeJson), &aggregates), jsonparser.KeyPathNotFoundError; got != expected {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+
+func TestAggregatesNilContextError(t *testing.T) {
+	c := NewClient(nil)
+	var ctx context.Context = nil
+	//lint:ignore SA1012 we have to check the right behaviour when nil passed instead of context, so it is not a bug
+	_, err := c.Aggregates.Aggregates(ctx, "SBERP", nil)
+	if got, expected := err, errNonNilContext; got == nil || got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
+	}
+}
+
+func TestAggregatesKeyPathNotFound(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		str := `[
+  {}]
+`
+		_, _ = w.Write([]byte(str))
+	}))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+
+	c.BaseURL, _ = url.Parse(srv.URL + "/")
+	_, err := c.Aggregates.Aggregates(context.Background(), "jhgsd", nil)
+	if got, expected := err, jsonparser.KeyPathNotFoundError; got == nil || got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
 	}
 }
