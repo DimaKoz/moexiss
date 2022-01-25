@@ -1,6 +1,9 @@
 package moexiss
 
 import (
+	"bufio"
+	"bytes"
+	"context"
 	"github.com/buger/jsonparser"
 	"path"
 )
@@ -51,10 +54,35 @@ const (
 // MoEx ISS API docs: https://iss.moex.com/iss/reference/214
 type AggregateService service
 
+//Aggregates provides Aggregates of MoEx ISS
+func (a *AggregateService) Aggregates(ctx context.Context, security string, opt *AggregateRequestOptions) (*AggregatesResponse, error) {
+
+	url := a.getUrl(security, opt)
+	req, err := a.client.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var b bytes.Buffer
+	w := bufio.NewWriter(&b)
+
+	_, err = a.client.Do(ctx, req, w)
+	if err != nil {
+		return nil, err
+	}
+	ar := AggregatesResponse{}
+	err = parseAggregateResponse(b.Bytes(), &ar)
+	if err != nil {
+		return nil, err
+	}
+	return &ar, nil
+}
+
+
 //getUrl provides an url for a request of the aggregates with parameters from AggregateRequestOptions
 //opt *AggregateRequestOptions can be nil, it is safe
-func (s *AggregateService) getUrl(security string, opt *AggregateRequestOptions) string {
-	url, _ := s.client.BaseURL.Parse("securities")
+func (a *AggregateService) getUrl(security string, opt *AggregateRequestOptions) string {
+	url, _ := a.client.BaseURL.Parse("securities")
 
 	url.Path = path.Join(url.Path, security, aggregatesPartsUrl)
 	gotUrl := addAggregateRequestOptions(url, opt)
