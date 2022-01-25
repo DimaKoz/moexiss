@@ -14,10 +14,12 @@ func TestParseAggregateResponse(t *testing.T) {
 {"market_name": "shares", "market_title": "Рынок акций", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": 9833418828.24, "volume": 42115503, "numtrades": 144467, "updated_at": "2022-01-21 09:00:15"},
 {"market_name": "moexboard", "market_title": "MOEX Board", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": null, "volume": null, "numtrades": 0, "updated_at": "2022-01-21 09:00:15"}],
 "agregates.dates": [
-{"from": "2011-11-21", "till": "2022-01-21"}]}
+{"from": "2011-11-21", "till": "2022-01-21"}, {"from": "0000-00-00", "till": "0000-00-00"}]}
 ]
 `
 	expectedResponse := AggregatesResponse{
+		DatesFrom: "2011-11-21",
+		DatesTill: "2022-01-21",
 		Aggregates: []Aggregate{
 			{
 				MarketName:   "shares",
@@ -54,6 +56,12 @@ func TestParseAggregateResponse(t *testing.T) {
 			t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 		}
 	}
+	if got, expected := aggregatesR.DatesFrom, expectedResponse.DatesFrom; got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+	if got, expected := aggregatesR.DatesTill, expectedResponse.DatesTill; got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
 
 }
 
@@ -81,6 +89,60 @@ func TestParseAggregateResponseError(t *testing.T) {
 	var aggregatesResponse = &AggregatesResponse{}
 
 	if got, expected := parseAggregateResponse([]byte(incomeJson), aggregatesResponse), jsonparser.KeyPathNotFoundError; got != expected {
+		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+func TestParseAggregateResponseErrorBadDatesFrom(t *testing.T) {
+	var incomeJson = `
+[
+{"charsetinfo": {"name": "utf-8"}},
+{
+"aggregates": [
+{"market_name": "moexboard", "market_title": "MOEX Board", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": null, "volume": null, "numtrades": 0, "updated_at": "2022-01-21 09:00:15"}],
+"agregates.dates": [
+{"from1": "2011-11-21", "till": "2022-01-21"}]}
+]
+`
+	var aggregatesResponse = &AggregatesResponse{}
+
+	if got, expected := parseAggregateResponse([]byte(incomeJson), aggregatesResponse), jsonparser.KeyPathNotFoundError; got != expected {
+		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+
+func TestParseAggregateResponseDatesError(t *testing.T) {
+	var incomeJson = `
+[
+{"charsetinfo": {"name": "utf-8"}},
+{
+"aggregates": [
+{"market_name": "shares", "market_title": "Рынок акций", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": 9833418828.24, "volume": 42115503, "numtrades": 144467, "updated_at": "2022-01-21 09:00:15"},
+{"market_name": "moexboard", "market_title": "MOEX Board", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": null, "volume": null, "numtrades": 0, "updated_at": "2022-01-21 09:00:15"}],
+"agregates.dates": [
+{"from": "2011-11-21", "till1": "2022-01-21"}]}
+]
+`
+	var aggregatesResponse = &AggregatesResponse{}
+
+	if got, expected := parseAggregateResponse([]byte(incomeJson), aggregatesResponse), jsonparser.KeyPathNotFoundError; got != expected {
+		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+
+func TestParseAggregateResponseDatesWrongJsonObject(t *testing.T) {
+	var incomeJson = `
+[
+{"charsetinfo": {"name": "utf-8"}},
+{
+"aggregates": [
+{"market_name": "moexboard", "market_title": "MOEX Board", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": null, "volume": null, "numtrades": 0, "updated_at": "2022-01-21 09:00:15"}],
+"agregates.dates": [[
+{"from": "2011-11-21", "till1": "2022-01-21"},{"from": "0", "till1": "0"}]]}
+]
+`
+	var aggregatesResponse = &AggregatesResponse{}
+
+	if got, expected := parseAggregateResponse([]byte(incomeJson), aggregatesResponse), errUnexpectedDataType; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }

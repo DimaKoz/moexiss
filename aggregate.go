@@ -39,7 +39,10 @@ const (
 	aggKeyNumberTrades = "numtrades"
 	aggKeyUpdatedAt    = "updated_at"
 
-	aggregatesKey = "aggregates"
+	aggKeyAggregates = "aggregates"
+	aggKeyDates      = "agregates.dates"
+	aggKeyFrom       = "from"
+	aggKeyTill       = "till"
 )
 
 // AggregateService gets aggregated trading results
@@ -68,9 +71,16 @@ func parseAggregateResponse(byteData []byte, aggregatesResponse *AggregatesRespo
 	_, err = jsonparser.ArrayEach(byteData, func(aggregatesBytes []byte, _ jsonparser.ValueType, offset int, errCb error) {
 		var data []byte
 		var dataType jsonparser.ValueType
-		data, dataType, _, errInCb = jsonparser.Get(aggregatesBytes, aggregatesKey)
+		data, dataType, _, errInCb = jsonparser.Get(aggregatesBytes, aggKeyAggregates)
 		if errInCb == nil && data != nil && dataType == jsonparser.Array {
 			errInCb = parseAggregates(data, &aggregatesResponse.Aggregates)
+			if errInCb != nil {
+				return
+			}
+		}
+		data, dataType, _, errInCb = jsonparser.Get(aggregatesBytes, aggKeyDates)
+		if errInCb == nil && data != nil && dataType == jsonparser.Array {
+			errInCb = parseAggregatesDates(data, aggregatesResponse)
 			if errInCb != nil {
 				return
 			}
@@ -80,6 +90,50 @@ func parseAggregateResponse(byteData []byte, aggregatesResponse *AggregatesRespo
 		err = errInCb
 	}
 	return err
+}
+
+func parseAggregatesDates(dataDates []byte, ar *AggregatesResponse) (err error) {
+	var errInCb error
+	counter := 0
+	_, err = jsonparser.ArrayEach(dataDates, func(aggregateDateData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if counter > 0 { // getting the first item only
+			return
+		}
+		counter++
+
+		if dataType != jsonparser.Object {
+			errInCb = errUnexpectedDataType
+			return
+		}
+
+		errInCb = parseAggregatesDate(aggregateDateData, ar)
+		if errInCb != nil {
+			return
+		}
+
+	})
+	if err == nil && errInCb != nil {
+		err = errInCb
+	}
+	return
+
+}
+
+func parseAggregatesDate(data []byte, ar *AggregatesResponse) (err error) {
+
+	from, err := parseStringWithDefaultValueByKey(data, aggKeyFrom, "")
+	if err != nil {
+		return
+	}
+
+	till, err := parseStringWithDefaultValueByKey(data, aggKeyTill, "")
+	if err != nil {
+		return
+	}
+
+	ar.DatesFrom = from
+	ar.DatesTill = till
+	return
 }
 
 func parseAggregates(byteData []byte, aggregates *[]Aggregate) (err error) {
