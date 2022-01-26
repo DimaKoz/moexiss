@@ -1,0 +1,25 @@
+[
+  {"charsetinfo": {"name": "utf-8"}},
+  {
+    "indices": [
+      {"SECID": "EPSI", "SHORTNAME": "Субиндекс акций", "FROM": "2016-12-16", "TILL": "2022-01-26"},
+      {"SECID": "IMOEX", "SHORTNAME": "Индекс МосБиржи", "FROM": "2007-04-16", "TILL": "2022-01-26"},
+      {"SECID": "IMOEX2", "SHORTNAME": "Индекс МосБиржи (все сессии)", "FROM": "2020-06-22", "TILL": "2022-01-25"},
+      {"SECID": "MCXSM", "SHORTNAME": "Индекс МосБиржи SMID", "FROM": "2014-01-06", "TILL": "2014-12-30"},
+      {"SECID": "MICEXLC", "SHORTNAME": "MICEX LC", "FROM": "2006-07-03", "TILL": "2013-05-17"},
+      {"SECID": "MICEXMC", "SHORTNAME": "MICEX MC", "FROM": "2006-09-04", "TILL": "2007-07-13"},
+      {"SECID": "MOEX10", "SHORTNAME": "Индекс МосБиржи 10", "FROM": "2017-07-03", "TILL": "2022-01-26"},
+      {"SECID": "MOEXBC", "SHORTNAME": "Индекс голубых фишек", "FROM": "2019-09-20", "TILL": "2022-01-26"},
+      {"SECID": "MOEXBMI", "SHORTNAME": "Индекс широкого рынка", "FROM": "2011-12-30", "TILL": "2022-01-26"},
+      {"SECID": "MOEXMM", "SHORTNAME": "Индекс металлов и добычи", "FROM": "2006-07-03", "TILL": "2022-01-26"},
+      {"SECID": "MRBC", "SHORTNAME": "Индекс МосБиржи 15", "FROM": "2019-09-20", "TILL": "2022-01-26"},
+      {"SECID": "MRRT", "SHORTNAME": "Индекс \"Ответственность и открытость\"", "FROM": "2020-09-21", "TILL": "2022-01-26"},
+      {"SECID": "MRSV", "SHORTNAME": "Индекс \"Вектор устойчивого развития\"", "FROM": "2020-09-21", "TILL": "2022-01-26"},
+      {"SECID": "MRSVR", "SHORTNAME": "MOEX-RSPP MRSV RU Co Index", "FROM": "2021-03-25", "TILL": "2022-01-26"},
+      {"SECID": "MXSHAR", "SHORTNAME": "Индекс МосБиржи Исламский", "FROM": "2021-10-01", "TILL": "2022-01-26"},
+      {"SECID": "RTSI", "SHORTNAME": "Индекс РТС", "FROM": "2009-09-30", "TILL": "2022-01-26"},
+      {"SECID": "RTSmm", "SHORTNAME": "Индекс РТС металлов и добычи", "FROM": "2009-09-30", "TILL": "2022-01-26"},
+      {"SECID": "RTSSM", "SHORTNAME": "RTS SMID Index", "FROM": "2014-01-06", "TILL": "2014-12-30"},
+      {"SECID": "RUBMI", "SHORTNAME": "Индекс РТС широкого рынка", "FROM": "2013-05-20", "TILL": "2022-01-26"},
+      {"SECID": "RUCGI", "SHORTNAME": "Нац. индекс корп. Управления", "FROM": "2021-06-18", "TILL": "2022-01-26"}]}
+]
