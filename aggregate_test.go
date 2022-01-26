@@ -2,10 +2,14 @@ package moexiss
 
 import (
 	"context"
+	"fmt"
 	"github.com/buger/jsonparser"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -325,5 +329,51 @@ func TestAggregateService_AggregatesBadUrl(t *testing.T) {
 	_, err := c.Aggregates.Aggregates(context.Background(), "", nil)
 	if got, expected := err, "BaseURL must have a trailing slash, but \""+srv.URL+"\" does not"; got == nil || got.Error() != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
+
+//A handler to return expected results
+//TestingAggregatesHandler emulates an external server
+func TestingAggregatesHandler(w http.ResponseWriter, _ *http.Request) {
+
+	//getting test data
+	fullPath := filepath.Join("testdata", "aggregates.json")
+	jsonFile, err := os.Open(fullPath)
+	// if we os.Open returns an error then handle it
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("Successfully Opened aggregates.json")
+	// defer the closing of our jsonFile so that we can parse it later on
+	defer jsonFile.Close()
+
+	byteValueResult, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write(byteValueResult)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+}
+
+func TestAggregateService_Aggregates(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(TestingAggregatesHandler))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+	c.BaseURL, _ = url.Parse(srv.URL + "/")
+	result, err := c.Aggregates.Aggregates(context.Background(), "SBERP", nil)
+	if err != nil {
+		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
+	}
+	if got, expected := len(result.Aggregates), 5; got != expected {
+		t.Fatalf("Error: expecting: \n %v items\ngot:\n %v items\ninstead", expected, got)
 	}
 }
