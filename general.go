@@ -1,6 +1,15 @@
 package moexiss
 
-import "github.com/buger/jsonparser"
+import (
+	"errors"
+	"github.com/buger/jsonparser"
+)
+
+var (
+	errUnexpectedDataType   = errors.New("unexpected data type")
+	errNilPointer           = errors.New("nil pointer error")
+	errBadSecurityParameter = errors.New("bad 'security' parameter")
+)
 
 func parseStringWithDefaultValue(fieldValue []byte) (string, error) {
 	res, err := jsonparser.ParseString(fieldValue)
@@ -56,4 +65,11 @@ func parseIntWithDefaultValue(fieldValue []byte, key string) (int64, error) {
 		return 0, err
 	}
 	return value, nil
+}
+
+func isOkSecurityParam(securityId string) bool {
+	if securityId == "" {
+		return false
+	}
+	return true
 }

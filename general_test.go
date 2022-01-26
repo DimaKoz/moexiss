@@ -78,3 +78,16 @@ func TestParseFloatWithDefaultValueBadFloat(t *testing.T) {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
+
+func TestGeneralIsOkSecurityParamEmptySecurity(t *testing.T) {
+	if got, expected := isOkSecurityParam(""), false; got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+
+func TestGeneralIsOkSecurityParamNonEmptySecurity(t *testing.T) {
+	if got, expected := isOkSecurityParam("sber"), true; got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+

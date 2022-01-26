@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"context"
-	"errors"
 	"github.com/buger/jsonparser"
 	"log"
 )
@@ -33,9 +32,6 @@ var indexKeys = []string{
 	keySecurityGroups,
 	keySecurityCollections,
 }
-
-var errUnexpectedDataType = errors.New("unexpected data type")
-var errNilPointer = errors.New("nil pointer error")
 
 //GeneralFields it contains general fields of some other structures
 type GeneralFields struct {
@@ -171,13 +167,12 @@ func (s *IndexService) getUrl(opt *IndexRequestOptions) string {
 	return gotUrl.String()
 }
 
-func parseIndexResponse(byteData []byte, index *Index) (err error) {
+func parseIndexResponse(byteData []byte, index *Index) error {
 	if index == nil {
-		err = errNilPointer
-		return
+		return errNilPointer
 	}
 	for _, key := range indexKeys {
-		bytes, dataType, _, err := jsonparser.Get(byteData, key)
+		foundBytes, dataType, _, err := jsonparser.Get(byteData, key)
 		if err != nil {
 			if err != jsonparser.KeyPathNotFoundError {
 				return err
@@ -185,7 +180,6 @@ func parseIndexResponse(byteData []byte, index *Index) (err error) {
 				log.Println(err.Error(), "for the key:", key)
 				continue
 			}
-
 		}
 		if dataType != jsonparser.Object {
 			return errUnexpectedDataType
@@ -211,13 +205,13 @@ func parseIndexResponse(byteData []byte, index *Index) (err error) {
 		default:
 			log.Println("unknown key:", key)
 		}
-		err = usingFunc(bytes, index)
+		err = usingFunc(foundBytes, index)
 		if err != nil {
 			return err
 		}
 	}
 
-	return
+	return nil
 }
 
 var parseEngines = func(byteData []byte, index *Index) (err error) {

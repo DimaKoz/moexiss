@@ -57,7 +57,10 @@ type AggregateService service
 //Aggregates provides Aggregates of MoEx ISS
 func (a *AggregateService) Aggregates(ctx context.Context, security string, opt *AggregateRequestOptions) (*AggregatesResponse, error) {
 
-	url := a.getUrl(security, opt)
+	url, err := a.getUrl(security, opt)
+	if err != nil {
+		return nil, err
+	}
 	req, err := a.client.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -78,15 +81,17 @@ func (a *AggregateService) Aggregates(ctx context.Context, security string, opt 
 	return &ar, nil
 }
 
-
 //getUrl provides an url for a request of the aggregates with parameters from AggregateRequestOptions
 //opt *AggregateRequestOptions can be nil, it is safe
-func (a *AggregateService) getUrl(security string, opt *AggregateRequestOptions) string {
+func (a *AggregateService) getUrl(security string, opt *AggregateRequestOptions) (string, error) {
+	if !isOkSecurityParam(security) {
+		return "", errBadSecurityParameter
+	}
 	url, _ := a.client.BaseURL.Parse("securities")
 
 	url.Path = path.Join(url.Path, security, aggregatesPartsUrl)
 	gotUrl := addAggregateRequestOptions(url, opt)
-	return gotUrl.String()
+	return gotUrl.String(), nil
 }
 
 func parseAggregateResponse(byteData []byte, aggregatesResponse *AggregatesResponse) error {

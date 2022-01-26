@@ -158,8 +158,11 @@ func TestParseAggregateResponseDatesWrongJsonObject(t *testing.T) {
 func TestAggregatesGetUrl(t *testing.T) {
 	var income *AggregateRequestOptions = nil
 	c := NewClient(nil)
-
-	if got, expected := c.Aggregates.getUrl("sberp", income), `https://iss.moex.com/iss/securities/sberp/aggregates.json?iss.json=extended&iss.meta=off`; got != expected {
+	url, err := c.Aggregates.getUrl("sberp", income)
+	if err != nil {
+		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
+	}
+	if got, expected := url, `https://iss.moex.com/iss/securities/sberp/aggregates.json?iss.json=extended&iss.meta=off`; got != expected {
 		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
 	}
 }
@@ -326,8 +329,23 @@ func TestAggregateService_AggregatesBadUrl(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL)
-	_, err := c.Aggregates.Aggregates(context.Background(), "", nil)
+	_, err := c.Aggregates.Aggregates(context.Background(), "sber", nil)
 	if got, expected := err, "BaseURL must have a trailing slash, but \""+srv.URL+"\" does not"; got == nil || got.Error() != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
+
+func TestAggregateService_AggregatesBadSecurityParam(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+
+	c.BaseURL, _ = url.Parse(srv.URL)
+	_, err := c.Aggregates.Aggregates(context.Background(), "", nil)
+	if got, expected := err, errBadSecurityParameter; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
