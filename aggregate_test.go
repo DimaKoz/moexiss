@@ -312,3 +312,18 @@ func TestAggregatesKeyPathNotFound(t *testing.T) {
 		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
 	}
 }
+
+func TestAggregateService_AggregatesBadUrl(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+
+	c.BaseURL, _ = url.Parse(srv.URL)
+	_, err := c.Aggregates.Aggregates(context.Background(), "", nil)
+	if got, expected := err, "BaseURL must have a trailing slash, but \""+srv.URL+"\" does not"; got == nil || got.Error() != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
