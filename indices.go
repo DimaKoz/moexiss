@@ -44,3 +44,33 @@ func (i *IndicesService) getUrl(security string, opt *IndicesRequestOptions) (st
 	gotUrl := addIndicesRequestOptions(url, opt)
 	return gotUrl.String(), nil
 }
+
+func parseIndicesItem(data []byte, i *Indices) (err error) {
+
+	id, err := parseStringWithDefaultValueByKey(data, indicesKeyId, "")
+	if err != nil {
+		return
+	}
+
+	name, err := parseStringWithDefaultValueByKey(data, indicesKeyName, "")
+	if err != nil {
+		return
+	}
+
+	from, err := parseStringWithDefaultValueByKey(data, indicesKeyFrom, "")
+	if err != nil {
+		return
+	}
+
+	till, err := parseStringWithDefaultValueByKey(data, indicesKeyTill, "")
+	if err != nil {
+		return
+	}
+
+	i.IndexId = id
+	i.IndexName = name
+	i.From = from
+	i.Till = till
+
+	return
+}
