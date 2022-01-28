@@ -69,3 +69,49 @@ func TestParseIndicesItemErrCases(t *testing.T) {
 
 	}
 }
+
+func TestParseIndices(t *testing.T) {
+
+	var incomeJson = `
+[
+      {"SECID": "IMOEX", "SHORTNAME": "Индекс МосБиржи", "FROM": "2007-04-16", "TILL": "2022-01-26"},
+      {"SECID": "IMOEX2", "SHORTNAME": "Индекс МосБиржи (все сессии)", "FROM": "2020-06-22", "TILL": "2022-01-25"},
+      {"SECID": "MCXSM", "SHORTNAME": "Индекс МосБиржи SMID", "FROM": "2014-01-06", "TILL": "2014-12-30"},
+      {"SECID": "RUCGI", "SHORTNAME": "Нац. индекс корп. Управления", "FROM": "2021-06-18", "TILL": "2022-01-26"}
+]
+`
+	indices := make([]Indices, 0)
+	err := parseIndices([]byte(incomeJson), &indices)
+	if err != nil {
+		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
+	}
+	if got, expected := len(indices), 4; got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+
+func TestParseIndicesUnexpectedDataTypeError(t *testing.T) {
+
+	var incomeJson = `
+[
+      []
+]`
+	indices := make([]Indices, 0)
+	if got, expected := parseIndices([]byte(incomeJson), &indices), errUnexpectedDataType; got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+
+func TestParseIndicesError(t *testing.T) {
+
+	var incomeJson = `
+[
+      {"SECID": "IMOEX", "SHORTNAME": "Индекс МосБиржи", "FROM": "2007-04-16", "TILL": "2022-01-26"},
+      {"SECID": "RUCGI", "SHORTNAME1": "Нац. индекс корп. Управления", "FROM": "2021-06-18", "TILL": "2022-01-26"},
+      {"SECID": "RUCGI", "SHORTNAME": "Нац. индекс корп. Управления", "FROM": "2021-06-18", "TILL": "2022-01-26"}
+]`
+	indices := make([]Indices, 0)
+	if got, expected := parseIndices([]byte(incomeJson), &indices), jsonparser.KeyPathNotFoundError; got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}

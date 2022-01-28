@@ -1,6 +1,9 @@
 package moexiss
 
-import "path"
+import (
+	"github.com/buger/jsonparser"
+	"path"
+)
 
 //Indices struct represents a list of the indices that include the security
 type Indices struct {
@@ -43,6 +46,32 @@ func (i *IndicesService) getUrl(security string, opt *IndicesRequestOptions) (st
 	url.Path = path.Join(url.Path, security, indicesPartsUrl)
 	gotUrl := addIndicesRequestOptions(url, opt)
 	return gotUrl.String(), nil
+}
+
+func parseIndices(data []byte, i *[]Indices) (err error) {
+
+	var errInCb error
+	_, err = jsonparser.ArrayEach(data, func(aggregateItemData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errInCb != nil {
+			return
+		}
+		if dataType != jsonparser.Object {
+			errInCb = errUnexpectedDataType
+			return
+		}
+
+		indices := Indices{}
+		errInCb = parseIndicesItem(aggregateItemData, &indices)
+		if errInCb != nil {
+			return
+		}
+		*i = append(*i, indices)
+
+	})
+	if err == nil && errInCb != nil {
+		err = errInCb
+	}
+	return
 }
 
 func parseIndicesItem(data []byte, i *Indices) (err error) {
