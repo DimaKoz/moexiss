@@ -22,10 +22,11 @@ type IndicesResponse struct {
 const (
 	indicesPartsUrl = "indices.json"
 
-	indicesKeyId   = "SECID"
-	indicesKeyName = "SHORTNAME"
-	indicesKeyFrom = "FROM"
-	indicesKeyTill = "TILL"
+	indicesKeyId      = "SECID"
+	indicesKeyName    = "SHORTNAME"
+	indicesKeyFrom    = "FROM"
+	indicesKeyTill    = "TILL"
+	indicesKeyIndices = "indices"
 )
 
 // IndicesService gets a list of the indices that include the security
@@ -46,6 +47,30 @@ func (i *IndicesService) getUrl(security string, opt *IndicesRequestOptions) (st
 	url.Path = path.Join(url.Path, security, indicesPartsUrl)
 	gotUrl := addIndicesRequestOptions(url, opt)
 	return gotUrl.String(), nil
+}
+
+func parseIndicesResponse(byteData []byte, indicesResponse *IndicesResponse) error {
+	var err error
+	if indicesResponse == nil {
+		err = errNilPointer
+		return err
+	}
+	var errInCb error
+	_, err = jsonparser.ArrayEach(byteData, func(indicesBytes []byte, _ jsonparser.ValueType, offset int, errCb error) {
+		var data []byte
+		var dataType jsonparser.ValueType
+		data, dataType, _, errInCb = jsonparser.Get(indicesBytes, indicesKeyIndices)
+		if errInCb == nil && data != nil && dataType == jsonparser.Array {
+			errInCb = parseIndices(data, &indicesResponse.Indices)
+			if errInCb != nil {
+				return
+			}
+		}
+	})
+	if err == nil && errInCb != nil {
+		err = errInCb
+	}
+	return err
 }
 
 func parseIndices(data []byte, i *[]Indices) (err error) {

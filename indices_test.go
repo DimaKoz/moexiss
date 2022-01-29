@@ -115,3 +115,54 @@ func TestParseIndicesError(t *testing.T) {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
+
+func TestParseIndicesResponse(t *testing.T) {
+	var incomeJson = `
+[
+  {"charsetinfo": {"name": "utf-8"}},
+  {
+    "indices": [
+      {"SECID": "IMOEX", "SHORTNAME": "Индекс МосБиржи", "FROM": "2007-04-16", "TILL": "2022-01-26"},
+      {"SECID": "RTSI", "SHORTNAME": "Индекс РТС", "FROM": "2009-09-30", "TILL": "2022-01-26"}
+]}
+]
+`
+	expectedResponse := IndicesResponse{
+		Indices: []Indices{
+			{
+				IndexId:   "IMOEX",
+				IndexName: "Индекс МосБиржи",
+				From:      "2007-04-16",
+				Till:      "2022-01-26",
+			},
+			{
+				IndexId:   "RTSI",
+				IndexName: "Индекс РТС",
+				From:      "2009-09-30",
+				Till:      "2022-01-26"},
+		},
+	}
+	indicesR := IndicesResponse{}
+	var err error = nil
+	if got, expected := parseIndicesResponse([]byte(incomeJson), &indicesR), err; got != expected {
+		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+	if got, expected := len(indicesR.Indices), len(expectedResponse.Indices); got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+	for i, gotItem := range indicesR.Indices {
+		if got, expected := gotItem, expectedResponse.Indices[i]; got != expected {
+			t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+		}
+	}
+
+}
+
+func TestParseIndicesResponseNilError(t *testing.T) {
+	var incomeJson = ``
+	var indicesResponse *IndicesResponse = nil
+
+	if got, expected := parseIndicesResponse([]byte(incomeJson), indicesResponse), errNilPointer; got != expected {
+		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
