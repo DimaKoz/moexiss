@@ -166,3 +166,20 @@ func TestParseIndicesResponseNilError(t *testing.T) {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
+
+func TestParseIndicesResponseError(t *testing.T) {
+	var incomeJson = `
+[
+  {"charsetinfo": {"name": "utf-8"}},
+  {
+    "indices": [
+      {"SECID": "IMOEX", "SHORTNAME": "Индекс МосБиржи", "FROM": "2007-04-16", "TILL": "2022-01-26"},
+      {"SECID1": "RUCGI", "SHORTNAME": "Нац. индекс корп. Управления", "FROM": "2021-06-18", "TILL": "2022-01-26"}]}
+]
+`
+	var indicesResponse = &IndicesResponse{}
+
+	if got, expected := parseIndicesResponse([]byte(incomeJson), indicesResponse), jsonparser.KeyPathNotFoundError; got != expected {
+		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
