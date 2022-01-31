@@ -1,18 +1,22 @@
 package moexiss
 
 import (
+	"context"
 	"github.com/buger/jsonparser"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
 	"testing"
 )
 
 func TestIndicesGetUrl(t *testing.T) {
 	var income *IndicesRequestOptions = nil
 	c := NewClient(nil)
-	url, err := c.Indices.getUrl("sberp", income)
+	gotUrl, err := c.Indices.getUrl("sberp", income)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
-	if got, expected := url, `https://iss.moex.com/iss/securities/sberp/indices.json?iss.json=extended&iss.meta=off`; got != expected {
+	if got, expected := gotUrl, `https://iss.moex.com/iss/securities/sberp/indices.json?iss.json=extended&iss.meta=off`; got != expected {
 		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
 	}
 }
@@ -181,5 +185,98 @@ func TestParseIndicesResponseError(t *testing.T) {
 
 	if got, expected := parseIndicesResponse([]byte(incomeJson), indicesResponse), jsonparser.KeyPathNotFoundError; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+
+func TestIndicesService_BadSecurityParam(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+
+	c.BaseURL, _ = url.Parse(srv.URL)
+	_, err := c.Indices.Indices(context.Background(), "", nil)
+	if got, expected := err, errBadSecurityParameter; got == nil || got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
+
+func TestIndicesService_BadUrl(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+
+	c.BaseURL, _ = url.Parse(srv.URL)
+	_, err := c.Indices.Indices(context.Background(), "sber", nil)
+	if got, expected := err, "BaseURL must have a trailing slash, but \""+srv.URL+"\" does not"; got == nil || got.Error() != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
+
+func TestIndicesKeyPathNotFound(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		str := `[{}]`
+		_, _ = w.Write([]byte(str))
+	}))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+
+	c.BaseURL, _ = url.Parse(srv.URL + "/")
+	_, err := c.Indices.Indices(context.Background(), "jhgsd", nil)
+	if got, expected := err, jsonparser.KeyPathNotFoundError; got == nil || got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
+	}
+}
+
+func TestIndicesNilContextError(t *testing.T) {
+	c := NewClient(nil)
+	var ctx context.Context = nil
+	//lint:ignore SA1012 we have to check the right behaviour when nil passed instead of context, so it is not a bug
+	_, err := c.Indices.Indices(ctx, "SBERP", nil)
+	if got, expected := err, errNonNilContext; got == nil || got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
+	}
+}
+
+func TestIndicesService_Indices(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		str := `
+[
+  {
+    "indices": [
+      {"SECID": "IMOEX", "SHORTNAME": "Индекс МосБиржи", "FROM": "2007-04-16", "TILL": "2022-01-26"},
+      {"SECID": "IMOEX2", "SHORTNAME": "Индекс МосБиржи (все сессии)", "FROM": "2020-06-22", "TILL": "2022-01-25"},
+      {"SECID": "MICEXLC", "SHORTNAME": "MICEX LC", "FROM": "2006-07-03", "TILL": "2013-05-17"},
+      {"SECID": "MICEXMC", "SHORTNAME": "MICEX MC", "FROM": "2006-09-04", "TILL": "2007-07-13"},
+      {"SECID": "MOEXBC", "SHORTNAME": "Индекс голубых фишек", "FROM": "2019-09-20", "TILL": "2022-01-26"},
+      {"SECID": "RUCGI", "SHORTNAME": "Нац. индекс корп. Управления", "FROM": "2021-06-18", "TILL": "2022-01-26"}]}
+]
+
+`
+		_, _ = w.Write([]byte(str))
+	}))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+	secId := "SBERP"
+	c := NewClient(httpClient)
+	c.BaseURL, _ = url.Parse(srv.URL + "/")
+	result, err := c.Indices.Indices(context.Background(), secId, nil)
+	if err != nil {
+		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
+	}
+	if got, expected := len(result.Indices), 6; got != expected {
+		t.Fatalf("Error: expecting: \n %v items\ngot:\n %v items\ninstead", expected, got)
+	}
+	if got, expected := result.SecurityId, secId; got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }

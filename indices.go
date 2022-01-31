@@ -1,6 +1,9 @@
 package moexiss
 
 import (
+	"bufio"
+	"bytes"
+	"context"
 	"github.com/buger/jsonparser"
 	"path"
 )
@@ -34,6 +37,34 @@ const (
 //
 // MoEx ISS API docs: https://iss.moex.com/iss/reference/160
 type IndicesService service
+
+//Aggregates provides Aggregates of MoEx ISS
+func (i *IndicesService) Indices(ctx context.Context, security string, opt *IndicesRequestOptions) (*IndicesResponse, error) {
+
+	url, err := i.getUrl(security, opt)
+	if err != nil {
+		return nil, err
+	}
+	req, err := i.client.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var b bytes.Buffer
+	w := bufio.NewWriter(&b)
+
+	_, err = i.client.Do(ctx, req, w)
+	if err != nil {
+		return nil, err
+	}
+	ir := IndicesResponse{}
+	err = parseIndicesResponse(b.Bytes(), &ir)
+	if err != nil {
+		return nil, err
+	}
+	ir.SecurityId = security
+	return &ir, nil
+}
 
 // getUrl provides an url for a request of indices with parameters from IndicesRequestOptions
 // opt *IndicesRequestOptions can be nil, it is safe
