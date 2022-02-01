@@ -24,6 +24,7 @@ type Aggregate struct {
 
 //AggregatesResponse struct represents a response with aggregated trading results
 type AggregatesResponse struct {
+	SecurityId string
 	Aggregates []Aggregate
 	DatesFrom  string //
 	DatesTill  string
@@ -78,6 +79,7 @@ func (a *AggregateService) Aggregates(ctx context.Context, security string, opt 
 	if err != nil {
 		return nil, err
 	}
+	ar.SecurityId = security
 	return &ar, nil
 }
 
