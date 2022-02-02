@@ -23,9 +23,8 @@ func (hlt HistoryListingTradingStatus) String() string {
 // https://iss.moex.com/iss/reference/119
 // https://iss.moex.com/iss/reference/120
 type HistoryListingRequestOptions struct {
-	// `lang` query parameter in url.URL
-	lang Language
-	start uint64 // `start` query parameter in url.URL
+	lang   Language                    // `lang` query parameter in url.URL
+	start  uint64                      // `start` query parameter in url.URL
 	status HistoryListingTradingStatus // `status` query parameter in url.URL
 }
 

@@ -9,7 +9,7 @@ func TestIndicesReqOptionsBuilder_Build(t *testing.T) {
 	bld := NewIndicesReqOptionsBuilder()
 
 	if got, expected := *bld.Build(), expectStruct; got != expected {
-		t.Fatalf("Error: expecting `%v` AggregateRequestOptions \ngot `%v` AggregateRequestOptions \ninstead", expected, got)
+		t.Fatalf("Error: expecting `%v` IndicesRequestOptions \ngot `%v` IndicesRequestOptions \ninstead", expected, got)
 	}
 }
 
