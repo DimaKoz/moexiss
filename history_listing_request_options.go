@@ -1,5 +1,10 @@
 package moexiss
 
+import (
+	"net/url"
+	"strconv"
+)
+
 // HistoryListingTradingStatus represents a type of trading status for listing of MoEx ISS API
 type HistoryListingTradingStatus string
 
@@ -67,4 +72,32 @@ func (b *HistoryListingRequestOptionsBuilder) Start(start uint64) *HistoryListin
 func (b *HistoryListingRequestOptionsBuilder) Status(status HistoryListingTradingStatus) *HistoryListingRequestOptionsBuilder {
 	b.options.status = status
 	return b
+}
+
+// addHistoryListingRequestOptions sets parameters into *url.URL
+// from HistoryListingRequestOptions struct and returns it back
+func addHistoryListingRequestOptions(url *url.URL, options *HistoryListingRequestOptions) *url.URL {
+	q := url.Query()
+	q.Set("iss.meta", "off")
+	q.Set("iss.json", "extended")
+
+	if options == nil {
+		url.RawQuery = q.Encode()
+		return url
+	}
+
+	if options.lang != LangUndefined {
+		q.Set("lang", options.lang.String())
+	}
+
+	if options.start != 0 {
+		q.Set("start", strconv.FormatUint(options.start, 10))
+	}
+
+	if options.status != ListingTradingStatusUndefined && options.status != ListingTradingStatusAll {
+		q.Set("status", options.status.String())
+	}
+
+	url.RawQuery = q.Encode()
+	return url
 }
