@@ -1,5 +1,7 @@
 package moexiss
 
+import "path"
+
 //Listing struct represents listing of the security
 type Listing struct {
 	Ticker    string // "SECID"
@@ -30,3 +32,12 @@ const (
 // https://iss.moex.com/iss/reference/119
 // https://iss.moex.com/iss/reference/120
 type HistoryListingService service
+
+// getUrlListing provides an url to get information on when securities were traded on which boards
+func (i *HistoryListingService) getUrlListing(engine EngineName, market string, opt *HistoryListingRequestOptions) (string, error) {
+	url, _ := i.client.BaseURL.Parse("history/engines")
+
+	url.Path = path.Join(url.Path, engine.String(), "markets", market, "listing.json")
+	gotUrl := addHistoryListingRequestOptions(url, opt)
+	return gotUrl.String(), nil
+}

@@ -49,11 +49,12 @@ type Client struct {
 
 	common service // Reuse a single struct instead of allocating one for each service on the heap.
 
-	Securities *SecuritiesService
-	Index      *IndexService
-	Turnovers  *TurnoverService
-	Aggregates *AggregateService
-	Indices    *IndicesService
+	Securities     *SecuritiesService
+	Index          *IndexService
+	Turnovers      *TurnoverService
+	Aggregates     *AggregateService
+	Indices        *IndicesService
+	HistoryListing *HistoryListingService
 }
 
 func NewClient(httpClient *http.Client) *Client {
@@ -70,6 +71,7 @@ func NewClient(httpClient *http.Client) *Client {
 	c.Turnovers = (*TurnoverService)(&c.common)
 	c.Aggregates = (*AggregateService)(&c.common)
 	c.Indices = (*IndicesService)(&c.common)
+	c.HistoryListing = (*HistoryListingService)(&c.common)
 	return c
 }
 
