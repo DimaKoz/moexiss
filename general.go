@@ -3,6 +3,7 @@ package moexiss
 import (
 	"errors"
 	"github.com/buger/jsonparser"
+	"unicode/utf8"
 )
 
 var (
@@ -71,5 +72,6 @@ func isOkSecurityParam(securityId string) bool {
 	if securityId == "" {
 		return false
 	}
-	return true
+	minLen := 3
+	return utf8.RuneCountInString(securityId) >= minLen
 }

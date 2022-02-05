@@ -90,3 +90,9 @@ func TestGeneralIsOkSecurityParamNonEmptySecurity(t *testing.T) {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
+
+func TestGeneralIsOkSecurityParamShortLenSecurity(t *testing.T) {
+	if got, expected := isOkSecurityParam("sb"), false; got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
