@@ -107,7 +107,7 @@ func parseIndicesResponse(byteData []byte, indicesResponse *IndicesResponse) err
 func parseIndices(data []byte, i *[]Indices) (err error) {
 
 	var errInCb error
-	_, err = jsonparser.ArrayEach(data, func(aggregateItemData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+	_, err = jsonparser.ArrayEach(data, func(indicesItemData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
 		if errInCb != nil {
 			return
 		}
@@ -117,7 +117,7 @@ func parseIndices(data []byte, i *[]Indices) (err error) {
 		}
 
 		indices := Indices{}
-		errInCb = parseIndicesItem(aggregateItemData, &indices)
+		errInCb = parseIndicesItem(indicesItemData, &indices)
 		if errInCb != nil {
 			return
 		}

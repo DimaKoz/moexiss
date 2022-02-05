@@ -90,4 +90,3 @@ func TestGeneralIsOkSecurityParamNonEmptySecurity(t *testing.T) {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
-

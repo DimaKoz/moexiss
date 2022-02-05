@@ -1,6 +1,7 @@
 package moexiss
 
 import (
+	"github.com/buger/jsonparser"
 	"path"
 )
 
@@ -42,6 +43,32 @@ func (i *HistoryListingService) getUrlListing(engine EngineName, market string, 
 	url.Path = path.Join(url.Path, engine.String(), "markets", market, "listing.json")
 	gotUrl := addHistoryListingRequestOptions(url, opt)
 	return gotUrl.String(), nil
+}
+
+func parseListing(data []byte, l *[]Listing) (err error) {
+
+	var errInCb error
+	_, err = jsonparser.ArrayEach(data, func(listingItemData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errInCb != nil {
+			return
+		}
+		if dataType != jsonparser.Object {
+			errInCb = errUnexpectedDataType
+			return
+		}
+
+		listing := Listing{}
+		errInCb = parseListingItem(listingItemData, &listing)
+		if errInCb != nil {
+			return
+		}
+		*l = append(*l, listing)
+
+	})
+	if err == nil && errInCb != nil {
+		err = errInCb
+	}
+	return
 }
 
 func parseListingItem(data []byte, l *Listing) (err error) {

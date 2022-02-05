@@ -6,7 +6,7 @@ import "net/url"
 // for building requests to get a list of indices that include the security.
 // MoEx ISS API docs: https://iss.moex.com/iss/reference/160
 type IndicesRequestOptions struct {
-	lang Language  // `lang` query parameter in url.URL
+	lang Language // `lang` query parameter in url.URL
 }
 
 // IndicesRequestOptionsBuilder represents a builder of IndicesRequestOptions struct
