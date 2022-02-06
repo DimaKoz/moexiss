@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -27,8 +26,6 @@ const (
 	libraryUserAgentPrefix = "MoExIss (" + runtime.GOOS + "; " + runtime.GOARCH + ") "
 	libraryUserAgent       = libraryUserAgentPrefix + libraryName + "/" + libraryVersion
 )
-
-var errNonNilContext = errors.New("context must be non-nil")
 
 type Response struct {
 	*http.Response
@@ -165,7 +162,7 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 // canceled or times out, ctx.Err() will be returned.
 func (c *Client) BareDo(ctx context.Context, req *http.Request) (*Response, error) {
 	if ctx == nil {
-		return nil, errNonNilContext
+		return nil, ErrNonNilContext
 	}
 
 	resp, err := c.client.Do(req)

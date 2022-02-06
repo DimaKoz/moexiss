@@ -7,6 +7,7 @@ import (
 )
 
 var (
+	ErrNonNilContext        = errors.New("context must be non-nil")
 	ErrUnexpectedDataType   = errors.New("unexpected data type")
 	ErrNilPointer           = errors.New("nil pointer error")
 	ErrBadSecurityParameter = errors.New("bad 'security' parameter")
