@@ -68,10 +68,10 @@ func (i *IndicesService) Indices(ctx context.Context, security string, opt *Indi
 
 // getUrl provides an url for a request of indices with parameters from IndicesRequestOptions
 // opt *IndicesRequestOptions can be nil, it is safe
-// 'security' parameter must not be empty otherwise getUrl returns errBadSecurityParameter
+// 'security' parameter must not be empty otherwise getUrl returns ErrBadSecurityParameter
 func (i *IndicesService) getUrl(security string, opt *IndicesRequestOptions) (string, error) {
 	if !isOkSecurityParam(security) {
-		return "", errBadSecurityParameter
+		return "", ErrBadSecurityParameter
 	}
 	url, _ := i.client.BaseURL.Parse("securities")
 
@@ -83,7 +83,7 @@ func (i *IndicesService) getUrl(security string, opt *IndicesRequestOptions) (st
 func parseIndicesResponse(byteData []byte, indicesResponse *IndicesResponse) error {
 	var err error
 	if indicesResponse == nil {
-		err = errNilPointer
+		err = ErrNilPointer
 		return err
 	}
 	var errInCb error
@@ -112,7 +112,7 @@ func parseIndices(data []byte, i *[]Indices) (err error) {
 			return
 		}
 		if dataType != jsonparser.Object {
-			errInCb = errUnexpectedDataType
+			errInCb = ErrUnexpectedDataType
 			return
 		}
 

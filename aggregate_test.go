@@ -77,7 +77,7 @@ func TestParseAggregateResponseNilError(t *testing.T) {
 	var incomeJson = ``
 	var aggregatesResponse *AggregatesResponse = nil
 
-	if got, expected := parseAggregateResponse([]byte(incomeJson), aggregatesResponse), errNilPointer; got != expected {
+	if got, expected := parseAggregateResponse([]byte(incomeJson), aggregatesResponse), ErrNilPointer; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
@@ -150,7 +150,7 @@ func TestParseAggregateResponseDatesWrongJsonObject(t *testing.T) {
 `
 	var aggregatesResponse = &AggregatesResponse{}
 
-	if got, expected := parseAggregateResponse([]byte(incomeJson), aggregatesResponse), errUnexpectedDataType; got != expected {
+	if got, expected := parseAggregateResponse([]byte(incomeJson), aggregatesResponse), ErrUnexpectedDataType; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
@@ -273,7 +273,7 @@ func TestParseAggregatesUnexpectedDataTypeError(t *testing.T) {
       []
 ]`
 	aggregates := make([]Aggregate, 0)
-	if got, expected := parseAggregates([]byte(incomeJson), &aggregates), errUnexpectedDataType; got != expected {
+	if got, expected := parseAggregates([]byte(incomeJson), &aggregates), ErrUnexpectedDataType; got != expected {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
@@ -345,7 +345,7 @@ func TestAggregateService_AggregatesBadSecurityParam(t *testing.T) {
 
 	c.BaseURL, _ = url.Parse(srv.URL)
 	_, err := c.Aggregates.Aggregates(context.Background(), "", nil)
-	if got, expected := err, errBadSecurityParameter; got == nil || got != expected {
+	if got, expected := err, ErrBadSecurityParameter; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }

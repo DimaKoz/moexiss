@@ -87,7 +87,7 @@ func (a *AggregateService) Aggregates(ctx context.Context, security string, opt 
 //opt *AggregateRequestOptions can be nil, it is safe
 func (a *AggregateService) getUrl(security string, opt *AggregateRequestOptions) (string, error) {
 	if !isOkSecurityParam(security) {
-		return "", errBadSecurityParameter
+		return "", ErrBadSecurityParameter
 	}
 	url, _ := a.client.BaseURL.Parse("securities")
 
@@ -99,7 +99,7 @@ func (a *AggregateService) getUrl(security string, opt *AggregateRequestOptions)
 func parseAggregateResponse(byteData []byte, aggregatesResponse *AggregatesResponse) error {
 	var err error
 	if aggregatesResponse == nil {
-		err = errNilPointer
+		err = ErrNilPointer
 		return err
 	}
 	var errInCb error
@@ -137,7 +137,7 @@ func parseAggregatesDates(dataDates []byte, ar *AggregatesResponse) (err error) 
 		counter++
 
 		if dataType != jsonparser.Object {
-			errInCb = errUnexpectedDataType
+			errInCb = ErrUnexpectedDataType
 			return
 		}
 
@@ -178,7 +178,7 @@ func parseAggregates(byteData []byte, aggregates *[]Aggregate) (err error) {
 			return
 		}
 		if dataType != jsonparser.Object {
-			errInCb = errUnexpectedDataType
+			errInCb = ErrUnexpectedDataType
 			return
 		}
 

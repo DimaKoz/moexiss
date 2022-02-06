@@ -7,9 +7,9 @@ import (
 )
 
 var (
-	errUnexpectedDataType   = errors.New("unexpected data type")
-	errNilPointer           = errors.New("nil pointer error")
-	errBadSecurityParameter = errors.New("bad 'security' parameter")
+	ErrUnexpectedDataType   = errors.New("unexpected data type")
+	ErrNilPointer           = errors.New("nil pointer error")
+	ErrBadSecurityParameter = errors.New("bad 'security' parameter")
 )
 
 func parseStringWithDefaultValue(fieldValue []byte) (string, error) {

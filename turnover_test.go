@@ -61,7 +61,7 @@ func TestParseTurnoverResponseNilError(t *testing.T) {
 `
 	var turnovers *[]Turnover = nil
 
-	if got, expected := parseTurnoverResponse([]byte(incomeJson), turnovers), errNilPointer; got != expected {
+	if got, expected := parseTurnoverResponse([]byte(incomeJson), turnovers), ErrNilPointer; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
@@ -93,7 +93,7 @@ func TestParseTurnoversUnexpectedDataTypeError(t *testing.T) {
       []
 ]`
 	turnovers := make([]Turnover, 0)
-	if got, expected := parseTurnovers([]byte(incomeJson), &turnovers), errUnexpectedDataType; got != expected {
+	if got, expected := parseTurnovers([]byte(incomeJson), &turnovers), ErrUnexpectedDataType; got != expected {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }

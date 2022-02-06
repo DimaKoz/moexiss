@@ -98,7 +98,7 @@ func TestParseListingUnexpectedDataTypeError(t *testing.T) {
       []
 ]`
 	listing := make([]Listing, 0)
-	if got, expected := parseListing([]byte(incomeJson), &listing), errUnexpectedDataType; got != expected {
+	if got, expected := parseListing([]byte(incomeJson), &listing), ErrUnexpectedDataType; got != expected {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }

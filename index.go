@@ -169,7 +169,7 @@ func (s *IndexService) getUrl(opt *IndexRequestOptions) string {
 
 func parseIndexResponse(byteData []byte, index *Index) error {
 	if index == nil {
-		return errNilPointer
+		return ErrNilPointer
 	}
 	for _, key := range indexKeys {
 		foundBytes, dataType, _, err := jsonparser.Get(byteData, key)
@@ -182,7 +182,7 @@ func parseIndexResponse(byteData []byte, index *Index) error {
 			}
 		}
 		if dataType != jsonparser.Object {
-			return errUnexpectedDataType
+			return ErrUnexpectedDataType
 		}
 		var usingFunc = func(byteData []byte, index *Index) (err error) { return }
 		switch key {

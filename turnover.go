@@ -72,7 +72,7 @@ func (s *TurnoverService) getUrl(opt *TurnoverRequestOptions, onlyBlock turnover
 func parseTurnoverResponse(byteData []byte, turnovers *[]Turnover) error {
 	var err error
 	if turnovers == nil {
-		err = errNilPointer
+		err = ErrNilPointer
 		return err
 	}
 	var errInCb error
@@ -101,7 +101,7 @@ func parseTurnovers(byteData []byte, turnovers *[]Turnover) (err error) {
 			return
 		}
 		if dataType != jsonparser.Object {
-			errInCb = errUnexpectedDataType
+			errInCb = ErrUnexpectedDataType
 			return
 		}
 

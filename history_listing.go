@@ -53,7 +53,7 @@ func parseListing(data []byte, l *[]Listing) (err error) {
 			return
 		}
 		if dataType != jsonparser.Object {
-			errInCb = errUnexpectedDataType
+			errInCb = ErrUnexpectedDataType
 			return
 		}
 

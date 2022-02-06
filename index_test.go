@@ -97,7 +97,7 @@ func TestParseIndexResponseNilIndex(t *testing.T) {
 }
 `
 	var index *Index = nil
-	if got, expected := parseIndexResponse([]byte(incomeJson), index), errNilPointer; got != expected {
+	if got, expected := parseIndexResponse([]byte(incomeJson), index), ErrNilPointer; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
@@ -120,7 +120,7 @@ func TestParseIndexResponseError(t *testing.T) {
 "engines": []}
 `
 	var index = &Index{}
-	if got, expected := parseIndexResponse([]byte(incomeJson), index), errUnexpectedDataType; got != expected {
+	if got, expected := parseIndexResponse([]byte(incomeJson), index), ErrUnexpectedDataType; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }

@@ -25,8 +25,8 @@ func TestIndicesGetUrlBadSecurity(t *testing.T) {
 	var income *IndicesRequestOptions = nil
 	c := NewClient(nil)
 	_, err := c.Indices.getUrl("", income)
-	if err != errBadSecurityParameter {
-		t.Fatalf("Error: expecting error: %v \ngot %v \ninstead", errBadSecurityParameter, err)
+	if err != ErrBadSecurityParameter {
+		t.Fatalf("Error: expecting error: %v \ngot %v \ninstead", ErrBadSecurityParameter, err)
 	}
 }
 
@@ -101,7 +101,7 @@ func TestParseIndicesUnexpectedDataTypeError(t *testing.T) {
       []
 ]`
 	indices := make([]Indices, 0)
-	if got, expected := parseIndices([]byte(incomeJson), &indices), errUnexpectedDataType; got != expected {
+	if got, expected := parseIndices([]byte(incomeJson), &indices), ErrUnexpectedDataType; got != expected {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
@@ -166,7 +166,7 @@ func TestParseIndicesResponseNilError(t *testing.T) {
 	var incomeJson = ``
 	var indicesResponse *IndicesResponse = nil
 
-	if got, expected := parseIndicesResponse([]byte(incomeJson), indicesResponse), errNilPointer; got != expected {
+	if got, expected := parseIndicesResponse([]byte(incomeJson), indicesResponse), ErrNilPointer; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
@@ -198,7 +198,7 @@ func TestIndicesService_BadSecurityParam(t *testing.T) {
 
 	c.BaseURL, _ = url.Parse(srv.URL)
 	_, err := c.Indices.Indices(context.Background(), "", nil)
-	if got, expected := err, errBadSecurityParameter; got == nil || got != expected {
+	if got, expected := err, ErrBadSecurityParameter; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
