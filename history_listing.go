@@ -16,14 +16,23 @@ type Listing struct {
 	Till      string // "history_till"
 }
 
+//ListingResponse struct represents a response with listing of the security
+type ListingResponse struct {
+	Engine       EngineName
+	Market       string
+	BoardGroupId string
+	Listing      []Listing
+}
+
 const (
-	listingKeyId        = "SECID"
-	listingKeyShortName = "SHORTNAME"
-	listingKeyName      = "NAME"
-	listingKeyBoardId   = "BOARDID"
-	listingKeyDecimals  = "decimals"
-	listingKeyFrom      = "history_from"
-	listingKeyTill      = "history_till"
+	listingKeyId         = "SECID"
+	listingKeyShortName  = "SHORTNAME"
+	listingKeyName       = "NAME"
+	listingKeyBoardId    = "BOARDID"
+	listingKeyDecimals   = "decimals"
+	listingKeyFrom       = "history_from"
+	listingKeyTill       = "history_till"
+	listingKeySecurities = "securities"
 )
 
 // HistoryListingService gets a list of tradable/non-tradable securities
@@ -43,6 +52,33 @@ func (i *HistoryListingService) getUrlListing(engine EngineName, market string, 
 	url.Path = path.Join(url.Path, engine.String(), "markets", market, "listing.json")
 	gotUrl := addHistoryListingRequestOptions(url, opt)
 	return gotUrl.String(), nil
+}
+
+func parseListingResponse(byteData []byte, listingResponse *ListingResponse) error {
+	var err error
+	if listingResponse == nil {
+		err = ErrNilPointer
+		return err
+	}
+	var errInCb error
+	_, err = jsonparser.ArrayEach(byteData, func(listingBytes []byte, _ jsonparser.ValueType, offset int, errCb error) {
+		var data []byte
+		var dataType jsonparser.ValueType
+		data, dataType, _, errInCb = jsonparser.Get(listingBytes, listingKeySecurities)
+		if errInCb == nil && data != nil && dataType == jsonparser.Array {
+			errInCb = parseListing(data, &listingResponse.Listing)
+			if errInCb != nil {
+				return
+			}
+		}
+	})
+	if err == nil && errInCb != nil {
+		err = errInCb
+	}
+	if err == nil && len(listingResponse.Listing) == 0 {
+		return ErrEmptyServerResult
+	}
+	return err
 }
 
 func parseListing(data []byte, l *[]Listing) (err error) {

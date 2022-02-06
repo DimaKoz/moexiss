@@ -11,6 +11,7 @@ var (
 	ErrUnexpectedDataType   = errors.New("unexpected data type")
 	ErrNilPointer           = errors.New("nil pointer error")
 	ErrBadSecurityParameter = errors.New("bad 'security' parameter")
+	ErrEmptyServerResult    = errors.New("the empty answer")
 )
 
 func parseStringWithDefaultValue(fieldValue []byte) (string, error) {

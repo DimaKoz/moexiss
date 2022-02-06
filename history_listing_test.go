@@ -119,3 +119,96 @@ func TestParseListingError(t *testing.T) {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
+
+func TestParseListingResponse(t *testing.T) {
+
+	var incomeJson = `
+[
+  {"charsetinfo": {"name": "utf-8"}},
+  {
+    "securities": [
+      {"SECID": "CHMF", "SHORTNAME": "СевСт-ао", "NAME": "Северсталь (ПАО)ао", "BOARDID": "EQCC", "decimals": 1, "history_from": "2010-02-15", "history_till": "2011-05-27"},
+      {"SECID": "CHMF", "SHORTNAME": "СевСт-ао", "NAME": "Северсталь (ПАО)ао", "BOARDID": "TQDP", "decimals": 1, "history_from": null, "history_till": null}
+]}
+]
+`
+	expectedResponse := ListingResponse{
+		Listing: []Listing{
+			{
+				Ticker:    "CHMF",
+				ShortName: "СевСт-ао",
+				FullName:  "Северсталь (ПАО)ао",
+				BoardId:   "EQCC",
+				Decimals:  1,
+				From:      "2010-02-15",
+				Till:      "2011-05-27",
+			},
+			{
+				Ticker:    "CHMF",
+				ShortName: "СевСт-ао",
+				FullName:  "Северсталь (ПАО)ао",
+				BoardId:   "TQDP",
+				Decimals:  1,
+				From:      "",
+				Till:      "",
+			},
+		},
+	}
+	listingR := ListingResponse{}
+	var err error = nil
+	if got, expected := parseListingResponse([]byte(incomeJson), &listingR), err; got != expected {
+		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+	if got, expected := len(listingR.Listing), len(expectedResponse.Listing); got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+	for i, gotItem := range listingR.Listing {
+		if got, expected := gotItem, expectedResponse.Listing[i]; got != expected {
+			t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+		}
+	}
+
+}
+
+func TestParseListingResponseNilError(t *testing.T) {
+	var incomeJson = ``
+	var listingR *ListingResponse = nil
+
+	if got, expected := parseListingResponse([]byte(incomeJson), listingR), ErrNilPointer; got != expected {
+		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+
+func TestParseListingResponseError(t *testing.T) {
+	var incomeJson = `
+[
+  {"charsetinfo": {"name": "utf-8"}},
+  {
+    "securities": [
+      {"SECID": "CHMF", "SHORTNAME1": "СевСт-ао", "NAME": "Северсталь (ПАО)ао", "BOARDID": "EQCC", "decimals": 1, "history_from": "2010-02-15", "history_till": "2011-05-27"},
+      {"SECID": "CHMF", "SHORTNAME": "СевСт-ао", "NAME": "Северсталь (ПАО)ао", "BOARDID": "TQDP", "decimals": 1, "history_from": null, "history_till": null}
+]}
+]
+`
+	var listingR = &ListingResponse{}
+
+	if got, expected := parseListingResponse([]byte(incomeJson), listingR), jsonparser.KeyPathNotFoundError; got != expected {
+		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+
+func TestParseListingResponseEmpty(t *testing.T) {
+	var incomeJson = `
+[
+{"charsetinfo": {"name": "utf-8"}},
+{
+"securities": [
+]}
+]
+`
+	var listingR = &ListingResponse{}
+
+	if got, expected := parseListingResponse([]byte(incomeJson), listingR), ErrEmptyServerResult; got != expected {
+		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
