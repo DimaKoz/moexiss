@@ -244,11 +244,56 @@ func TestHistoryListingService_Listing(t *testing.T) {
 
 	c := NewClient(httpClient)
 	c.BaseURL, _ = url.Parse(srv.URL + "/")
-	result, err := c.HistoryListing.Listing(context.Background(), EngineStock,"shares", nil)
+	result, err := c.HistoryListing.Listing(context.Background(), EngineStock, "shares", nil)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
 	if got, expected := len(result.Listing), 100; got != expected {
 		t.Fatalf("Error: expecting: \n %v items\ngot:\n %v items\ninstead", expected, got)
+	}
+}
+
+func TestHistoryListingService_ListingBadEngineParam(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+
+	c.BaseURL, _ = url.Parse(srv.URL)
+	_, err := c.HistoryListing.Listing(context.Background(), "", "shares", nil)
+	if got, expected := err, ErrBadEngineParameter; got == nil || got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
+
+func TestHistoryListingService_ListingBadMarketParam(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+
+	c.BaseURL, _ = url.Parse(srv.URL)
+	_, err := c.HistoryListing.Listing(context.Background(), EngineStock, "", nil)
+	if got, expected := err, ErrBadMarketParameter; got == nil || got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
+
+func TestHistoryListingService_BadUrl(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+
+	c.BaseURL, _ = url.Parse(srv.URL)
+	_, err := c.HistoryListing.Listing(context.Background(), EngineStock, "shares", nil)
+	if got, expected := err, "BaseURL must have a trailing slash, but \""+srv.URL+"\" does not"; got == nil || got.Error() != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
