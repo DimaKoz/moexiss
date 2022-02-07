@@ -1,7 +1,12 @@
 package moexiss
 
 import (
+	"context"
+	"fmt"
 	"github.com/buger/jsonparser"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
 	"testing"
 )
 
@@ -210,5 +215,40 @@ func TestParseListingResponseEmpty(t *testing.T) {
 
 	if got, expected := parseListingResponse([]byte(incomeJson), listingR), ErrEmptyServerResult; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+
+//A handler to return expected results
+//TestingHistoryListingHandler emulates an external server
+func TestingHistoryListingHandler(w http.ResponseWriter, _ *http.Request) {
+
+	byteValueResult, err := getTestingData("history_listing.json")
+	if err != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write(byteValueResult)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+}
+
+func TestHistoryListingService_Listing(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(TestingHistoryListingHandler))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+	c.BaseURL, _ = url.Parse(srv.URL + "/")
+	result, err := c.HistoryListing.Listing(context.Background(), EngineStock,"shares", nil)
+	if err != nil {
+		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
+	}
+	if got, expected := len(result.Listing), 100; got != expected {
+		t.Fatalf("Error: expecting: \n %v items\ngot:\n %v items\ninstead", expected, got)
 	}
 }

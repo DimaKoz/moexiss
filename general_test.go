@@ -1,7 +1,11 @@
 package moexiss
 
 import (
+	"fmt"
 	"github.com/buger/jsonparser"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -95,4 +99,27 @@ func TestGeneralIsOkSecurityParamShortLenSecurity(t *testing.T) {
 	if got, expected := isOkSecurityParam("sb"), false; got != expected {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
+}
+
+func getTestingData(fileName string) ([]byte, error) {
+	//getting test data
+	fullPath := filepath.Join("testdata", fileName)
+	jsonFile, err := os.Open(fullPath)
+	// if we os.Open returns an error then handle it
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	fmt.Printf("Successfully opened %s\n", fileName)
+	// defer the closing of our jsonFile so that we can parse it later on
+	defer func() {
+		_ = jsonFile.Close()
+	}()
+
+	byteValueResult, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	return byteValueResult, nil
 }

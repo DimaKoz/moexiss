@@ -11,6 +11,8 @@ var (
 	ErrUnexpectedDataType   = errors.New("unexpected data type")
 	ErrNilPointer           = errors.New("nil pointer error")
 	ErrBadSecurityParameter = errors.New("bad 'security' parameter")
+	ErrBadEngineParameter   = errors.New("bad 'engine' parameter")
+	ErrBadMarketParameter   = errors.New("bad 'market' parameter")
 	ErrEmptyServerResult    = errors.New("the empty answer")
 )
 

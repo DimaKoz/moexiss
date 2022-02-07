@@ -1,8 +1,12 @@
 package moexiss
 
 import (
+	"bufio"
+	"bytes"
+	"context"
 	"github.com/buger/jsonparser"
 	"path"
+	"unicode/utf8"
 )
 
 //Listing struct represents listing of the security
@@ -45,9 +49,44 @@ const (
 // https://iss.moex.com/iss/reference/120
 type HistoryListingService service
 
+//Listing provides a list of tradable/non-tradable securities
+func (hl *HistoryListingService) Listing(ctx context.Context, engine EngineName, market string, opt *HistoryListingRequestOptions) (*ListingResponse, error) {
+	if engine == EngineUndefined {
+		return nil, ErrBadEngineParameter
+	}
+	marketMinLen := 3
+	if market == "" || utf8.RuneCountInString(market) < marketMinLen {
+		return nil, ErrBadMarketParameter
+	}
+	url, err := hl.getUrlListing(engine, market, opt)
+	if err != nil {
+		return nil, err
+	}
+	req, err := hl.client.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var b bytes.Buffer
+	w := bufio.NewWriter(&b)
+
+	_, err = hl.client.Do(ctx, req, w)
+	if err != nil {
+		return nil, err
+	}
+	lr := ListingResponse{}
+	err = parseListingResponse(b.Bytes(), &lr)
+	if err != nil {
+		return nil, err
+	}
+	lr.Engine = engine
+	lr.Market = market
+	return &lr, nil
+}
+
 // getUrlListing provides an url to get information on when securities were traded on which boards
-func (i *HistoryListingService) getUrlListing(engine EngineName, market string, opt *HistoryListingRequestOptions) (string, error) {
-	url, _ := i.client.BaseURL.Parse("history/engines")
+func (hl *HistoryListingService) getUrlListing(engine EngineName, market string, opt *HistoryListingRequestOptions) (string, error) {
+	url, _ := hl.client.BaseURL.Parse("history/engines")
 
 	url.Path = path.Join(url.Path, engine.String(), "markets", market, "listing.json")
 	gotUrl := addHistoryListingRequestOptions(url, opt)
