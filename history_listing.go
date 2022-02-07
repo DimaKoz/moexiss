@@ -51,13 +51,6 @@ type HistoryListingService service
 
 //Listing provides a list of tradable/non-tradable securities
 func (hl *HistoryListingService) Listing(ctx context.Context, engine EngineName, market string, opt *HistoryListingRequestOptions) (*ListingResponse, error) {
-	if engine == EngineUndefined {
-		return nil, ErrBadEngineParameter
-	}
-	marketMinLen := 3
-	if market == "" || utf8.RuneCountInString(market) < marketMinLen {
-		return nil, ErrBadMarketParameter
-	}
 	url, err := hl.getUrlListing(engine, market, opt)
 	if err != nil {
 		return nil, err
@@ -86,6 +79,14 @@ func (hl *HistoryListingService) Listing(ctx context.Context, engine EngineName,
 
 // getUrlListing provides an url to get information on when securities were traded on which boards
 func (hl *HistoryListingService) getUrlListing(engine EngineName, market string, opt *HistoryListingRequestOptions) (string, error) {
+	if engine == EngineUndefined {
+		return "", ErrBadEngineParameter
+	}
+	marketMinLen := 3
+	if market == "" || utf8.RuneCountInString(market) < marketMinLen {
+		return "", ErrBadMarketParameter
+	}
+
 	url, _ := hl.client.BaseURL.Parse("history/engines")
 
 	url.Path = path.Join(url.Path, engine.String(), "markets", market, "listing.json")

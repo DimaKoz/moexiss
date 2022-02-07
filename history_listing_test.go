@@ -297,3 +297,30 @@ func TestHistoryListingService_BadUrl(t *testing.T) {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
+
+func TestHistoryListingKeyPathNotFound(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		str := `[{}]`
+		_, _ = w.Write([]byte(str))
+	}))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+
+	c.BaseURL, _ = url.Parse(srv.URL + "/")
+	_, err := c.HistoryListing.Listing(context.Background(), EngineStock, "shares", nil)
+	if got, expected := err, jsonparser.KeyPathNotFoundError; got == nil || got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
+	}
+}
+
+func TestHistoryListingNilContextError(t *testing.T) {
+	c := NewClient(nil)
+	var ctx context.Context = nil
+	_, err := c.HistoryListing.Listing(ctx, EngineStock, "shares", nil)
+	if got, expected := err, ErrNonNilContext; got == nil || got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
+	}
+}
