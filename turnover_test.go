@@ -4,12 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/buger/jsonparser"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"os"
-	"path/filepath"
 	"testing"
 )
 
@@ -236,20 +233,9 @@ func TestTurnoversGetUrl(t *testing.T) {
 //TestingTurnoverHandler emulates an external server
 func TestingTurnoverHandler(w http.ResponseWriter, _ *http.Request) {
 
-	//getting test data
-	fullPath := filepath.Join("testdata", "turnover.json")
-	jsonFile, err := os.Open(fullPath)
-	// if we os.Open returns an error then handle it
+	byteValueResult, err := getTestingData("turnover.json")
 	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println("Successfully Opened turnover.json")
-	// defer the closing of our jsonFile so that we can parse it later on
-	defer jsonFile.Close()
-
-	byteValueResult, err := ioutil.ReadAll(jsonFile)
-	if err != nil {
-		fmt.Println(err)
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
