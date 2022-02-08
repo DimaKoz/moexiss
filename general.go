@@ -7,14 +7,15 @@ import (
 )
 
 var (
-	ErrNonNilContext        = errors.New("context must be non-nil")
-	ErrUnexpectedDataType   = errors.New("unexpected data type")
-	ErrNilPointer           = errors.New("nil pointer error")
-	ErrBadSecurityParameter = errors.New("bad 'security' parameter")
-	ErrBadEngineParameter   = errors.New("bad 'engine' parameter")
-	ErrBadMarketParameter   = errors.New("bad 'market' parameter")
-	ErrBadBoardParameter    = errors.New("bad 'board' parameter")
-	ErrEmptyServerResult    = errors.New("the empty answer")
+	ErrNonNilContext          = errors.New("context must be non-nil")
+	ErrUnexpectedDataType     = errors.New("unexpected data type")
+	ErrNilPointer             = errors.New("nil pointer error")
+	ErrBadSecurityParameter   = errors.New("bad 'security' parameter")
+	ErrBadEngineParameter     = errors.New("bad 'engine' parameter")
+	ErrBadMarketParameter     = errors.New("bad 'market' parameter")
+	ErrBadBoardParameter      = errors.New("bad 'board' parameter")
+	ErrBadBoardGroupParameter = errors.New("bad 'boardgroup' parameter")
+	ErrEmptyServerResult      = errors.New("the empty answer")
 )
 
 func parseStringWithDefaultValue(fieldValue []byte) (string, error) {
