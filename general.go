@@ -13,6 +13,7 @@ var (
 	ErrBadSecurityParameter = errors.New("bad 'security' parameter")
 	ErrBadEngineParameter   = errors.New("bad 'engine' parameter")
 	ErrBadMarketParameter   = errors.New("bad 'market' parameter")
+	ErrBadBoardParameter    = errors.New("bad 'board' parameter")
 	ErrEmptyServerResult    = errors.New("the empty answer")
 )
 

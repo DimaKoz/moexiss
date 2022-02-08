@@ -77,6 +77,34 @@ func (hl *HistoryListingService) Listing(ctx context.Context, engine EngineName,
 	return &lr, nil
 }
 
+//ListingByBoard provides security listing information for a given board
+func (hl *HistoryListingService) ListingByBoard(ctx context.Context, engine EngineName, market string, boardId string, opt *HistoryListingRequestOptions) (*ListingResponse, error) {
+	url, err := hl.getUrlListingByBoard(engine, market, boardId, opt)
+	if err != nil {
+		return nil, err
+	}
+	req, err := hl.client.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var b bytes.Buffer
+	w := bufio.NewWriter(&b)
+
+	_, err = hl.client.Do(ctx, req, w)
+	if err != nil {
+		return nil, err
+	}
+	lr := ListingResponse{}
+	err = parseListingResponse(b.Bytes(), &lr)
+	if err != nil {
+		return nil, err
+	}
+	lr.Engine = engine
+	lr.Market = market
+	return &lr, nil
+}
+
 // getUrlListing provides an url to get information on when securities were traded on which boards
 func (hl *HistoryListingService) getUrlListing(engine EngineName, market string, opt *HistoryListingRequestOptions) (string, error) {
 	if engine == EngineUndefined {
@@ -90,6 +118,26 @@ func (hl *HistoryListingService) getUrlListing(engine EngineName, market string,
 	url, _ := hl.client.BaseURL.Parse("history/engines")
 
 	url.Path = path.Join(url.Path, engine.String(), "markets", market, "listing.json")
+	gotUrl := addHistoryListingRequestOptions(url, opt)
+	return gotUrl.String(), nil
+}
+
+// getUrlListingByBoard provides an url to get security listing information for a given board
+func (hl *HistoryListingService) getUrlListingByBoard(engine EngineName, market string, boardId string, opt *HistoryListingRequestOptions) (string, error) {
+	if engine == EngineUndefined {
+		return "", ErrBadEngineParameter
+	}
+	marketMinLen := 3
+	if market == "" || utf8.RuneCountInString(market) < marketMinLen {
+		return "", ErrBadMarketParameter
+	}
+	boardMinLen := 4
+	if boardId == "" || utf8.RuneCountInString(boardId) < boardMinLen {
+		return "", ErrBadBoardParameter
+	}
+	url, _ := hl.client.BaseURL.Parse("history/engines")
+
+	url.Path = path.Join(url.Path, engine.String(), "markets", market, "boards", boardId, "listing.json")
 	gotUrl := addHistoryListingRequestOptions(url, opt)
 	return gotUrl.String(), nil
 }
