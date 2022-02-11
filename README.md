@@ -1,7 +1,7 @@
 # MOEXISS
 
-Неофициальный [MOEX](https://iss.moex.com/iss/reference/) ISS API на Golang  
-Unofficial Application Programming Interface for the Moscow Exchange([MOEX](https://iss.moex.com/iss/reference/)) ISS on Golang 
+Неофициальный клиент для получения информации и статистики Московской биржи [MOEX](https://iss.moex.com/iss/reference/) на Golang  
+An unofficial client of Application Programming Interface for the Moscow Exchange([MOEX](https://iss.moex.com/iss/reference/)) ISS(Informational & Statistical Server) on Golang 
 
 Under active development, pls, do not use it  
 Находится в разработке, не стоит использовать
