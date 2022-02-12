@@ -29,17 +29,24 @@ type StatRequestOptions struct {
 	BoardId            []string       // `boardid` query parameter in url.URL
 }
 
-//StatReqOptionsBuilder represents a builder of StatRequestOptions struct
+// StatReqOptionsBuilder represents a builder of StatRequestOptions struct
 type StatReqOptionsBuilder struct {
 	options *StatRequestOptions
 }
 
-//NewStatReqOptionsBuilder is a constructor of StatReqOptionsBuilder
+// NewStatReqOptionsBuilder is a constructor of StatReqOptionsBuilder
 func NewStatReqOptionsBuilder() *StatReqOptionsBuilder {
 	return &StatReqOptionsBuilder{options: &StatRequestOptions{}}
 }
 
-//Build builds StatRequestOptions from StatReqOptionsBuilder
+// Build builds StatRequestOptions from StatReqOptionsBuilder
 func (b *StatReqOptionsBuilder) Build() *StatRequestOptions {
 	return b.options
+}
+
+// TypeTradingSession sets a type of trading session parameter to a request
+// It allows to show data only for the required session.
+func (b *StatReqOptionsBuilder) TypeTradingSession(ts TradingSession) *StatReqOptionsBuilder {
+	b.options.TradingSessionType = ts
+	return b
 }

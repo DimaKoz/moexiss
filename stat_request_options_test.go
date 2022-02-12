@@ -45,3 +45,13 @@ func TestStatReqOptionsBuilder_Build(t *testing.T) {
 		t.Fatalf("Error: expecting `%v` StatRequestOptions \ngot `%v` StatRequestOptions \ninstead", expected, got)
 	}
 }
+
+func TestStatReqOptionsBuilder_TypeTradingSession(t *testing.T) {
+	expectStruct := StatRequestOptions{TradingSessionType: TradingSessionMain}
+	bld := NewStatReqOptionsBuilder()
+	bld.TypeTradingSession(TradingSessionMain)
+
+	if got, expected := *bld.Build(), expectStruct; !compareStatRequestOptions(expected, got) {
+		t.Fatalf("Error: expecting `%v` StatRequestOptions \ngot `%v` StatRequestOptions \ninstead", expected, got)
+	}
+}
