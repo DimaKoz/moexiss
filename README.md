@@ -19,6 +19,16 @@ client := moexiss.NewClient(nil)
 turnovers, err := client.Turnovers.Turnovers(context.Background(), nil)
 ```
 
+### Getting ISS reference ###
+
+Getting initial ISS reference:
+
+```go
+client := moexiss.NewClient(nil)
+
+result, err := client.Index.List(context.Background(), nil)
+```
+
 ## Использование ##
 
 Создайте новый MOEX ISS клиент, а затем используйте различные сервисы клиента 
@@ -30,4 +40,15 @@ client := moexiss.NewClient(nil)
 
 // Получить сводные обороты по рынкам.
 turnovers, err := client.Turnovers.Turnovers(context.Background(), nil)
+```
+
+
+### Получение ISS справочников ###
+
+Получить глобальные справочники ISS:
+
+```go
+client := moexiss.NewClient(nil)
+
+result, err := client.Index.List(context.Background(), nil)
 ```
