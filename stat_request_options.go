@@ -19,3 +19,27 @@ const (
 func (ts TradingSession) String() string {
 	return strconv.Itoa(int(ts))
 }
+
+// StatRequestOptions contains options which can be used as arguments
+// for building requests to get intermediate day summary.
+// MoEx ISS API docs: https://iss.moex.com/iss/reference/823
+type StatRequestOptions struct {
+	TradingSessionType TradingSession // `tradingsession` query parameter in url.URL
+	TickerIds          []string       // `securities` query parameter in url.URL
+	BoardId            []string       // `boardid` query parameter in url.URL
+}
+
+//StatReqOptionsBuilder represents a builder of StatRequestOptions struct
+type StatReqOptionsBuilder struct {
+	options *StatRequestOptions
+}
+
+//NewStatReqOptionsBuilder is a constructor of StatReqOptionsBuilder
+func NewStatReqOptionsBuilder() *StatReqOptionsBuilder {
+	return &StatReqOptionsBuilder{options: &StatRequestOptions{}}
+}
+
+//Build builds StatRequestOptions from StatReqOptionsBuilder
+func (b *StatReqOptionsBuilder) Build() *StatRequestOptions {
+	return b.options
+}
