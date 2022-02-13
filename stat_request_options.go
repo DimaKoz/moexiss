@@ -50,3 +50,19 @@ func (b *StatReqOptionsBuilder) TypeTradingSession(ts TradingSession) *StatReqOp
 	b.options.TradingSessionType = ts
 	return b
 }
+
+// AddTicker adds a ticker to a request
+// It allows to show data only for the required tickers.
+// No more than 10 tickers.
+func (b *StatReqOptionsBuilder) AddTicker(ticker string) *StatReqOptionsBuilder {
+	b.options.TickerIds = append(b.options.TickerIds, ticker)
+	return b
+}
+
+// AddBoard adds a board to a request
+// Filter the output by trading mode.
+// No more than 10 boards.
+func (b *StatReqOptionsBuilder) AddBoard(boardId string) *StatReqOptionsBuilder {
+	b.options.BoardId = append(b.options.BoardId, boardId)
+	return b
+}
