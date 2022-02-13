@@ -2,16 +2,17 @@ package moexiss
 
 import "net/url"
 
-//Language represents a language of answers of MoEx ISS API
+// Language represents a language of answers of MoEx ISS API
 type Language string
 
 const (
+	// Possible values of Language type
 	LangUndefined Language = ""
 	LangEn        Language = "en"
 	LangRu        Language = "ru"
 )
 
-//string representations of Language values
+// string representations of Language values
 func (s Language) String() string {
 	switch s {
 	case LangEn:

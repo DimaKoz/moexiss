@@ -239,7 +239,6 @@ func TestIndicesKeyPathNotFound(t *testing.T) {
 func TestIndicesNilContextError(t *testing.T) {
 	c := NewClient(nil)
 	var ctx context.Context = nil
-	//lint:ignore SA1012 we have to check the right behaviour when nil passed instead of context, so it is not a bug
 	_, err := c.Indices.Indices(ctx, "SBERP", nil)
 	if got, expected := err, ErrNonNilContext; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)

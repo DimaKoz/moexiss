@@ -115,7 +115,7 @@ type Index struct {
 	SecurityCollections []SecurityCollection
 }
 
-func NewIndex() *Index {
+func newIndex() *Index {
 	result := &Index{
 		Engines:             make([]Engine, 0),
 		Markets:             make([]Market, 0),
@@ -151,7 +151,7 @@ func (s *IndexService) List(ctx context.Context, opt *IndexRequestOptions) (*Ind
 	if err != nil {
 		return nil, err
 	}
-	index := NewIndex()
+	index := newIndex()
 	err = parseIndexResponse(b.Bytes(), index)
 	if err != nil {
 		return nil, err
@@ -176,10 +176,9 @@ func parseIndexResponse(byteData []byte, index *Index) error {
 		if err != nil {
 			if err != jsonparser.KeyPathNotFoundError {
 				return err
-			} else {
-				log.Println(err.Error(), "for the key:", key)
-				continue
 			}
+			log.Println(err.Error(), "for the key:", key)
+			continue
 		}
 		if dataType != jsonparser.Object {
 			return ErrUnexpectedDataType

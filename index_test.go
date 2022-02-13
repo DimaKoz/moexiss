@@ -193,7 +193,7 @@ func TestIndexParseEngines(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	err := parseEngines([]byte(incomeJson), index)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
@@ -216,7 +216,7 @@ func TestIndexParseMarkets(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	err := parseMarkets([]byte(incomeJson), index)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
@@ -235,7 +235,7 @@ func TestIndexParseBoards(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	err := parseBoards([]byte(incomeJson), index)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
@@ -252,7 +252,7 @@ func TestIndexParseBoardsError(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	if got, expected := parseBoards([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -265,7 +265,7 @@ func TestIndexParseEnginesError(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	if got, expected := parseEngines([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -278,7 +278,7 @@ func TestIndexParseMarketsError(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	if got, expected := parseMarkets([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -291,7 +291,7 @@ func TestIndexParseMarketsUnknownValueTypeError(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	if got, expected := parseMarkets([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -304,7 +304,7 @@ func TestIndexParseEnginesUnknownValueTypeError(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	if got, expected := parseEngines([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -317,7 +317,7 @@ func TestIndexParseBoardsUnknownValueTypeError(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	if got, expected := parseBoards([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -333,7 +333,7 @@ func TestIndexParseBoardGroups(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	err := parseBoardGroups([]byte(incomeJson), index)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
@@ -350,7 +350,7 @@ func TestIndexParseBoardGroupsMalformedArrayError(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	if got, expected := parseBoardGroups([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -363,7 +363,7 @@ func TestIndexParseBoardGroupsUnknownValueTypeError(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	if got, expected := parseBoardGroups([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -383,7 +383,7 @@ func TestIndexParseDurations(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	err := parseDurations([]byte(incomeJson), index)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
@@ -400,7 +400,7 @@ func TestIndexParseDurationsMalformedArrayError(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	if got, expected := parseDurations([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -413,7 +413,7 @@ func TestIndexParseDurationsUnknownValueTypeError(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	if got, expected := parseDurations([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -433,7 +433,7 @@ func TestIndexParseSecurityTypes(t *testing.T) {
 		Engine:            Engine{GeneralFields{Id: 1, Name: "stock", Title: "Фондовый рынок и рынок депозитов"}},
 		SecurityGroupName: "stock_shares",
 	}
-	var index = NewIndex()
+	var index = newIndex()
 	err := parseSecurityTypes([]byte(incomeJson), index)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
@@ -453,7 +453,7 @@ func TestIndexParseSecurityTypesMalformedArrayError(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	if got, expected := parseSecurityTypes([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -466,7 +466,7 @@ func TestIndexParseSecurityTypesUnknownValueTypeError(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	if got, expected := parseSecurityTypes([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -486,7 +486,7 @@ func TestIndexParseSecurityGroups(t *testing.T) {
 		GeneralFields: GeneralFields{Id: 22, Name: "stock_mortgage", Title: "Ипотечный сертификат"},
 		IsHidden:      true,
 	}
-	var index = NewIndex()
+	var index = newIndex()
 	err := parseSecurityGroups([]byte(incomeJson), index)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
@@ -506,7 +506,7 @@ func TestIndexParseSecurityGroupsMalformedArrayError(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	if got, expected := parseSecurityGroups([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -519,7 +519,7 @@ func TestIndexParseSecurityGroupsUnknownValueTypeError(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	if got, expected := parseSecurityGroups([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -538,7 +538,7 @@ func TestIndexParseSecurityCollections(t *testing.T) {
 		GeneralFields:   GeneralFields{Id: 72, Name: "stock_index_all", Title: "Все индексы"},
 		SecurityGroupId: 12,
 	}
-	var index = NewIndex()
+	var index = newIndex()
 	err := parseSecurityCollections([]byte(incomeJson), index)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
@@ -558,7 +558,7 @@ func TestIndexParseSecurityCollectionsMalformedArrayError(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	if got, expected := parseSecurityCollections([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -571,7 +571,7 @@ func TestIndexParseSecurityCollectionsUnknownValueTypeError(t *testing.T) {
 	]
 }
 	`
-	var index = NewIndex()
+	var index = newIndex()
 	if got, expected := parseSecurityCollections([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -647,7 +647,6 @@ func TestGetIndexListKeyPathNotFound(t *testing.T) {
 func TestGetIndexListNilContextError(t *testing.T) {
 	c := NewClient(nil)
 	var ctx context.Context = nil
-	//lint:ignore SA1012 we have to check the right behaviour when nil passed instead of context, so it is not a bug
 	_, err := c.Index.List(ctx, nil)
 	if got, expected := err, ErrNonNilContext; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
