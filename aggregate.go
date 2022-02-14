@@ -92,8 +92,8 @@ func (a *AggregateService) getUrl(security string, opt *AggregateRequestOptions)
 	url, _ := a.client.BaseURL.Parse("securities")
 
 	url.Path = path.Join(url.Path, security, aggregatesPartsUrl)
-	gotUrl := addAggregateRequestOptions(url, opt)
-	return gotUrl.String(), nil
+	gotURL := addAggregateRequestOptions(url, opt)
+	return gotURL.String(), nil
 }
 
 func parseAggregateResponse(byteData []byte, aggregatesResponse *AggregatesResponse) error {

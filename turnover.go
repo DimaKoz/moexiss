@@ -65,8 +65,8 @@ func (s *TurnoverService) Turnovers(ctx context.Context, opt *TurnoverRequestOpt
 //opt *TurnoverRequestOptions can be nil, it is safe
 func (s *TurnoverService) getUrl(opt *TurnoverRequestOptions, onlyBlock turnoverBlock) string {
 	url, _ := s.client.BaseURL.Parse(turnoverPartsUrl)
-	gotUrl := addTurnoverRequestOptions(url, opt, onlyBlock)
-	return gotUrl.String()
+	gotURL := addTurnoverRequestOptions(url, opt, onlyBlock)
+	return gotURL.String()
 }
 
 func parseTurnoverResponse(byteData []byte, turnovers *[]Turnover) error {

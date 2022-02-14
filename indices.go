@@ -76,8 +76,8 @@ func (i *IndicesService) getUrl(security string, opt *IndicesRequestOptions) (st
 	url, _ := i.client.BaseURL.Parse("securities")
 
 	url.Path = path.Join(url.Path, security, indicesPartsUrl)
-	gotUrl := addIndicesRequestOptions(url, opt)
-	return gotUrl.String(), nil
+	gotURL := addIndicesRequestOptions(url, opt)
+	return gotURL.String(), nil
 }
 
 func parseIndicesResponse(byteData []byte, indicesResponse *IndicesResponse) error {

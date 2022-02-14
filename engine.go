@@ -1,8 +1,9 @@
 package moexiss
 
-//EngineName represents the known Engine names of MoEx ISS API
+// EngineName represents the known Engine names of MoEx ISS API
 type EngineName string
 
+// A section of EngineName values
 const (
 	EngineUndefined     EngineName = ""
 	EngineStock         EngineName = "stock"

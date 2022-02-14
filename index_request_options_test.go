@@ -205,7 +205,7 @@ func TestAddIndexRequestOptions(t *testing.T) {
 		Build()
 	c := NewClient(nil)
 	url, _ := c.BaseURL.Parse(indexPartsUrl)
-	gotUrl := addIndexRequestOptions(url, income)
+	gotURL := addIndexRequestOptions(url, income)
 
 	expected := `https://iss.moex.com/iss/index.json?` +
 		`boardgroups.engine=currency&boardgroups.is_traded=1&boardgroups.lang=en&` +
@@ -218,7 +218,7 @@ func TestAddIndexRequestOptions(t *testing.T) {
 		`securitygroups.hide_inactive=1&securitygroups.lang=ru&securitygroups.trade_engine=stock&` +
 		`securitytypes.engine=futures&securitytypes.lang=en`
 
-	if got := gotUrl.String(); got != expected {
+	if got := gotURL.String(); got != expected {
 		t.Fatalf("Error: expecting url :\n`%s`  \ngot \n`%s` \ninstead", expected, got)
 	}
 }
@@ -227,10 +227,10 @@ func TestAddIndexRequestOptionsNilOptions(t *testing.T) {
 	var income *IndexRequestOptions = nil
 	c := NewClient(nil)
 	url, _ := c.BaseURL.Parse("index.json")
-	gotUrl := addIndexRequestOptions(url, income)
+	gotURL := addIndexRequestOptions(url, income)
 
 	expected := `https://iss.moex.com/iss/index.json`
-	if got := gotUrl.String(); got != expected {
+	if got := gotURL.String(); got != expected {
 		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
 	}
 }

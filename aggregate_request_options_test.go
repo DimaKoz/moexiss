@@ -51,10 +51,10 @@ func TestAddAggregateRequestOptionsNilOptions(t *testing.T) {
 	var income *AggregateRequestOptions = nil
 	c := NewClient(nil)
 	url, _ := c.BaseURL.Parse("aggregates.json")
-	gotUrl := addAggregateRequestOptions(url, income)
+	gotURL := addAggregateRequestOptions(url, income)
 
 	expected := `https://iss.moex.com/iss/aggregates.json?iss.json=extended&iss.meta=off`
-	if got := gotUrl.String(); got != expected {
+	if got := gotURL.String(); got != expected {
 		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
 	}
 }
@@ -66,10 +66,10 @@ func TestAddAggregateRequestOptions(t *testing.T) {
 		Build()
 	c := NewClient(nil)
 	url, _ := c.BaseURL.Parse("aggregates.json")
-	gotUrl := addAggregateRequestOptions(url, incomeOptions)
+	gotURL := addAggregateRequestOptions(url, incomeOptions)
 
 	expected := `https://iss.moex.com/iss/aggregates.json?date=2021-02-24&iss.json=extended&iss.meta=off&lang=en`
-	if got := gotUrl.String(); got != expected {
+	if got := gotURL.String(); got != expected {
 		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
 	}
 }

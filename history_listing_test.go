@@ -12,33 +12,33 @@ import (
 
 func TestHistoryListingGetUrl(t *testing.T) {
 	c := NewClient(nil)
-	gotUrl, err := c.HistoryListing.getUrlListing(EngineStock, "shares", nil)
+	gotURL, err := c.HistoryListing.getUrlListing(EngineStock, "shares", nil)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
-	if got, expected := gotUrl, `https://iss.moex.com/iss/history/engines/stock/markets/shares/listing.json?iss.json=extended&iss.meta=off`; got != expected {
+	if got, expected := gotURL, `https://iss.moex.com/iss/history/engines/stock/markets/shares/listing.json?iss.json=extended&iss.meta=off`; got != expected {
 		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
 	}
 }
 
 func TestHistoryListingGetUrlListingByBoard(t *testing.T) {
 	c := NewClient(nil)
-	gotUrl, err := c.HistoryListing.getUrlListingByBoard(EngineStock, "shares", "TQTD", nil)
+	gotURL, err := c.HistoryListing.getUrlListingByBoard(EngineStock, "shares", "TQTD", nil)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
-	if got, expected := gotUrl, `https://iss.moex.com/iss/history/engines/stock/markets/shares/boards/TQTD/listing.json?iss.json=extended&iss.meta=off`; got != expected {
+	if got, expected := gotURL, `https://iss.moex.com/iss/history/engines/stock/markets/shares/boards/TQTD/listing.json?iss.json=extended&iss.meta=off`; got != expected {
 		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
 	}
 }
 
 func TestHistoryListingGetUrlListingByBoardGroup(t *testing.T) {
 	c := NewClient(nil)
-	gotUrl, err := c.HistoryListing.getUrlListingByBoardGroup(EngineStock, "shares", "6", nil)
+	gotURL, err := c.HistoryListing.getUrlListingByBoardGroup(EngineStock, "shares", "6", nil)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
-	if got, expected := gotUrl, `https://iss.moex.com/iss/history/engines/stock/markets/shares/boardgroups/6/listing.json?iss.json=extended&iss.meta=off`; got != expected {
+	if got, expected := gotURL, `https://iss.moex.com/iss/history/engines/stock/markets/shares/boardgroups/6/listing.json?iss.json=extended&iss.meta=off`; got != expected {
 		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
 	}
 }
@@ -101,11 +101,11 @@ func TestParseListingItem(t *testing.T) {
 		From:      "2014-06-09",
 		Till:      "2022-02-04",
 	}
-	var incomeJson = `
+	var incomeJSON = `
       {"SECID": "BSPB", "SHORTNAME": "БСП ао", "NAME": "ПАО \"Банк \"Санкт-Петербург\" ао", "BOARDID": "TQBR", "decimals": 2, "history_from": "2014-06-09", "history_till": "2022-02-04"}
 `
 	listingItem := Listing{}
-	err := parseListingItem([]byte(incomeJson), &listingItem)
+	err := parseListingItem([]byte(incomeJSON), &listingItem)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
@@ -116,7 +116,7 @@ func TestParseListingItem(t *testing.T) {
 
 func TestParseListingItemErrCases(t *testing.T) {
 	type Case struct {
-		incomeJson string
+		incomeJSON string
 	}
 	cases := []Case{
 		// no SECID
@@ -137,7 +137,7 @@ func TestParseListingItemErrCases(t *testing.T) {
 
 	for i, c := range cases {
 		listing := Listing{}
-		if got, expected := parseListingItem([]byte(c.incomeJson), &listing), jsonparser.KeyPathNotFoundError; got != expected {
+		if got, expected := parseListingItem([]byte(c.incomeJSON), &listing), jsonparser.KeyPathNotFoundError; got != expected {
 			t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead in %d case", expected, got, i)
 		}
 
@@ -146,7 +146,7 @@ func TestParseListingItemErrCases(t *testing.T) {
 
 func TestParseListing(t *testing.T) {
 
-	var incomeJson = `
+	var incomeJSON = `
 [
       {"SECID": "CHMF", "SHORTNAME": "СевСт-ао", "NAME": "Северсталь (ПАО)ао", "BOARDID": "EQCC", "decimals": 1, "history_from": "2010-02-15", "history_till": "2011-05-27"},
       {"SECID": "CHMF", "SHORTNAME": "СевСт-ао", "NAME": "Северсталь (ПАО)ао", "BOARDID": "TQDP", "decimals": 1, "history_from": null, "history_till": null},
@@ -157,7 +157,7 @@ func TestParseListing(t *testing.T) {
 ]
 `
 	listing := make([]Listing, 0)
-	err := parseListing([]byte(incomeJson), &listing)
+	err := parseListing([]byte(incomeJSON), &listing)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
@@ -168,19 +168,19 @@ func TestParseListing(t *testing.T) {
 
 func TestParseListingUnexpectedDataTypeError(t *testing.T) {
 
-	var incomeJson = `
+	var incomeJSON = `
 [
       []
 ]`
 	listing := make([]Listing, 0)
-	if got, expected := parseListing([]byte(incomeJson), &listing), ErrUnexpectedDataType; got != expected {
+	if got, expected := parseListing([]byte(incomeJSON), &listing), ErrUnexpectedDataType; got != expected {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
 
 func TestParseListingError(t *testing.T) {
 
-	var incomeJson = `
+	var incomeJSON = `
 [
       {"SECID": "CHMF", "SHORTNAME": "СевСт-ао", "NAME": "Северсталь (ПАО)ао", "BOARDID": "EQCC", "decimals": 1, "history_from": "2010-02-15", "history_till": "2011-05-27"},
       {"SECID": "CHMF", "SHORTNAME1": "СевСт-ао", "NAME": "Северсталь (ПАО)ао", "BOARDID": "TQDP", "decimals": 1, "history_from": null, "history_till": null},
@@ -190,14 +190,14 @@ func TestParseListingError(t *testing.T) {
       {"SECID": "CHMZ", "SHORTNAME": "ЧМЗ ао", "NAME": "Чусовской мет.завод ОАО ао", "BOARDID": "EQNE", "decimals": 2, "history_from": "2011-12-08", "history_till": "2012-07-09"}
 ]`
 	listing := make([]Listing, 0)
-	if got, expected := parseListing([]byte(incomeJson), &listing), jsonparser.KeyPathNotFoundError; got != expected {
+	if got, expected := parseListing([]byte(incomeJSON), &listing), jsonparser.KeyPathNotFoundError; got != expected {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
 
 func TestParseListingResponse(t *testing.T) {
 
-	var incomeJson = `
+	var incomeJSON = `
 [
   {"charsetinfo": {"name": "utf-8"}},
   {
@@ -231,7 +231,7 @@ func TestParseListingResponse(t *testing.T) {
 	}
 	listingR := ListingResponse{}
 	var err error = nil
-	if got, expected := parseListingResponse([]byte(incomeJson), &listingR), err; got != expected {
+	if got, expected := parseListingResponse([]byte(incomeJSON), &listingR), err; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 	if got, expected := len(listingR.Listing), len(expectedResponse.Listing); got != expected {
@@ -246,16 +246,16 @@ func TestParseListingResponse(t *testing.T) {
 }
 
 func TestParseListingResponseNilError(t *testing.T) {
-	var incomeJson = ``
+	var incomeJSON = ``
 	var listingR *ListingResponse = nil
 
-	if got, expected := parseListingResponse([]byte(incomeJson), listingR), ErrNilPointer; got != expected {
+	if got, expected := parseListingResponse([]byte(incomeJSON), listingR), ErrNilPointer; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
 
 func TestParseListingResponseError(t *testing.T) {
-	var incomeJson = `
+	var incomeJSON = `
 [
   {"charsetinfo": {"name": "utf-8"}},
   {
@@ -267,13 +267,13 @@ func TestParseListingResponseError(t *testing.T) {
 `
 	var listingR = &ListingResponse{}
 
-	if got, expected := parseListingResponse([]byte(incomeJson), listingR), jsonparser.KeyPathNotFoundError; got != expected {
+	if got, expected := parseListingResponse([]byte(incomeJSON), listingR), jsonparser.KeyPathNotFoundError; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
 
 func TestParseListingResponseEmpty(t *testing.T) {
-	var incomeJson = `
+	var incomeJSON = `
 [
 {"charsetinfo": {"name": "utf-8"}},
 {
@@ -283,7 +283,7 @@ func TestParseListingResponseEmpty(t *testing.T) {
 `
 	var listingR = &ListingResponse{}
 
-	if got, expected := parseListingResponse([]byte(incomeJson), listingR), ErrEmptyServerResult; got != expected {
+	if got, expected := parseListingResponse([]byte(incomeJSON), listingR), ErrEmptyServerResult; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }

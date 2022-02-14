@@ -58,10 +58,10 @@ func TestAddHistoryListingRequestOptionsNil(t *testing.T) {
 	var income *HistoryListingRequestOptions = nil
 	c := NewClient(nil)
 	url, _ := c.BaseURL.Parse("test.json")
-	gotUrl := addHistoryListingRequestOptions(url, income)
+	gotURL := addHistoryListingRequestOptions(url, income)
 
 	expected := `https://iss.moex.com/iss/test.json?iss.json=extended&iss.meta=off`
-	if got := gotUrl.String(); got != expected {
+	if got := gotURL.String(); got != expected {
 		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
 	}
 }
@@ -75,10 +75,10 @@ func TestAddHistoryListingRequestOptions(t *testing.T) {
 
 	c := NewClient(nil)
 	url, _ := c.BaseURL.Parse("test.json")
-	gotUrl := addHistoryListingRequestOptions(url, income)
+	gotURL := addHistoryListingRequestOptions(url, income)
 
 	expected := `https://iss.moex.com/iss/test.json?iss.json=extended&iss.meta=off&lang=en&start=42&status=nottraded`
-	if got := gotUrl.String(); got != expected {
+	if got := gotURL.String(); got != expected {
 		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
 	}
 }

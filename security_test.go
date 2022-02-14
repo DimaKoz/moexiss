@@ -138,7 +138,7 @@ func TestParseSecuritiesWrongTypeJson(t *testing.T) {
 }
 
 func TestIndexParseSecurityMalformedArrayError(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 		"data": [
 		[5444,
 	]
@@ -146,13 +146,13 @@ func TestIndexParseSecurityMalformedArrayError(t *testing.T) {
 	`
 
 	securities := make([]Security, 0, 2)
-	if got, expected := parseSecurities(&securities, []byte(incomeJson)), jsonparser.MalformedArrayError; got == nil || got != expected {
+	if got, expected := parseSecurities(&securities, []byte(incomeJSON)), jsonparser.MalformedArrayError; got == nil || got != expected {
 		t.Fatalf("Error: expecting:\n'%v'\ngot:\n'%v'\ninstead", expected, got)
 	}
 }
 
 func TestIndexParseSecurityUnknownValueTypeError(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 		"data": [
 		[5444,]
 	]
@@ -160,7 +160,7 @@ func TestIndexParseSecurityUnknownValueTypeError(t *testing.T) {
 	`
 
 	securities := make([]Security, 0, 2)
-	if got, expected := parseSecurities(&securities, []byte(incomeJson)), jsonparser.UnknownValueTypeError; got == nil || got != expected {
+	if got, expected := parseSecurities(&securities, []byte(incomeJSON)), jsonparser.UnknownValueTypeError; got == nil || got != expected {
 		t.Fatalf("Error: expecting:\n'%v'\ngot:\n'%v'\ninstead", expected, got)
 	}
 }

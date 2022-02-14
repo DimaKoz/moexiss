@@ -6,8 +6,8 @@ import (
 	"unicode/utf8"
 )
 
+// A section of general errors
 var (
-	// General errors
 	ErrNonNilContext          = errors.New("context must be non-nil")
 	ErrUnexpectedDataType     = errors.New("unexpected data type")
 	ErrNilPointer             = errors.New("nil pointer error")

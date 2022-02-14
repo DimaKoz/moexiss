@@ -27,6 +27,7 @@ const (
 	libraryUserAgent       = libraryUserAgentPrefix + libraryName + "/" + libraryVersion
 )
 
+// Response represent a response of BareDo an Do functions
 type Response struct {
 	*http.Response
 }
@@ -35,6 +36,7 @@ type service struct {
 	client *Client
 }
 
+// Client structure represents a client of MoEx ISS API
 type Client struct {
 	client *http.Client
 
@@ -54,6 +56,7 @@ type Client struct {
 	HistoryListing *HistoryListingService
 }
 
+// NewClient creates an instance of Client
 func NewClient(httpClient *http.Client) *Client {
 	if httpClient == nil {
 		httpClient = &http.Client{}

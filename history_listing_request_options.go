@@ -8,6 +8,7 @@ import (
 // HistoryListingTradingStatus represents a type of trading status for listing of MoEx ISS API
 type HistoryListingTradingStatus string
 
+// A section of HistoryListingTradingStatus values
 const (
 	ListingTradingStatusUndefined HistoryListingTradingStatus = ""
 	ListingTradingStatusAll       HistoryListingTradingStatus = "all"

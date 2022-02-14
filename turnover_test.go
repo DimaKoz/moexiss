@@ -11,7 +11,7 @@ import (
 )
 
 func TestParseTurnoverResponse(t *testing.T) {
-	var incomeJson = `[
+	var incomeJSON = `[
 {"charsetinfo": {"name": "utf-8"}},
   {
     "turnovers": [
@@ -21,7 +21,7 @@ func TestParseTurnoverResponse(t *testing.T) {
 `
 	turnovers := make([]Turnover, 0)
 	var err error = nil
-	if got, expected := parseTurnoverResponse([]byte(incomeJson), &turnovers), err; got != expected {
+	if got, expected := parseTurnoverResponse([]byte(incomeJSON), &turnovers), err; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 	if got, expected := len(turnovers), 1; got != expected {
@@ -31,7 +31,7 @@ func TestParseTurnoverResponse(t *testing.T) {
 }
 
 func TestParseTurnoverResponseError(t *testing.T) {
-	var incomeJson = `[
+	var incomeJSON = `[
 {"charsetinfo": {"name": "utf-8"}},
   {
     "turnovers": [
@@ -41,14 +41,14 @@ func TestParseTurnoverResponseError(t *testing.T) {
 
 `
 	turnovers := make([]Turnover, 0)
-	if got, expected := parseTurnoverResponse([]byte(incomeJson), &turnovers), jsonparser.KeyPathNotFoundError; got != expected {
+	if got, expected := parseTurnoverResponse([]byte(incomeJSON), &turnovers), jsonparser.KeyPathNotFoundError; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 
 }
 
 func TestParseTurnoverResponseNilError(t *testing.T) {
-	var incomeJson = `[
+	var incomeJSON = `[
 {"charsetinfo": {"name": "utf-8"}},
   {
     "turnovers": [
@@ -58,14 +58,14 @@ func TestParseTurnoverResponseNilError(t *testing.T) {
 `
 	var turnovers *[]Turnover = nil
 
-	if got, expected := parseTurnoverResponse([]byte(incomeJson), turnovers), ErrNilPointer; got != expected {
+	if got, expected := parseTurnoverResponse([]byte(incomeJSON), turnovers), ErrNilPointer; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
 
 func TestParseTurnovers(t *testing.T) {
 
-	var incomeJson = `
+	var incomeJSON = `
 [
       {"NAME": "stock", "ID": 1, "VALTODAY": 1988404.90786, "VALTODAY_USD": 26876.4019428, "NUMTRADES": 2214956, "UPDATETIME": "2021-02-24 23:50:29", "TITLE": "Securities Market"},
       {"NAME": "currency", "ID": 3, "VALTODAY": 1517369.23013, "VALTODAY_USD": 20509.6181183, "NUMTRADES": 481765, "UPDATETIME": "2021-02-24 23:49:59", "TITLE": "FX Market"},
@@ -74,7 +74,7 @@ func TestParseTurnovers(t *testing.T) {
       {"NAME": "TOTALS", "ID": null, "VALTODAY": 4157103.05631, "VALTODAY_USD": 56189.7489881, "NUMTRADES": 4315419, "UPDATETIME": "2021-02-24 23:50:29", "TITLE": "Total on Moscow Exchange"}]}
 ]`
 	turnovers := make([]Turnover, 0)
-	err := parseTurnovers([]byte(incomeJson), &turnovers)
+	err := parseTurnovers([]byte(incomeJSON), &turnovers)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
@@ -85,24 +85,24 @@ func TestParseTurnovers(t *testing.T) {
 
 func TestParseTurnoversUnexpectedDataTypeError(t *testing.T) {
 
-	var incomeJson = `
+	var incomeJSON = `
 [
       []
 ]`
 	turnovers := make([]Turnover, 0)
-	if got, expected := parseTurnovers([]byte(incomeJson), &turnovers), ErrUnexpectedDataType; got != expected {
+	if got, expected := parseTurnovers([]byte(incomeJSON), &turnovers), ErrUnexpectedDataType; got != expected {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
 
 func TestParseTurnoversError(t *testing.T) {
 
-	var incomeJson = `
+	var incomeJSON = `
 [
       {"NAME": "commodity","ID": "5", "VALTODAY": null, "VALTODAY_USD": null, "NUMTRADES": null, "UPDATETIME": "2021-02-24 09:30:00"}
 ]`
 	turnovers := make([]Turnover, 0)
-	if got, expected := parseTurnovers([]byte(incomeJson), &turnovers), jsonparser.KeyPathNotFoundError; got != expected {
+	if got, expected := parseTurnovers([]byte(incomeJSON), &turnovers), jsonparser.KeyPathNotFoundError; got != expected {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
@@ -117,11 +117,11 @@ func TestParseTurnover(t *testing.T) {
 		UpdateTime:  "2021-02-24 23:50:29",
 		Title:       "Securities Market",
 	}
-	var incomeJson = `
+	var incomeJSON = `
       {"NAME": "stock", "ID": 1, "VALTODAY": 1988404.90786, "VALTODAY_USD": 26876.4019428, "NUMTRADES": 2214956, "UPDATETIME": "2021-02-24 23:50:29", "TITLE": "Securities Market"}
 `
 	turnover := Turnover{}
-	err := parseTurnover([]byte(incomeJson), &turnover)
+	err := parseTurnover([]byte(incomeJSON), &turnover)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
@@ -140,11 +140,11 @@ func TestParseTurnoverNilId(t *testing.T) {
 		UpdateTime:  "2021-02-24 23:50:29",
 		Title:       "Total on Moscow Exchange",
 	}
-	var incomeJson = `
+	var incomeJSON = `
       {"NAME": "TOTALS", "ID": null, "VALTODAY": 1988404.90786, "VALTODAY_USD": 26876.4019428, "NUMTRADES": 2214956, "UPDATETIME": "2021-02-24 23:50:29", "TITLE": "Total on Moscow Exchange"}
 `
 	turnover := Turnover{}
-	err := parseTurnover([]byte(incomeJson), &turnover)
+	err := parseTurnover([]byte(incomeJSON), &turnover)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
@@ -163,10 +163,10 @@ func TestParseTurnoverCommodity(t *testing.T) {
 		UpdateTime:  "2021-02-24 09:30:00",
 		Title:       "Commodities Market",
 	}
-	var incomeJson = `
+	var incomeJSON = `
 {"NAME": "commodity", "ID": 5, "VALTODAY": null, "VALTODAY_USD": null, "NUMTRADES": null, "UPDATETIME": "2021-02-24 09:30:00", "TITLE": "Commodities Market"}`
 	turnover := Turnover{}
-	err := parseTurnover([]byte(incomeJson), &turnover)
+	err := parseTurnover([]byte(incomeJSON), &turnover)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
@@ -177,7 +177,7 @@ func TestParseTurnoverCommodity(t *testing.T) {
 
 func TestParseTurnoverErrCases(t *testing.T) {
 	type Case struct {
-		incomeJson string
+		incomeJSON string
 		expected   error
 	}
 	cases := []Case{
@@ -213,7 +213,7 @@ func TestParseTurnoverErrCases(t *testing.T) {
 
 	for i, c := range cases {
 		turnover := Turnover{}
-		if got, expected := parseTurnover([]byte(c.incomeJson), &turnover), c.expected; got != expected {
+		if got, expected := parseTurnover([]byte(c.incomeJSON), &turnover), c.expected; got != expected {
 			t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead in %d case", expected, got, i)
 		}
 

@@ -11,7 +11,7 @@ import (
 )
 
 func TestParseAggregateResponse(t *testing.T) {
-	var incomeJson = `
+	var incomeJSON = `
 [
 {"charsetinfo": {"name": "utf-8"}},
 {
@@ -50,7 +50,7 @@ func TestParseAggregateResponse(t *testing.T) {
 	}
 	aggregatesR := AggregatesResponse{}
 	var err error = nil
-	if got, expected := parseAggregateResponse([]byte(incomeJson), &aggregatesR), err; got != expected {
+	if got, expected := parseAggregateResponse([]byte(incomeJSON), &aggregatesR), err; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 	if got, expected := len(aggregatesR.Aggregates), len(expectedResponse.Aggregates); got != expected {
@@ -71,16 +71,16 @@ func TestParseAggregateResponse(t *testing.T) {
 }
 
 func TestParseAggregateResponseNilError(t *testing.T) {
-	var incomeJson = ``
+	var incomeJSON = ``
 	var aggregatesResponse *AggregatesResponse = nil
 
-	if got, expected := parseAggregateResponse([]byte(incomeJson), aggregatesResponse), ErrNilPointer; got != expected {
+	if got, expected := parseAggregateResponse([]byte(incomeJSON), aggregatesResponse), ErrNilPointer; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
 
 func TestParseAggregateResponseError(t *testing.T) {
-	var incomeJson = `
+	var incomeJSON = `
 [
 {"charsetinfo": {"name": "utf-8"}},
 {
@@ -93,12 +93,12 @@ func TestParseAggregateResponseError(t *testing.T) {
 `
 	var aggregatesResponse = &AggregatesResponse{}
 
-	if got, expected := parseAggregateResponse([]byte(incomeJson), aggregatesResponse), jsonparser.KeyPathNotFoundError; got != expected {
+	if got, expected := parseAggregateResponse([]byte(incomeJSON), aggregatesResponse), jsonparser.KeyPathNotFoundError; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
 func TestParseAggregateResponseErrorBadDatesFrom(t *testing.T) {
-	var incomeJson = `
+	var incomeJSON = `
 [
 {"charsetinfo": {"name": "utf-8"}},
 {
@@ -110,13 +110,13 @@ func TestParseAggregateResponseErrorBadDatesFrom(t *testing.T) {
 `
 	var aggregatesResponse = &AggregatesResponse{}
 
-	if got, expected := parseAggregateResponse([]byte(incomeJson), aggregatesResponse), jsonparser.KeyPathNotFoundError; got != expected {
+	if got, expected := parseAggregateResponse([]byte(incomeJSON), aggregatesResponse), jsonparser.KeyPathNotFoundError; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
 
 func TestParseAggregateResponseDatesError(t *testing.T) {
-	var incomeJson = `
+	var incomeJSON = `
 [
 {"charsetinfo": {"name": "utf-8"}},
 {
@@ -129,13 +129,13 @@ func TestParseAggregateResponseDatesError(t *testing.T) {
 `
 	var aggregatesResponse = &AggregatesResponse{}
 
-	if got, expected := parseAggregateResponse([]byte(incomeJson), aggregatesResponse), jsonparser.KeyPathNotFoundError; got != expected {
+	if got, expected := parseAggregateResponse([]byte(incomeJSON), aggregatesResponse), jsonparser.KeyPathNotFoundError; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
 
 func TestParseAggregateResponseDatesWrongJsonObject(t *testing.T) {
-	var incomeJson = `
+	var incomeJSON = `
 [
 {"charsetinfo": {"name": "utf-8"}},
 {
@@ -147,7 +147,7 @@ func TestParseAggregateResponseDatesWrongJsonObject(t *testing.T) {
 `
 	var aggregatesResponse = &AggregatesResponse{}
 
-	if got, expected := parseAggregateResponse([]byte(incomeJson), aggregatesResponse), ErrUnexpectedDataType; got != expected {
+	if got, expected := parseAggregateResponse([]byte(incomeJSON), aggregatesResponse), ErrUnexpectedDataType; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
@@ -176,11 +176,11 @@ func TestParseAggregate(t *testing.T) {
 		NumberTrades: 144467,
 		UpdatedAt:    "2022-01-20 09:00:14",
 	}
-	var incomeJson = `
+	var incomeJSON = `
       {"market_name": "shares", "market_title": "Рынок акций", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": 9833418828.24, "volume": 42115503, "numtrades": 144467, "updated_at": "2022-01-20 09:00:14"}
 `
 	aggregate := Aggregate{}
-	err := parseAggregate([]byte(incomeJson), &aggregate)
+	err := parseAggregate([]byte(incomeJSON), &aggregate)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
@@ -191,7 +191,7 @@ func TestParseAggregate(t *testing.T) {
 
 func TestParseAggregateErrCases(t *testing.T) {
 	type Case struct {
-		incomeJson string
+		incomeJSON string
 		expected   error
 	}
 	cases := []Case{
@@ -235,7 +235,7 @@ func TestParseAggregateErrCases(t *testing.T) {
 
 	for i, c := range cases {
 		aggregate := Aggregate{}
-		if got, expected := parseAggregate([]byte(c.incomeJson), &aggregate), c.expected; got != expected {
+		if got, expected := parseAggregate([]byte(c.incomeJSON), &aggregate), c.expected; got != expected {
 			t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead in %d case", expected, got, i)
 		}
 
@@ -244,7 +244,7 @@ func TestParseAggregateErrCases(t *testing.T) {
 
 func TestParseAggregates(t *testing.T) {
 
-	var incomeJson = `
+	var incomeJSON = `
 [
       {"market_name": "shares", "market_title": "Рынок акций", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": 9833418828.24, "volume": 42115503, "numtrades": 144467, "updated_at": "2022-01-20 09:00:14"},
       {"market_name": "ndm", "market_title": "Режим переговорных сделок", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": 179995527.30, "volume": 751890, "numtrades": 3, "updated_at": "2022-01-20 09:00:14"},
@@ -254,7 +254,7 @@ func TestParseAggregates(t *testing.T) {
 ]
 `
 	aggregates := make([]Aggregate, 0)
-	err := parseAggregates([]byte(incomeJson), &aggregates)
+	err := parseAggregates([]byte(incomeJSON), &aggregates)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
@@ -265,24 +265,24 @@ func TestParseAggregates(t *testing.T) {
 
 func TestParseAggregatesUnexpectedDataTypeError(t *testing.T) {
 
-	var incomeJson = `
+	var incomeJSON = `
 [
       []
 ]`
 	aggregates := make([]Aggregate, 0)
-	if got, expected := parseAggregates([]byte(incomeJson), &aggregates), ErrUnexpectedDataType; got != expected {
+	if got, expected := parseAggregates([]byte(incomeJSON), &aggregates), ErrUnexpectedDataType; got != expected {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
 
 func TestParseAggregatesError(t *testing.T) {
 
-	var incomeJson = `
+	var incomeJSON = `
 [
       {"market_name1": "repo", "market_title": "Рынок сделок РЕПО", "engine": "stock", "tradedate": "2022-01-19", "secid": "SBERP", "value": 9397389429.44, "volume": 46971852, "numtrades": 3320, "updated_at": "2022-01-20 09:00:14"}
 ]`
 	aggregates := make([]Aggregate, 0)
-	if got, expected := parseAggregates([]byte(incomeJson), &aggregates), jsonparser.KeyPathNotFoundError; got != expected {
+	if got, expected := parseAggregates([]byte(incomeJSON), &aggregates), jsonparser.KeyPathNotFoundError; got != expected {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }

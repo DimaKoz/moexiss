@@ -8,8 +8,8 @@ import (
 // of MoEx ISS API
 type TradingSession uint8
 
+// These constants represent possible values of TradingSession
 const (
-	// These constants represent possible values of TradingSession
 	TradingSessionUndefined  TradingSession = 0
 	TradingSessionMain       TradingSession = 1
 	TradingSessionAdditional TradingSession = 2

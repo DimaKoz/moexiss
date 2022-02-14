@@ -147,8 +147,8 @@ func (hl *HistoryListingService) getUrlListing(engine EngineName, market string,
 	url, _ := hl.client.BaseURL.Parse("history/engines")
 
 	url.Path = path.Join(url.Path, engine.String(), "markets", market, "listing.json")
-	gotUrl := addHistoryListingRequestOptions(url, opt)
-	return gotUrl.String(), nil
+	gotURL := addHistoryListingRequestOptions(url, opt)
+	return gotURL.String(), nil
 }
 
 // getUrlListingByBoard provides an url to get security listing information for a given board
@@ -167,8 +167,8 @@ func (hl *HistoryListingService) getUrlListingByBoard(engine EngineName, market 
 	url, _ := hl.client.BaseURL.Parse("history/engines")
 
 	url.Path = path.Join(url.Path, engine.String(), "markets", market, "boards", boardId, "listing.json")
-	gotUrl := addHistoryListingRequestOptions(url, opt)
-	return gotUrl.String(), nil
+	gotURL := addHistoryListingRequestOptions(url, opt)
+	return gotURL.String(), nil
 }
 
 // getUrlListingByBoardGroup provides an url to get security listing information for a given boardgroup
@@ -187,8 +187,8 @@ func (hl *HistoryListingService) getUrlListingByBoardGroup(engine EngineName, ma
 	url, _ := hl.client.BaseURL.Parse("history/engines")
 
 	url.Path = path.Join(url.Path, engine.String(), "markets", market, "boardgroups", boardGroupId, "listing.json")
-	gotUrl := addHistoryListingRequestOptions(url, opt)
-	return gotUrl.String(), nil
+	gotURL := addHistoryListingRequestOptions(url, opt)
+	return gotURL.String(), nil
 }
 
 func parseListingResponse(byteData []byte, listingResponse *ListingResponse) error {

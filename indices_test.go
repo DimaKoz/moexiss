@@ -12,11 +12,11 @@ import (
 func TestIndicesGetUrl(t *testing.T) {
 	var income *IndicesRequestOptions = nil
 	c := NewClient(nil)
-	gotUrl, err := c.Indices.getUrl("sberp", income)
+	gotURL, err := c.Indices.getUrl("sberp", income)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
-	if got, expected := gotUrl, `https://iss.moex.com/iss/securities/sberp/indices.json?iss.json=extended&iss.meta=off`; got != expected {
+	if got, expected := gotURL, `https://iss.moex.com/iss/securities/sberp/indices.json?iss.json=extended&iss.meta=off`; got != expected {
 		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
 	}
 }
@@ -37,11 +37,11 @@ func TestParseIndicesItem(t *testing.T) {
 		From:      "2007-04-16",
 		Till:      "2022-01-26",
 	}
-	var incomeJson = `
+	var incomeJSON = `
       {"SECID": "IMOEX", "SHORTNAME": "Индекс МосБиржи", "FROM": "2007-04-16", "TILL": "2022-01-26"}
 `
 	indicesItem := Indices{}
-	err := parseIndicesItem([]byte(incomeJson), &indicesItem)
+	err := parseIndicesItem([]byte(incomeJSON), &indicesItem)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
@@ -52,7 +52,7 @@ func TestParseIndicesItem(t *testing.T) {
 
 func TestParseIndicesItemErrCases(t *testing.T) {
 	type Case struct {
-		incomeJson string
+		incomeJSON string
 	}
 	cases := []Case{
 		// no SECID
@@ -67,7 +67,7 @@ func TestParseIndicesItemErrCases(t *testing.T) {
 
 	for i, c := range cases {
 		indices := Indices{}
-		if got, expected := parseIndicesItem([]byte(c.incomeJson), &indices), jsonparser.KeyPathNotFoundError; got != expected {
+		if got, expected := parseIndicesItem([]byte(c.incomeJSON), &indices), jsonparser.KeyPathNotFoundError; got != expected {
 			t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead in %d case", expected, got, i)
 		}
 
@@ -76,7 +76,7 @@ func TestParseIndicesItemErrCases(t *testing.T) {
 
 func TestParseIndices(t *testing.T) {
 
-	var incomeJson = `
+	var incomeJSON = `
 [
       {"SECID": "IMOEX", "SHORTNAME": "Индекс МосБиржи", "FROM": "2007-04-16", "TILL": "2022-01-26"},
       {"SECID": "IMOEX2", "SHORTNAME": "Индекс МосБиржи (все сессии)", "FROM": "2020-06-22", "TILL": "2022-01-25"},
@@ -85,7 +85,7 @@ func TestParseIndices(t *testing.T) {
 ]
 `
 	indices := make([]Indices, 0)
-	err := parseIndices([]byte(incomeJson), &indices)
+	err := parseIndices([]byte(incomeJSON), &indices)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
@@ -96,32 +96,32 @@ func TestParseIndices(t *testing.T) {
 
 func TestParseIndicesUnexpectedDataTypeError(t *testing.T) {
 
-	var incomeJson = `
+	var incomeJSON = `
 [
       []
 ]`
 	indices := make([]Indices, 0)
-	if got, expected := parseIndices([]byte(incomeJson), &indices), ErrUnexpectedDataType; got != expected {
+	if got, expected := parseIndices([]byte(incomeJSON), &indices), ErrUnexpectedDataType; got != expected {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
 
 func TestParseIndicesError(t *testing.T) {
 
-	var incomeJson = `
+	var incomeJSON = `
 [
       {"SECID": "IMOEX", "SHORTNAME": "Индекс МосБиржи", "FROM": "2007-04-16", "TILL": "2022-01-26"},
       {"SECID": "RUCGI", "SHORTNAME1": "Нац. индекс корп. Управления", "FROM": "2021-06-18", "TILL": "2022-01-26"},
       {"SECID": "RUCGI", "SHORTNAME": "Нац. индекс корп. Управления", "FROM": "2021-06-18", "TILL": "2022-01-26"}
 ]`
 	indices := make([]Indices, 0)
-	if got, expected := parseIndices([]byte(incomeJson), &indices), jsonparser.KeyPathNotFoundError; got != expected {
+	if got, expected := parseIndices([]byte(incomeJSON), &indices), jsonparser.KeyPathNotFoundError; got != expected {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
 
 func TestParseIndicesResponse(t *testing.T) {
-	var incomeJson = `
+	var incomeJSON = `
 [
   {"charsetinfo": {"name": "utf-8"}},
   {
@@ -148,7 +148,7 @@ func TestParseIndicesResponse(t *testing.T) {
 	}
 	indicesR := IndicesResponse{}
 	var err error = nil
-	if got, expected := parseIndicesResponse([]byte(incomeJson), &indicesR), err; got != expected {
+	if got, expected := parseIndicesResponse([]byte(incomeJSON), &indicesR), err; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 	if got, expected := len(indicesR.Indices), len(expectedResponse.Indices); got != expected {
@@ -163,16 +163,16 @@ func TestParseIndicesResponse(t *testing.T) {
 }
 
 func TestParseIndicesResponseNilError(t *testing.T) {
-	var incomeJson = ``
+	var incomeJSON = ``
 	var indicesResponse *IndicesResponse = nil
 
-	if got, expected := parseIndicesResponse([]byte(incomeJson), indicesResponse), ErrNilPointer; got != expected {
+	if got, expected := parseIndicesResponse([]byte(incomeJSON), indicesResponse), ErrNilPointer; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
 
 func TestParseIndicesResponseError(t *testing.T) {
-	var incomeJson = `
+	var incomeJSON = `
 [
   {"charsetinfo": {"name": "utf-8"}},
   {
@@ -183,7 +183,7 @@ func TestParseIndicesResponseError(t *testing.T) {
 `
 	var indicesResponse = &IndicesResponse{}
 
-	if got, expected := parseIndicesResponse([]byte(incomeJson), indicesResponse), jsonparser.KeyPathNotFoundError; got != expected {
+	if got, expected := parseIndicesResponse([]byte(incomeJSON), indicesResponse), jsonparser.KeyPathNotFoundError; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }

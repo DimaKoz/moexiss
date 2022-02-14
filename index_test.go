@@ -63,7 +63,7 @@ func restoreOverriddenFunctions() {
 func TestParseIndexResponse(t *testing.T) {
 
 	overrideParseFunctions()
-	var incomeJson = `{
+	var incomeJSON = `{
 "engines": {},
 "markets": {},
 "boards": {},
@@ -74,7 +74,7 @@ func TestParseIndexResponse(t *testing.T) {
 "securitycollections": {}}
 `
 	index := &Index{}
-	err := parseIndexResponse([]byte(incomeJson), index)
+	err := parseIndexResponse([]byte(incomeJSON), index)
 
 	//restore functions
 	restoreOverriddenFunctions()
@@ -89,42 +89,42 @@ func TestParseIndexResponse(t *testing.T) {
 
 func TestParseIndexResponseNilIndex(t *testing.T) {
 
-	var incomeJson = `{
+	var incomeJSON = `{
 "engines": {},
 }
 `
 	var index *Index = nil
-	if got, expected := parseIndexResponse([]byte(incomeJson), index), ErrNilPointer; got != expected {
+	if got, expected := parseIndexResponse([]byte(incomeJSON), index), ErrNilPointer; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
 
 func TestParseIndexResponseMalformedObjectError(t *testing.T) {
 
-	var incomeJson = `{
+	var incomeJSON = `{
 "engines": {;,
 ;
 `
 	var index = &Index{}
-	if got, expected := parseIndexResponse([]byte(incomeJson), index), jsonparser.MalformedObjectError; got != expected {
+	if got, expected := parseIndexResponse([]byte(incomeJSON), index), jsonparser.MalformedObjectError; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
 
 func TestParseIndexResponseError(t *testing.T) {
 
-	var incomeJson = `{
+	var incomeJSON = `{
 "engines": []}
 `
 	var index = &Index{}
-	if got, expected := parseIndexResponse([]byte(incomeJson), index), ErrUnexpectedDataType; got != expected {
+	if got, expected := parseIndexResponse([]byte(incomeJSON), index), ErrUnexpectedDataType; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
 
 func TestParseIndexResponseNoKeys(t *testing.T) {
 
-	var incomeJson = `{
+	var incomeJSON = `{
 "engines": {}}
 `
 	expected := `Key path not found for the key: markets
@@ -140,7 +140,7 @@ Key path not found for the key: securitycollections
 	log.SetOutput(buf)
 	var index = &Index{}
 	overrideParseFunctions()
-	_ = parseIndexResponse([]byte(incomeJson), index)
+	_ = parseIndexResponse([]byte(incomeJSON), index)
 	restoreOverriddenFunctions()
 	b := buf.Bytes()
 	if got := string(b); got != expected {
@@ -151,7 +151,7 @@ Key path not found for the key: securitycollections
 func TestParseIndexResponseUnknownKey(t *testing.T) {
 	unknownKey := "unknownKey"
 	indexKeys = append(indexKeys, unknownKey)
-	var incomeJson = `{
+	var incomeJSON = `{
 		"engines": {},
 		"markets": {},
 		"boards": {},
@@ -169,7 +169,7 @@ func TestParseIndexResponseUnknownKey(t *testing.T) {
 	log.SetOutput(buf)
 	var index = &Index{}
 	overrideParseFunctions()
-	_ = parseIndexResponse([]byte(incomeJson), index)
+	_ = parseIndexResponse([]byte(incomeJSON), index)
 	restoreOverriddenFunctions()
 	indexKeys = indexKeys[0 : len(indexKeys)-1]
 	b := buf.Bytes()
@@ -179,7 +179,7 @@ func TestParseIndexResponseUnknownKey(t *testing.T) {
 }
 
 func TestIndexParseEngines(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"columns": ["id", "name", "title"], 
 	"data": [
 		[1, "stock", "Фондовый рынок и рынок депозитов"],
@@ -194,7 +194,7 @@ func TestIndexParseEngines(t *testing.T) {
 }
 	`
 	var index = newIndex()
-	err := parseEngines([]byte(incomeJson), index)
+	err := parseEngines([]byte(incomeJSON), index)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
 	}
@@ -204,7 +204,7 @@ func TestIndexParseEngines(t *testing.T) {
 }
 
 func TestIndexParseMarkets(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"columns": ["id", "trade_engine_id", "trade_engine_name", "trade_engine_title", "market_name", "market_title", "market_id", "marketplace"], 
 	"data": [
 		[51, 9, "agro", "Агро", "sugar", "Торги сахаром", 51, null],
@@ -217,7 +217,7 @@ func TestIndexParseMarkets(t *testing.T) {
 }
 	`
 	var index = newIndex()
-	err := parseMarkets([]byte(incomeJson), index)
+	err := parseMarkets([]byte(incomeJSON), index)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
 	}
@@ -227,7 +227,7 @@ func TestIndexParseMarkets(t *testing.T) {
 }
 
 func TestIndexParseBoards(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"columns": ["id", "board_group_id", "engine_id", "market_id", "boardid", "board_title", "is_traded", "has_candles", "is_primary"], 
 	"data": [
 		[177, 57, 1, 1, "TQIF", "Т+: Паи - безадрес.", 1, 1, 1],
@@ -236,7 +236,7 @@ func TestIndexParseBoards(t *testing.T) {
 }
 	`
 	var index = newIndex()
-	err := parseBoards([]byte(incomeJson), index)
+	err := parseBoards([]byte(incomeJSON), index)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
 	}
@@ -246,85 +246,85 @@ func TestIndexParseBoards(t *testing.T) {
 }
 
 func TestIndexParseBoardsError(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"data": [
 		[177;
 	]
 }
 	`
 	var index = newIndex()
-	if got, expected := parseBoards([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
+	if got, expected := parseBoards([]byte(incomeJSON), index), jsonparser.MalformedArrayError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
 
 func TestIndexParseEnginesError(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 		"data": [
 		[1;
 	]
 }
 	`
 	var index = newIndex()
-	if got, expected := parseEngines([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
+	if got, expected := parseEngines([]byte(incomeJSON), index), jsonparser.MalformedArrayError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
 
 func TestIndexParseMarketsError(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"data": [
 		[51;
 	]
 }
 	`
 	var index = newIndex()
-	if got, expected := parseMarkets([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
+	if got, expected := parseMarkets([]byte(incomeJSON), index), jsonparser.MalformedArrayError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
 
 func TestIndexParseMarketsUnknownValueTypeError(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"data": [
 		{}
 	]
 }
 	`
 	var index = newIndex()
-	if got, expected := parseMarkets([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
+	if got, expected := parseMarkets([]byte(incomeJSON), index), jsonparser.UnknownValueTypeError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
 
 func TestIndexParseEnginesUnknownValueTypeError(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"data": [
 		{}
 	]
 }
 	`
 	var index = newIndex()
-	if got, expected := parseEngines([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
+	if got, expected := parseEngines([]byte(incomeJSON), index), jsonparser.UnknownValueTypeError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
 
 func TestIndexParseBoardsUnknownValueTypeError(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"data": [
 		{}
 	]
 }
 	`
 	var index = newIndex()
-	if got, expected := parseBoards([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
+	if got, expected := parseBoards([]byte(incomeJSON), index), jsonparser.UnknownValueTypeError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
 
 func TestIndexParseBoardGroups(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"columns": ["id", "trade_engine_id", "trade_engine_name", "trade_engine_title", "market_id", "market_name", "name", "title", "is_default", "board_group_id", "is_traded"], 
 	"data": [
 		[9, 1, "stock", "Фондовый рынок и рынок депозитов", 5, "index", "stock_index", "Индексы", 1, 9, 1],
@@ -334,7 +334,7 @@ func TestIndexParseBoardGroups(t *testing.T) {
 }
 	`
 	var index = newIndex()
-	err := parseBoardGroups([]byte(incomeJson), index)
+	err := parseBoardGroups([]byte(incomeJSON), index)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
 	}
@@ -344,33 +344,33 @@ func TestIndexParseBoardGroups(t *testing.T) {
 }
 
 func TestIndexParseBoardGroupsMalformedArrayError(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"data": [
 		[51;
 	]
 }
 	`
 	var index = newIndex()
-	if got, expected := parseBoardGroups([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
+	if got, expected := parseBoardGroups([]byte(incomeJSON), index), jsonparser.MalformedArrayError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
 
 func TestIndexParseBoardGroupsUnknownValueTypeError(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"data": [
 		{}
 	]
 }
 	`
 	var index = newIndex()
-	if got, expected := parseBoardGroups([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
+	if got, expected := parseBoardGroups([]byte(incomeJSON), index), jsonparser.UnknownValueTypeError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
 
 func TestIndexParseDurations(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"columns": ["interval", "duration", "days", "title", "hint"], 
 	"data": [
 		[1, 60, null, "минута", "1м"],
@@ -384,7 +384,7 @@ func TestIndexParseDurations(t *testing.T) {
 }
 	`
 	var index = newIndex()
-	err := parseDurations([]byte(incomeJson), index)
+	err := parseDurations([]byte(incomeJSON), index)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
 	}
@@ -394,33 +394,33 @@ func TestIndexParseDurations(t *testing.T) {
 }
 
 func TestIndexParseDurationsMalformedArrayError(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"data": [
 		[51;
 	]
 }
 	`
 	var index = newIndex()
-	if got, expected := parseDurations([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
+	if got, expected := parseDurations([]byte(incomeJSON), index), jsonparser.MalformedArrayError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
 
 func TestIndexParseDurationsUnknownValueTypeError(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"data": [
 		{}
 	]
 }
 	`
 	var index = newIndex()
-	if got, expected := parseDurations([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
+	if got, expected := parseDurations([]byte(incomeJSON), index), jsonparser.UnknownValueTypeError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
 
 func TestIndexParseSecurityTypes(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"columns": ["id", "trade_engine_id", "trade_engine_name", "trade_engine_title", "security_type_name", "security_type_title", "security_group_name"], 
 	"data": [
 		[3, 1, "stock", "Фондовый рынок и рынок депозитов", "common_share", "Акция обыкновенная", "stock_shares"],
@@ -434,7 +434,7 @@ func TestIndexParseSecurityTypes(t *testing.T) {
 		SecurityGroupName: "stock_shares",
 	}
 	var index = newIndex()
-	err := parseSecurityTypes([]byte(incomeJson), index)
+	err := parseSecurityTypes([]byte(incomeJSON), index)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
 	}
@@ -447,33 +447,33 @@ func TestIndexParseSecurityTypes(t *testing.T) {
 }
 
 func TestIndexParseSecurityTypesMalformedArrayError(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"data": [
 		[51;
 	]
 }
 	`
 	var index = newIndex()
-	if got, expected := parseSecurityTypes([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
+	if got, expected := parseSecurityTypes([]byte(incomeJSON), index), jsonparser.MalformedArrayError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
 
 func TestIndexParseSecurityTypesUnknownValueTypeError(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"data": [
 		{}
 	]
 }
 	`
 	var index = newIndex()
-	if got, expected := parseSecurityTypes([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
+	if got, expected := parseSecurityTypes([]byte(incomeJSON), index), jsonparser.UnknownValueTypeError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
 
 func TestIndexParseSecurityGroups(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"columns": ["id", "name", "title", "is_hidden"], 
 	"data": [
 		[12, "stock_index", "Индексы", 0],
@@ -487,7 +487,7 @@ func TestIndexParseSecurityGroups(t *testing.T) {
 		IsHidden:      true,
 	}
 	var index = newIndex()
-	err := parseSecurityGroups([]byte(incomeJson), index)
+	err := parseSecurityGroups([]byte(incomeJSON), index)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
 	}
@@ -500,33 +500,33 @@ func TestIndexParseSecurityGroups(t *testing.T) {
 }
 
 func TestIndexParseSecurityGroupsMalformedArrayError(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"data": [
 		[51;
 	]
 }
 	`
 	var index = newIndex()
-	if got, expected := parseSecurityGroups([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
+	if got, expected := parseSecurityGroups([]byte(incomeJSON), index), jsonparser.MalformedArrayError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
 
 func TestIndexParseSecurityGroupsUnknownValueTypeError(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"data": [
 		{}
 	]
 }
 	`
 	var index = newIndex()
-	if got, expected := parseSecurityGroups([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
+	if got, expected := parseSecurityGroups([]byte(incomeJSON), index), jsonparser.UnknownValueTypeError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
 
 func TestIndexParseSecurityCollections(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"columns": ["id", "name", "title", "security_group_id"], 
 	"data": [
 		[72, "stock_index_all", "Все индексы", 12],
@@ -539,7 +539,7 @@ func TestIndexParseSecurityCollections(t *testing.T) {
 		SecurityGroupId: 12,
 	}
 	var index = newIndex()
-	err := parseSecurityCollections([]byte(incomeJson), index)
+	err := parseSecurityCollections([]byte(incomeJSON), index)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
 	}
@@ -552,27 +552,27 @@ func TestIndexParseSecurityCollections(t *testing.T) {
 }
 
 func TestIndexParseSecurityCollectionsMalformedArrayError(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"data": [
 		[51;
 	]
 }
 	`
 	var index = newIndex()
-	if got, expected := parseSecurityCollections([]byte(incomeJson), index), jsonparser.MalformedArrayError; got != expected {
+	if got, expected := parseSecurityCollections([]byte(incomeJSON), index), jsonparser.MalformedArrayError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
 
 func TestIndexParseSecurityCollectionsUnknownValueTypeError(t *testing.T) {
-	var incomeJson = `{
+	var incomeJSON = `{
 	"data": [
 		{}
 	]
 }
 	`
 	var index = newIndex()
-	if got, expected := parseSecurityCollections([]byte(incomeJson), index), jsonparser.UnknownValueTypeError; got != expected {
+	if got, expected := parseSecurityCollections([]byte(incomeJSON), index), jsonparser.UnknownValueTypeError; got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }

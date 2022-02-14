@@ -8,6 +8,7 @@ import (
 	"github.com/buger/jsonparser"
 )
 
+// Security represent a security
 type Security struct {
 	Id                 int64  //"0"
 	SecId              string //"1"
@@ -27,9 +28,6 @@ type Security struct {
 	MarketPriceBoardId string //"15"
 }
 
-type SecuritiesRequest struct {
-	Query string //Argument 'q', minimum 3 symbols
-}
 
 // SecuritiesService provides access to the security related functions
 // in the MoEx ISS API.
@@ -37,6 +35,7 @@ type SecuritiesRequest struct {
 // MoEx ISS API docs: https://iss.moex.com/iss/reference/5
 type SecuritiesService service
 
+// List allows to get a list of securities
 func (s *SecuritiesService) List(ctx context.Context) (*[]Security, error) {
 	var u string = "securities.json"
 

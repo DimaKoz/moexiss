@@ -5,8 +5,8 @@ import "net/url"
 // Language represents a language of answers of MoEx ISS API
 type Language string
 
+// Possible values of Language type
 const (
-	// Possible values of Language type
 	LangUndefined Language = ""
 	LangEn        Language = "en"
 	LangRu        Language = "ru"
