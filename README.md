@@ -1,4 +1,4 @@
-# MOEXISS ![Golang](https://img.shields.io/badge/-Golang%20❤️-05122A?style=flat&logo=go&logoColor=white)&nbsp; [![codecov](https://codecov.io/gh/DimaKoz/moexiss/branch/main/graph/badge.svg?token=B4TT54SCA1)](https://codecov.io/gh/DimaKoz/moexiss)
+# MOEXISS ![Golang](https://img.shields.io/badge/-Golang%20❤️-05122A?style=flat&logo=go&logoColor=white)&nbsp; [![codecov](https://codecov.io/gh/DimaKoz/moexiss/branch/main/graph/badge.svg?token=B4TT54SCA1)](https://codecov.io/gh/DimaKoz/moexiss)&nbsp; [![Go Report Card](https://goreportcard.com/badge/github.com/dimakoz/moexiss)](https://goreportcard.com/report/github.com/dimakoz/moexiss)
 
 
 Неофициальный клиент для получения информации и статистики Московской биржи [MOEX](https://iss.moex.com/iss/reference/) на Golang.  
