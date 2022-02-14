@@ -28,6 +28,58 @@ client := moexiss.NewClient(nil)
 
 result, err := client.Index.List(context.Background(), nil)
 ```
+Request options (not mandatory) for initial ISS reference:
+
+* ```Engine()``` - options for the list of trading systems.
+  - ```Lang(Language)``` - the language of the result. Possible values ```moexiss.LangEn```, ```moexiss.LangRu```. By default, ```moexiss.LangRu```.
+
+
+* ```Market()``` - options for the list of available markets.
+  - ```Lang(Language)``` - the language of the result. Possible values ```moexiss.LangEn```, ```moexiss.LangRu```. By default, ```moexiss.LangRu```.
+
+
+* ```Board()``` - options for the list of trading modes.
+  - ```Lang(Language)``` - the language of the result. Possible values ```moexiss.LangEn```, ```moexiss.LangRu```. By default, ```moexiss.LangRu```.
+
+
+* ```BoardGroup()``` - options for the list of board groups.
+  - ```Lang(Language)``` - the language of the result. Possible values ```moexiss.LangEn```, ```moexiss.LangRu```. By default, ```moexiss.LangRu```.
+  - ```IsTraded(bool)``` - show traded only currently traded board groups. ```false``` by default.
+  - ```WithEngine(EngineName)``` - filtering by an engine.
+
+
+* ```Duration()``` - selection for the list of available calculation intervals of candles in the HLOCV format.
+  - ```Lang(Language)``` - the language of the result. Possible values ```moexiss.LangEn```, ```moexiss.LangRu```. By default, ```moexiss.LangRu```.
+
+
+* ```SecurityType()``` - options for the list of securities.
+  - ```Lang(Language)``` - the language of the result. Possible values ```moexiss.LangEn```, ```moexiss.LangRu```. By default, ```moexiss.LangRu```.
+  - ```WithEngine(EngineName)``` - filtering by an engine.
+
+
+* ```SecurityGroup()``` - options for the list of security groups.
+  - ```Lang(Language)``` - the language of the result. Possible values ```moexiss.LangEn```, ```moexiss.LangRu```. By default, ```moexiss.LangRu```.
+  - ```WithEngine(EngineName)``` - filtering by an engine.
+  - ```HideInactive(bool)``` - filtering by activity.  ```false``` by default.
+
+
+* ```SecurityCollection()``` - options of collections of the securities list.
+  - ```Lang(Language)``` - the language of the result. Possible values ```moexiss.LangEn```, ```moexiss.LangRu```. By default, ```moexiss.LangRu```.
+
+
+An example:
+
+```go
+client := moexiss.NewClient(nil)
+	
+bld := moexiss.NewIndexReqOptionsBuilder()
+bld.BoardGroup().Lang(moexiss.LangEn).WithEngine(moexiss.EngineStock).IsTraded(true)
+bld.Engine().Lang(moexiss.LangEn)
+options := bld.Build()
+	
+result, err := client.Index.List(context.Background(), options)
+```
+
 
 ## Использование ##
 
