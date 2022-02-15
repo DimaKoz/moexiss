@@ -54,6 +54,7 @@ type Client struct {
 	Aggregates     *AggregateService
 	Indices        *IndicesService
 	HistoryListing *HistoryListingService
+	Stats          *StatsService
 }
 
 // NewClient creates an instance of Client
@@ -72,6 +73,7 @@ func NewClient(httpClient *http.Client) *Client {
 	c.Aggregates = (*AggregateService)(&c.common)
 	c.Indices = (*IndicesService)(&c.common)
 	c.HistoryListing = (*HistoryListingService)(&c.common)
+	c.Stats = (*StatsService)(&c.common)
 	return c
 }
 
