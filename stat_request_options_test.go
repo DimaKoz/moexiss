@@ -118,3 +118,59 @@ func TestStatReqOptionsBuilder(t *testing.T) {
 	}
 
 }
+
+func TestAddStatRequestOptions(t *testing.T) {
+	var incomeOptions = NewStatReqOptionsBuilder().
+		TypeTradingSession(TradingSessionMain).
+		AddBoard("TQBR").
+		AddBoard("SMAL").
+		AddTicker("SBERP").
+		AddTicker("GAZP").
+		AddTicker("DSKY").
+		Build()
+	c := NewClient(nil)
+	url, _ := c.BaseURL.Parse("test.json")
+	gotURL := addStatRequestOptions(url, incomeOptions)
+
+	expected := `https://iss.moex.com/iss/test.json?boardid=TQBR%2CSMAL&iss.json=extended&iss.meta=off&securities=SBERP%2CGAZP%2CDSKY&tradingsession=1`
+	if got := gotURL.String(); got != expected {
+		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
+	}
+}
+
+func TestAddStatRequestOptionsMore10(t *testing.T) {
+	var incomeOptions = NewStatReqOptionsBuilder().
+		TypeTradingSession(TradingSessionMain).
+		AddTicker("").
+		AddBoard("0000").
+		AddBoard("0001").
+		AddBoard("0002").
+		AddBoard("0003").
+		AddBoard("0004").
+		AddBoard("0005").
+		AddBoard("0006").
+		AddBoard("0007").
+		AddBoard("0008").
+		AddBoard("0009").
+		AddBoard("0010").
+		Build()
+	c := NewClient(nil)
+	url, _ := c.BaseURL.Parse("test.json")
+	gotURL := addStatRequestOptions(url, incomeOptions)
+
+	expected := `https://iss.moex.com/iss/test.json?boardid=0000%2C0001%2C0002%2C0003%2C0004%2C0005%2C0006%2C0007%2C0008%2C0009&iss.json=extended&iss.meta=off&tradingsession=1`
+	if got := gotURL.String(); got != expected {
+		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
+	}
+}
+
+func TestAddStatRequestOptionsNil(t *testing.T) {
+	c := NewClient(nil)
+	url, _ := c.BaseURL.Parse("test.json")
+	gotURL := addStatRequestOptions(url, nil)
+
+	expected := `https://iss.moex.com/iss/test.json?iss.json=extended&iss.meta=off`
+	if got := gotURL.String(); got != expected {
+		t.Fatalf("Error: expecting url :\n`%s` \ngot \n`%s` \ninstead", expected, got)
+	}
+}

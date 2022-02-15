@@ -1,7 +1,9 @@
 package moexiss
 
 import (
+	"net/url"
 	"strconv"
+	"strings"
 )
 
 // TradingSession represents a type of trading sessions for intermediate day summary
@@ -66,4 +68,56 @@ func (b *StatReqOptionsBuilder) AddTicker(ticker string) *StatReqOptionsBuilder 
 func (b *StatReqOptionsBuilder) AddBoard(boardId string) *StatReqOptionsBuilder {
 	b.options.BoardId = append(b.options.BoardId, boardId)
 	return b
+}
+
+// addStatRequestOptions sets parameters into *url.URL
+// from StatRequestOptions struct and returns it back
+func addStatRequestOptions(url *url.URL, options *StatRequestOptions) *url.URL {
+	q := url.Query()
+	q.Set("iss.meta", "off")
+	q.Set("iss.json", "extended")
+	if options == nil {
+		url.RawQuery = q.Encode()
+		return url
+	}
+
+	trType := options.TradingSessionType
+	if trType != TradingSessionUndefined &&
+		(trType == TradingSessionMain ||
+			trType == TradingSessionAdditional ||
+			trType == TradingSessionTotal) {
+		q.Set("tradingsession", trType.String())
+	}
+	limit := 10
+	if len(options.TickerIds) > 0 {
+		addArrayParams(&q, "securities", options.TickerIds, limit)
+	}
+	if len(options.BoardId) > 0 {
+		addArrayParams(&q, "boardid", options.BoardId, limit)
+	}
+	url.RawQuery = q.Encode()
+	return url
+}
+
+func addArrayParams(q *url.Values, key string, values []string, limit int) {
+	bld := strings.Builder{}
+	counter := 0
+	for _, value := range values {
+		if value == "" {
+			continue
+		}
+		counter++
+		if counter > limit {
+			break
+		}
+		if counter > 1 {
+			bld.WriteString(",")
+		}
+		bld.WriteString(value)
+	}
+	if bld.Len() == 0 {
+		return
+	}
+	str := bld.String()
+	q.Set(key, str)
 }
