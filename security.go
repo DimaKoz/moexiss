@@ -28,7 +28,6 @@ type Security struct {
 	MarketPriceBoardId string //"15"
 }
 
-
 // SecuritiesService provides access to the security related functions
 // in the MoEx ISS API.
 //

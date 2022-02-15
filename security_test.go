@@ -45,22 +45,7 @@ func TestParseSecurityItem(t *testing.T) {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v  \ninstead", err)
 	}
 
-	if got.Id != expected.Id ||
-		got.SecId != expected.SecId ||
-		got.ShortName != expected.ShortName ||
-		got.RegNumber != expected.RegNumber ||
-		got.Name != expected.Name ||
-		got.Isin != expected.Isin ||
-		got.IsTraded != expected.IsTraded ||
-		got.EmitentId != expected.EmitentId ||
-		got.EmitentTitle != expected.EmitentTitle ||
-		got.EmitentInn != expected.EmitentInn ||
-		got.EmitentOkpo != expected.EmitentOkpo ||
-		got.GosReg != expected.GosReg ||
-		got.Type != expected.Type ||
-		got.Group != expected.Group ||
-		got.PrimaryBoardId != expected.PrimaryBoardId ||
-		got.MarketPriceBoardId != expected.MarketPriceBoardId {
+	if got != expected {
 		t.Fatalf("Error: expected \n%v : \ngot \n%v  \ninstead", expected, got)
 	}
 
