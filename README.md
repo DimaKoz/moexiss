@@ -83,6 +83,16 @@ options := bld.Build()
 result, err := client.Index.List(context.Background(), options)
 ```
 
+### Getting trading results ###
+
+Getting aggregated trading results for the date by market:
+
+```go
+client := moexiss.NewClient(nil)
+ticker := "sberp"
+result, err := client.Aggregates.Aggregates(context.Background(), ticker, nil)
+```
+
 
 ## Использование ##
 
