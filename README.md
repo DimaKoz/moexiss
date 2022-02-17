@@ -179,3 +179,20 @@ client := moexiss.NewClient(nil)
 ticker := "sberp"
 result, err := client.Aggregates.Aggregates(context.Background(), ticker, nil)
 ```
+
+Опции запроса(не являются обязательными):
+
+- ```Lang(Language)``` - язык результата. Возможные значения ```moexiss.LangEn```, ```moexiss.LangRu```. Значение по умолчанию - ```moexiss.LangRu```.
+- ```Date(time.Date)``` - дата за которую необходимо отобразить данные. По умолчанию за последнюю дату в итогах торгов.
+
+Пример:
+```go
+client := moexiss.NewClient(nil)
+ticker := "sberp"
+opt := moexiss.NewAggregateReqOptionsBuilder().
+Lang(moexiss.LangEn).
+Date(time.Date(2021/*год*/, 2/*месяц*/, 24/*день*/, 12, 0, 0, 0, time.UTC)).
+Build()
+result, err := client.Aggregates.Aggregates(context.Background(), ticker, opt)
+
+```
