@@ -1,8 +1,7 @@
 # MOEXISS ![Golang](https://img.shields.io/badge/-Golang%20❤️-05122A?style=flat&logo=go&logoColor=white)&nbsp; [![codecov](https://codecov.io/gh/DimaKoz/moexiss/branch/main/graph/badge.svg?token=B4TT54SCA1)](https://codecov.io/gh/DimaKoz/moexiss)&nbsp; [![Go Report Card](https://goreportcard.com/badge/github.com/dimakoz/moexiss)](https://goreportcard.com/report/github.com/dimakoz/moexiss)
 
-
-Неофициальный клиент для получения информации и статистики Московской биржи [MOEX](https://iss.moex.com/iss/reference/) на Golang.  
-An unofficial client of Application Programming Interface for the Moscow Exchange([MOEX](https://iss.moex.com/iss/reference/)) ISS(Informational & Statistical Server) on Golang. 
+An unofficial client of Application Programming Interface for the Moscow Exchange([MOEX](https://iss.moex.com/iss/reference/)) ISS(Informational & Statistical Server) on Golang.
+Неофициальный клиент для получения информации и статистики Московской биржи [MOEX](https://iss.moex.com/iss/reference/) на Golang.
 
 [![stability-experimental](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/emersion/stability-badges#experimental)
 
@@ -91,6 +90,22 @@ Getting aggregated trading results for the date by market:
 client := moexiss.NewClient(nil)
 ticker := "sberp"
 result, err := client.Aggregates.Aggregates(context.Background(), ticker, nil)
+```
+
+Optional query parameters:
+
+- ```Lang(Language)``` - the language of the result. Possible values ```moexiss.LangEn```, ```moexiss.LangRu```. By default, ```moexiss.LangRu```.
+- ```Date(time.Date)``` - date of the results. The last date of aggregated trading results by default.
+
+Пример:
+```go
+client := moexiss.NewClient(nil)
+ticker := "sberp"
+opt := moexiss.NewAggregateReqOptionsBuilder().
+Lang(moexiss.LangEn).
+Date(time.Date(2021/*year*/, 2/*month*/, 24/*day*/, 12, 0, 0, 0, time.UTC)).
+Build()
+result, err := client.Aggregates.Aggregates(context.Background(), ticker, opt)
 ```
 
 
@@ -194,5 +209,4 @@ Lang(moexiss.LangEn).
 Date(time.Date(2021/*год*/, 2/*месяц*/, 24/*день*/, 12, 0, 0, 0, time.UTC)).
 Build()
 result, err := client.Aggregates.Aggregates(context.Background(), ticker, opt)
-
 ```
