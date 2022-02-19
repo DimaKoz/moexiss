@@ -97,7 +97,7 @@ Optional query parameters:
 - ```Lang(Language)``` - the language of the result. Possible values ```moexiss.LangEn```, ```moexiss.LangRu```. By default, ```moexiss.LangRu```.
 - ```Date(time.Date)``` - date of the results. The last date of aggregated trading results by default.
 
-Пример:
+An example:
 ```go
 client := moexiss.NewClient(nil)
 ticker := "sberp"
@@ -108,6 +108,30 @@ Build()
 result, err := client.Aggregates.Aggregates(context.Background(), ticker, opt)
 ```
 
+### Getting a list of indices that include a security  ###
+
+How to get a list of indices that include a security:
+
+```go
+client := moexiss.NewClient(nil)
+ticker := "sberp"
+result, err := client.Indices.GetIndices(context.Background(), ticker, nil)
+```
+
+Optional query parameters:
+
+- ```Lang(Language)``` - the language of the result. Possible values ```moexiss.LangEn```, ```moexiss.LangRu```. By default, ```moexiss.LangRu```.
+
+An example:
+
+```go
+client := moexiss.NewClient(nil)
+ticker := "sberp"
+opt := moexiss.NewIndicesReqOptionsBuilder().
+Lang(moexiss.LangEn).
+Build()
+result, err := client.Indices.GetIndices(context.Background(), ticker, opt)
+```
 
 ## Использование ##
 
@@ -228,7 +252,7 @@ result, err := client.Indices.GetIndices(context.Background(), ticker, nil)
 Пример:
 
 ```go
-	client := moexiss.NewClient(nil)
+client := moexiss.NewClient(nil)
 ticker := "sberp"
 opt := moexiss.NewIndicesReqOptionsBuilder().
 Lang(moexiss.LangEn).
