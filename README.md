@@ -1,6 +1,6 @@
 # MOEXISS ![Golang](https://img.shields.io/badge/-Golang%20❤️-05122A?style=flat&logo=go&logoColor=white)&nbsp; [![codecov](https://codecov.io/gh/DimaKoz/moexiss/branch/main/graph/badge.svg?token=B4TT54SCA1)](https://codecov.io/gh/DimaKoz/moexiss)&nbsp; [![Go Report Card](https://goreportcard.com/badge/github.com/dimakoz/moexiss)](https://goreportcard.com/report/github.com/dimakoz/moexiss)
 
-An unofficial client of Application Programming Interface for the Moscow Exchange([MOEX](https://iss.moex.com/iss/reference/)) ISS(Informational & Statistical Server) on Golang.
+An unofficial client of Application Programming Interface for the Moscow Exchange([MOEX](https://iss.moex.com/iss/reference/)) ISS(Informational & Statistical Server) on Golang.  
 Неофициальный клиент для получения информации и статистики Московской биржи [MOEX](https://iss.moex.com/iss/reference/) на Golang.
 
 [![stability-experimental](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/emersion/stability-badges#experimental)
