@@ -38,8 +38,8 @@ const (
 // MoEx ISS API docs: https://iss.moex.com/iss/reference/160
 type IndicesService service
 
-//Indices provides a list of the indices that include the security of MoEx ISS
-func (i *IndicesService) Indices(ctx context.Context, security string, opt *IndicesRequestOptions) (*IndicesResponse, error) {
+// GetIndices provides a list of the indices that include the security of MoEx ISS
+func (i *IndicesService) GetIndices(ctx context.Context, security string, opt *IndicesRequestOptions) (*IndicesResponse, error) {
 
 	url, err := i.getUrl(security, opt)
 	if err != nil {

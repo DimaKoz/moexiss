@@ -210,3 +210,13 @@ Date(time.Date(2021/*год*/, 2/*месяц*/, 24/*день*/, 12, 0, 0, 0, tim
 Build()
 result, err := client.Aggregates.Aggregates(context.Background(), ticker, opt)
 ```
+
+### Получение списка индексов по бумаге ###
+
+Получить список индексов в которые входит бумага:
+
+```go
+client := moexiss.NewClient(nil)
+ticker := "sberp"
+result, err := client.Indices.GetIndices(context.Background(), ticker, nil)
+```

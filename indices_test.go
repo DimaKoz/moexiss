@@ -197,7 +197,7 @@ func TestIndicesService_BadSecurityParam(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL)
-	_, err := c.Indices.Indices(context.Background(), "", nil)
+	_, err := c.Indices.GetIndices(context.Background(), "", nil)
 	if got, expected := err, ErrBadSecurityParameter; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -212,7 +212,7 @@ func TestIndicesService_BadUrl(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL)
-	_, err := c.Indices.Indices(context.Background(), "sber", nil)
+	_, err := c.Indices.GetIndices(context.Background(), "sber", nil)
 	if got, expected := err, "BaseURL must have a trailing slash, but \""+srv.URL+"\" does not"; got == nil || got.Error() != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -230,7 +230,7 @@ func TestIndicesKeyPathNotFound(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL + "/")
-	_, err := c.Indices.Indices(context.Background(), "jhgsd", nil)
+	_, err := c.Indices.GetIndices(context.Background(), "jhgsd", nil)
 	if got, expected := err, jsonparser.KeyPathNotFoundError; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
 	}
@@ -239,7 +239,7 @@ func TestIndicesKeyPathNotFound(t *testing.T) {
 func TestIndicesNilContextError(t *testing.T) {
 	c := NewClient(nil)
 	var ctx context.Context = nil
-	_, err := c.Indices.Indices(ctx, "SBERP", nil)
+	_, err := c.Indices.GetIndices(ctx, "SBERP", nil)
 	if got, expected := err, ErrNonNilContext; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
 	}
@@ -268,7 +268,7 @@ func TestIndicesService_Indices(t *testing.T) {
 	secId := "SBERP"
 	c := NewClient(httpClient)
 	c.BaseURL, _ = url.Parse(srv.URL + "/")
-	result, err := c.Indices.Indices(context.Background(), secId, nil)
+	result, err := c.Indices.GetIndices(context.Background(), secId, nil)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
