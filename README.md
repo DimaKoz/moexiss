@@ -18,7 +18,7 @@ For example:
 client := moexiss.NewClient(nil)
 
 // Get current turnover on all the markets.
-turnovers, err := client.Turnovers.Turnovers(context.Background(), nil)
+turnovers, err := client.Turnovers.GetTurnovers(context.Background(), nil)
 ```
 
 ### Getting ISS reference ###
@@ -143,7 +143,7 @@ result, err := client.Indices.GetIndices(context.Background(), ticker, opt)
 client := moexiss.NewClient(nil)
 
 // Получить сводные обороты по рынкам.
-turnovers, err := client.Turnovers.Turnovers(context.Background(), nil)
+turnovers, err := client.Turnovers.GetTurnovers(context.Background(), nil)
 ```
 
 
@@ -258,4 +258,31 @@ opt := moexiss.NewIndicesReqOptionsBuilder().
 Lang(moexiss.LangEn).
 Build()
 result, err := client.Indices.GetIndices(context.Background(), ticker, opt)
+```
+
+### Получение сводных оборотов по рынкам ###
+
+Получить сводные обороты по рынкам:
+
+```go
+client := moexiss.NewClient(nil)
+turnovers, err := client.Turnovers.GetTurnovers(context.Background(), nil)
+```
+
+Опции запроса(не являются обязательными):
+
+- ```Lang(Language)``` — язык результата. Возможные значения ```moexiss.LangEn```, ```moexiss.LangRu```. Значение по умолчанию — ```moexiss.LangRu```.
+- ```Date(time.Date)``` — дата за которую необходимо отобразить данные. По умолчанию — сегодня.
+- ```IsTonightSession(bool)``` — показывать обороты за вечернюю сессию. Значение по умолчанию — ```false```.
+
+Пример:
+
+```go
+client := moexiss.NewClient(nil)
+options := moexiss.NewTurnoverReqOptionsBuilder().
+Lang(moexiss.LangEn).
+Date(time.Date(2021/*год*/, 2/*месяц*/, 24/*день*/, 12, 0, 0, 0, time.UTC)).
+IsTonightSession(true).
+Build()
+result, err := client.Turnovers.GetTurnovers(context.Background(), options)
 ```

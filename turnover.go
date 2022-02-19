@@ -7,7 +7,7 @@ import (
 	"github.com/buger/jsonparser"
 )
 
-//Turnover struct represents market turnovers
+// Turnover struct represents market turnovers
 type Turnover struct {
 	Name        string  // "NAME" Market text identifier
 	Id          int64   // "ID" Market ID
@@ -36,8 +36,8 @@ const (
 // MoEx ISS API docs: https://iss.moex.com/iss/reference/24
 type TurnoverService service
 
-//Turnovers provides a list of turnovers of markets of MoEx ISS
-func (s *TurnoverService) Turnovers(ctx context.Context, opt *TurnoverRequestOptions) (*[]Turnover, error) {
+// GetTurnovers provides a list of turnovers of markets of MoEx ISS
+func (s *TurnoverService) GetTurnovers(ctx context.Context, opt *TurnoverRequestOptions) (*[]Turnover, error) {
 
 	url := s.getUrl(opt, turnoversBlock)
 	req, err := s.client.NewRequest("GET", url, nil)
@@ -61,8 +61,8 @@ func (s *TurnoverService) Turnovers(ctx context.Context, opt *TurnoverRequestOpt
 
 }
 
-//getUrl provides an url for a request of the turnovers with parameters from TurnoverRequestOptions
-//opt *TurnoverRequestOptions can be nil, it is safe
+// getUrl provides an url for a request of the turnovers with parameters from TurnoverRequestOptions
+// opt *TurnoverRequestOptions can be nil, it is safe
 func (s *TurnoverService) getUrl(opt *TurnoverRequestOptions, onlyBlock turnoverBlock) string {
 	url, _ := s.client.BaseURL.Parse(turnoverPartsUrl)
 	gotURL := addTurnoverRequestOptions(url, opt, onlyBlock)

@@ -255,7 +255,7 @@ func TestTurnoverService_Turnovers(t *testing.T) {
 
 	c := NewClient(httpClient)
 	c.BaseURL, _ = url.Parse(srv.URL + "/")
-	result, err := c.Turnovers.Turnovers(context.Background(), nil)
+	result, err := c.Turnovers.GetTurnovers(context.Background(), nil)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
@@ -273,7 +273,7 @@ func TestTurnoverService_TurnoversBaseUrl(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL)
-	_, err := c.Turnovers.Turnovers(context.Background(), nil)
+	_, err := c.Turnovers.GetTurnovers(context.Background(), nil)
 	if got, expected := err, "BaseURL must have a trailing slash, but \""+srv.URL+"\" does not"; got == nil || got.Error() != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -282,7 +282,7 @@ func TestTurnoverService_TurnoversBaseUrl(t *testing.T) {
 func TestTurnoversNilContextError(t *testing.T) {
 	c := NewClient(nil)
 	var ctx context.Context = nil
-	_, err := c.Turnovers.Turnovers(ctx, nil)
+	_, err := c.Turnovers.GetTurnovers(ctx, nil)
 	if got, expected := err, ErrNonNilContext; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
 	}
@@ -305,7 +305,7 @@ func TestTurnoversKeyPathNotFound(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL + "/")
-	_, err := c.Turnovers.Turnovers(context.Background(), nil)
+	_, err := c.Turnovers.GetTurnovers(context.Background(), nil)
 	if got, expected := err, jsonparser.KeyPathNotFoundError; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
 	}
