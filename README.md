@@ -220,3 +220,18 @@ client := moexiss.NewClient(nil)
 ticker := "sberp"
 result, err := client.Indices.GetIndices(context.Background(), ticker, nil)
 ```
+
+Опции запроса(не являются обязательными):
+
+- ```Lang(Language)``` - язык результата. Возможные значения ```moexiss.LangEn```, ```moexiss.LangRu```. Значение по умолчанию - ```moexiss.LangRu```.
+
+Пример:
+
+```go
+	client := moexiss.NewClient(nil)
+ticker := "sberp"
+opt := moexiss.NewIndicesReqOptionsBuilder().
+Lang(moexiss.LangEn).
+Build()
+result, err := client.Indices.GetIndices(context.Background(), ticker, opt)
+```
