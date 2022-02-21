@@ -133,6 +133,35 @@ Build()
 result, err := client.Indices.GetIndices(context.Background(), ticker, opt)
 ```
 
+
+### Get turnovers on all the markets ###
+
+How to get turnovers on all the markets:
+
+```go
+client := moexiss.NewClient(nil)
+turnovers, err := client.Turnovers.GetTurnovers(context.Background(), nil)
+```
+
+Optional query parameters:
+
+- ```Lang(Language)``` — the language of the result. Possible values ```moexiss.LangEn```, ```moexiss.LangRu```. By default, ```moexiss.LangRu```.
+- ```Date(time.Date)``` — date for which you want to display data. Today — by default.
+- ```IsTonightSession(bool)``` — show turnovers for the evening session. ```false``` — by default.
+
+For example:
+
+```go
+client := moexiss.NewClient(nil)
+options := moexiss.NewTurnoverReqOptionsBuilder().
+Lang(moexiss.LangEn).
+Date(time.Date(2021/*year*/, 2/*month*/, 24/*day*/, 12, 0, 0, 0, time.UTC)).
+IsTonightSession(true).
+Build()
+result, err := client.Turnovers.GetTurnovers(context.Background(), options)
+```
+
+
 ## Использование ##
 
 Создайте новый MOEX ISS клиент, а затем используйте различные сервисы клиента 
