@@ -17,6 +17,38 @@ func TestTradingSession_String(t *testing.T) {
 	}
 }
 
+func TestGetTradingSession(t *testing.T) {
+	type Case struct {
+		income   string
+		expected TradingSession
+	}
+	cases := []Case{
+		{
+			income:   "",
+			expected: TradingSessionUndefined},
+		{
+			income:   "dhe",
+			expected: TradingSessionUndefined},
+		{
+			income:   "0",
+			expected: TradingSessionUndefined},
+		{
+			income:   "1",
+			expected: TradingSessionMain},
+		{
+			income:   "2",
+			expected: TradingSessionAdditional},
+		{
+			income:   "3",
+			expected: TradingSessionTotal},
+	}
+	for _, c := range cases {
+		if got := getTradingSession(c.income); got != c.expected {
+			t.Fatalf("Error: expecting :\n`%s` \ngot \n`%s` \ninstead", c.expected, got)
+		}
+	}
+}
+
 func compareStatRequestOptions(a, b StatRequestOptions) bool {
 	if a.TradingSessionType != b.TradingSessionType {
 		return false

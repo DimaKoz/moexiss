@@ -23,6 +23,20 @@ func (ts TradingSession) String() string {
 	return strconv.Itoa(int(ts))
 }
 
+// getTradingSession returns TradingSession from a passed string
+func getTradingSession(value string) TradingSession {
+	switch value {
+	case "1":
+		return TradingSessionMain
+	case "2":
+		return TradingSessionAdditional
+	case "3":
+		return TradingSessionTotal
+	default:
+		return TradingSessionUndefined
+	}
+}
+
 // StatRequestOptions contains options which can be used as arguments
 // for building requests to get intermediate day summary.
 // MoEx ISS API docs: https://iss.moex.com/iss/reference/823
