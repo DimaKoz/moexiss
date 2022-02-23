@@ -51,8 +51,8 @@ const (
 // https://iss.moex.com/iss/reference/120
 type HistoryListingService service
 
-//Listing provides a list of tradable/non-tradable securities
-func (hl *HistoryListingService) Listing(ctx context.Context, engine EngineName, market string, opt *HistoryListingRequestOptions) (*ListingResponse, error) {
+// GetListing provides a list of tradable/non-tradable securities
+func (hl *HistoryListingService) GetListing(ctx context.Context, engine EngineName, market string, opt *HistoryListingRequestOptions) (*ListingResponse, error) {
 	url, err := hl.getUrlListing(engine, market, opt)
 	if err != nil {
 		return nil, err
@@ -79,8 +79,8 @@ func (hl *HistoryListingService) Listing(ctx context.Context, engine EngineName,
 	return &lr, nil
 }
 
-//ListingByBoardGroup provides security listing information for a given boardgroup
-func (hl *HistoryListingService) ListingByBoardGroup(ctx context.Context, engine EngineName, market string, boardGroupId string, opt *HistoryListingRequestOptions) (*ListingResponse, error) {
+// GetListingByBoardGroup provides security listing information for a given boardgroup
+func (hl *HistoryListingService) GetListingByBoardGroup(ctx context.Context, engine EngineName, market string, boardGroupId string, opt *HistoryListingRequestOptions) (*ListingResponse, error) {
 	url, err := hl.getUrlListingByBoardGroup(engine, market, boardGroupId, opt)
 	if err != nil {
 		return nil, err
@@ -108,8 +108,8 @@ func (hl *HistoryListingService) ListingByBoardGroup(ctx context.Context, engine
 	return &lr, nil
 }
 
-//ListingByBoard provides security listing information for a given board
-func (hl *HistoryListingService) ListingByBoard(ctx context.Context, engine EngineName, market string, boardId string, opt *HistoryListingRequestOptions) (*ListingResponse, error) {
+// GetListingByBoard provides security listing information for a given board
+func (hl *HistoryListingService) GetListingByBoard(ctx context.Context, engine EngineName, market string, boardId string, opt *HistoryListingRequestOptions) (*ListingResponse, error) {
 	url, err := hl.getUrlListingByBoard(engine, market, boardId, opt)
 	if err != nil {
 		return nil, err

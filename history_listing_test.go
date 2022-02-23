@@ -314,7 +314,7 @@ func TestHistoryListingService_Listing(t *testing.T) {
 
 	c := NewClient(httpClient)
 	c.BaseURL, _ = url.Parse(srv.URL + "/")
-	result, err := c.HistoryListing.Listing(context.Background(), EngineStock, "shares", nil)
+	result, err := c.HistoryListing.GetListing(context.Background(), EngineStock, "shares", nil)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
@@ -332,7 +332,7 @@ func TestHistoryListingService_ListingBadEngineParam(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL)
-	_, err := c.HistoryListing.Listing(context.Background(), "", "shares", nil)
+	_, err := c.HistoryListing.GetListing(context.Background(), "", "shares", nil)
 	if got, expected := err, ErrBadEngineParameter; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -347,7 +347,7 @@ func TestHistoryListingService_ListingBadMarketParam(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL)
-	_, err := c.HistoryListing.Listing(context.Background(), EngineStock, "", nil)
+	_, err := c.HistoryListing.GetListing(context.Background(), EngineStock, "", nil)
 	if got, expected := err, ErrBadMarketParameter; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -362,7 +362,7 @@ func TestHistoryListingService_BadUrl(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL)
-	_, err := c.HistoryListing.Listing(context.Background(), EngineStock, "shares", nil)
+	_, err := c.HistoryListing.GetListing(context.Background(), EngineStock, "shares", nil)
 	if got, expected := err, "BaseURL must have a trailing slash, but \""+srv.URL+"\" does not"; got == nil || got.Error() != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -380,7 +380,7 @@ func TestHistoryListingKeyPathNotFound(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL + "/")
-	_, err := c.HistoryListing.Listing(context.Background(), EngineStock, "shares", nil)
+	_, err := c.HistoryListing.GetListing(context.Background(), EngineStock, "shares", nil)
 	if got, expected := err, jsonparser.KeyPathNotFoundError; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
 	}
@@ -389,7 +389,7 @@ func TestHistoryListingKeyPathNotFound(t *testing.T) {
 func TestHistoryListingNilContextError(t *testing.T) {
 	c := NewClient(nil)
 	var ctx context.Context = nil
-	_, err := c.HistoryListing.Listing(ctx, EngineStock, "shares", nil)
+	_, err := c.HistoryListing.GetListing(ctx, EngineStock, "shares", nil)
 	if got, expected := err, ErrNonNilContext; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
 	}
@@ -417,7 +417,7 @@ func TestHistoryListingService_ListingByBoard(t *testing.T) {
 
 	c := NewClient(httpClient)
 	c.BaseURL, _ = url.Parse(srv.URL + "/")
-	result, err := c.HistoryListing.ListingByBoard(context.Background(), EngineStock, "shares", "TQTD", nil)
+	result, err := c.HistoryListing.GetListingByBoard(context.Background(), EngineStock, "shares", "TQTD", nil)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}
@@ -429,7 +429,7 @@ func TestHistoryListingService_ListingByBoard(t *testing.T) {
 func TestHistoryListingByBoardNilContextError(t *testing.T) {
 	c := NewClient(nil)
 	var ctx context.Context = nil
-	_, err := c.HistoryListing.ListingByBoard(ctx, EngineStock, "shares", "TQTD", nil)
+	_, err := c.HistoryListing.GetListingByBoard(ctx, EngineStock, "shares", "TQTD", nil)
 	if got, expected := err, ErrNonNilContext; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
 	}
@@ -447,7 +447,7 @@ func TestHistoryListingByBoardKeyPathNotFound(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL + "/")
-	_, err := c.HistoryListing.ListingByBoard(context.Background(), EngineStock, "shares", "TQTD", nil)
+	_, err := c.HistoryListing.GetListingByBoard(context.Background(), EngineStock, "shares", "TQTD", nil)
 	if got, expected := err, jsonparser.KeyPathNotFoundError; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
 	}
@@ -462,7 +462,7 @@ func TestHistoryListingByBoardService_BadUrl(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL)
-	_, err := c.HistoryListing.ListingByBoard(context.Background(), EngineStock, "shares", "TQTD", nil)
+	_, err := c.HistoryListing.GetListingByBoard(context.Background(), EngineStock, "shares", "TQTD", nil)
 	if got, expected := err, "BaseURL must have a trailing slash, but \""+srv.URL+"\" does not"; got == nil || got.Error() != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -477,7 +477,7 @@ func TestHistoryListingService_ListingBadBoardParam(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL)
-	_, err := c.HistoryListing.ListingByBoard(context.Background(), EngineStock, "shares", "", nil)
+	_, err := c.HistoryListing.GetListingByBoard(context.Background(), EngineStock, "shares", "", nil)
 	if got, expected := err, ErrBadBoardParameter; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -492,7 +492,7 @@ func TestHistoryListingService_ListingBadBoardGroupParam(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL)
-	_, err := c.HistoryListing.ListingByBoardGroup(context.Background(), EngineStock, "shares", "", nil)
+	_, err := c.HistoryListing.GetListingByBoardGroup(context.Background(), EngineStock, "shares", "", nil)
 	if got, expected := err, ErrBadBoardGroupParameter; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -507,7 +507,7 @@ func TestHistoryListingByBoardGroupService_BadUrl(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL)
-	_, err := c.HistoryListing.ListingByBoardGroup(context.Background(), EngineStock, "shares", "TQTD", nil)
+	_, err := c.HistoryListing.GetListingByBoardGroup(context.Background(), EngineStock, "shares", "TQTD", nil)
 	if got, expected := err, "BaseURL must have a trailing slash, but \""+srv.URL+"\" does not"; got == nil || got.Error() != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -525,7 +525,7 @@ func TestHistoryListingByBoardGroupKeyPathNotFound(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL + "/")
-	_, err := c.HistoryListing.ListingByBoardGroup(context.Background(), EngineStock, "shares", "6", nil)
+	_, err := c.HistoryListing.GetListingByBoardGroup(context.Background(), EngineStock, "shares", "6", nil)
 	if got, expected := err, jsonparser.KeyPathNotFoundError; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
 	}
@@ -534,7 +534,7 @@ func TestHistoryListingByBoardGroupKeyPathNotFound(t *testing.T) {
 func TestHistoryListingByBoardGroupNilContextError(t *testing.T) {
 	c := NewClient(nil)
 	var ctx context.Context = nil
-	_, err := c.HistoryListing.ListingByBoardGroup(ctx, EngineStock, "shares", "6", nil)
+	_, err := c.HistoryListing.GetListingByBoardGroup(ctx, EngineStock, "shares", "6", nil)
 	if got, expected := err, ErrNonNilContext; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
 	}
@@ -562,7 +562,7 @@ func TestHistoryListingService_ListingByBoardGroup(t *testing.T) {
 
 	c := NewClient(httpClient)
 	c.BaseURL, _ = url.Parse(srv.URL + "/")
-	result, err := c.HistoryListing.ListingByBoardGroup(context.Background(), EngineStock, "shares", "6", nil)
+	result, err := c.HistoryListing.GetListingByBoardGroup(context.Background(), EngineStock, "shares", "6", nil)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}

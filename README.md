@@ -315,3 +315,35 @@ IsTonightSession(true).
 Build()
 result, err := client.Turnovers.GetTurnovers(context.Background(), options)
 ```
+
+### Получение данных по листингу бумаг ###
+
+ - Список неторгуемых/торгуемых инструментов с указанием интервалов торгуемости по режимам:
+
+```go
+client := moexiss.NewClient(nil)
+engine := moexiss.EngineStock
+market := "shares"
+result, err := client.HistoryListing.
+	GetListing(context.Background(), engine, market, nil)
+```
+ - Получить данные по листингу бумаг в историческом разрезе по указанному режиму:
+
+```go
+client := moexiss.NewClient(nil)
+engine := moexiss.EngineStock
+market := "shares"
+board := "TQTD"
+result, err := client.HistoryListing.
+   GetListingByBoard(context.Background(), engine, market, board, nil)
+```
+ - Получить данные по листингу бумаг в историческом разрезе по указанной группе режимов:
+
+```go
+client := moexiss.NewClient(nil)
+engine := moexiss.EngineStock
+market := "shares"
+boardGroupId := "6"
+result, err := client.HistoryListing.
+	GetListingByBoardGroup(context.Background(), engine, market, boardGroupId, nil)
+```
