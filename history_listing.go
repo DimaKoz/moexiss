@@ -37,6 +37,8 @@ const (
 	listingKeyFrom       = "history_from"
 	listingKeyTill       = "history_till"
 	listingKeySecurities = "securities"
+
+	historyListingFilePartsUrl = "listing.json"
 )
 
 // HistoryListingService gets a list of tradable/non-tradable securities
@@ -144,9 +146,9 @@ func (hl *HistoryListingService) getUrlListing(engine EngineName, market string,
 		return "", ErrBadMarketParameter
 	}
 
-	url, _ := hl.client.BaseURL.Parse("history/engines")
+	url, _ := hl.client.BaseURL.Parse(historyPartOfPath)
 
-	url.Path = path.Join(url.Path, engine.String(), "markets", market, "listing.json")
+	url.Path = path.Join(url.Path, enginePartOfPath, engine.String(), marketsPartOfPath, market, historyListingFilePartsUrl)
 	gotURL := addHistoryListingRequestOptions(url, opt)
 	return gotURL.String(), nil
 }
@@ -164,9 +166,9 @@ func (hl *HistoryListingService) getUrlListingByBoard(engine EngineName, market 
 	if boardId == "" || utf8.RuneCountInString(boardId) < boardMinLen {
 		return "", ErrBadBoardParameter
 	}
-	url, _ := hl.client.BaseURL.Parse("history/engines")
+	url, _ := hl.client.BaseURL.Parse(historyPartOfPath)
 
-	url.Path = path.Join(url.Path, engine.String(), "markets", market, "boards", boardId, "listing.json")
+	url.Path = path.Join(url.Path, enginePartOfPath, engine.String(), marketsPartOfPath, market, "boards", boardId, historyListingFilePartsUrl)
 	gotURL := addHistoryListingRequestOptions(url, opt)
 	return gotURL.String(), nil
 }
@@ -184,9 +186,9 @@ func (hl *HistoryListingService) getUrlListingByBoardGroup(engine EngineName, ma
 	if boardGroupId == "" {
 		return "", ErrBadBoardGroupParameter
 	}
-	url, _ := hl.client.BaseURL.Parse("history/engines")
+	url, _ := hl.client.BaseURL.Parse(historyPartOfPath)
 
-	url.Path = path.Join(url.Path, engine.String(), "markets", market, "boardgroups", boardGroupId, "listing.json")
+	url.Path = path.Join(url.Path, enginePartOfPath, engine.String(), marketsPartOfPath, market, "boardgroups", boardGroupId, historyListingFilePartsUrl)
 	gotURL := addHistoryListingRequestOptions(url, opt)
 	return gotURL.String(), nil
 }

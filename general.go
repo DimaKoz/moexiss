@@ -19,12 +19,20 @@ var (
 	ErrEmptyServerResult      = errors.New("the empty answer")
 )
 
+const (
+	marketsPartOfPath = "markets"
+	enginePartOfPath  = "engines"
+	historyPartOfPath = "history"
+
+	nullValue = "null"
+)
+
 func parseStringWithDefaultValue(fieldValue []byte) (string, error) {
 	res, err := jsonparser.ParseString(fieldValue)
 	if err != nil {
 		return "", err
 	}
-	if res != "null" {
+	if res != nullValue {
 		return res, nil
 	}
 	return "", nil
@@ -32,7 +40,7 @@ func parseStringWithDefaultValue(fieldValue []byte) (string, error) {
 
 func parseStringWithDefaultValueByKey(fieldValue []byte, key string, defaultValue string) (string, error) {
 	valueData, _, _, err := jsonparser.Get(fieldValue, key)
-	if string(valueData) == "null" {
+	if string(valueData) == nullValue {
 		return defaultValue, nil
 	}
 	if err != nil {
@@ -47,7 +55,7 @@ func parseStringWithDefaultValueByKey(fieldValue []byte, key string, defaultValu
 
 func parseFloatWithDefaultValue(fieldValue []byte, key string) (float64, error) {
 	valueData, _, _, err := jsonparser.Get(fieldValue, key)
-	if string(valueData) == "null" {
+	if string(valueData) == nullValue {
 		return 0, nil
 	}
 	if err != nil {
@@ -62,7 +70,7 @@ func parseFloatWithDefaultValue(fieldValue []byte, key string) (float64, error) 
 
 func parseIntWithDefaultValue(fieldValue []byte, key string) (int64, error) {
 	valueData, _, _, err := jsonparser.Get(fieldValue, key)
-	if string(valueData) == "null" {
+	if string(valueData) == nullValue {
 		return 0, nil
 	}
 	if err != nil {
