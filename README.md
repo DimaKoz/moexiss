@@ -347,3 +347,28 @@ boardGroupId := "6"
 result, err := client.HistoryListing.
 	GetListingByBoardGroup(context.Background(), engine, market, boardGroupId, nil)
 ```
+
+Опции запроса(не являются обязательными):
+
+- ```Lang(Language)``` — язык результата. Возможные значения ```moexiss.LangEn```, ```moexiss.LangRu```. Значение по умолчанию — ```moexiss.LangRu```.
+- ```Status(HistoryListingTradingStatus)``` — фильтр торгуемости инструментов: ```moexiss.ListingTradingStatusTraded```, ```moexiss.ListingTradingStatusNotTraded``` или ```moexiss.ListingTradingStatusAll```. 
+  По умолчанию — ```moexiss.ListingTradingStatusAll```.
+- ```Start(int)``` — номер строки (отсчет с нуля), с которой следует начать порцию возвращаемых данных. Значение по умолчанию — 0. 
+  Получение ответа без данных означает, что указанное значение превышает число строк, возвращаемых запросом.
+
+
+Пример:
+
+```go
+client := moexiss.NewClient(nil)
+engine := moexiss.EngineStock
+market := "shares"
+boardGroupId := "6"
+opt := moexiss.NewHistoryListingReqOptionsBuilder().
+    Status(moexiss.ListingTradingStatusNotTraded).
+    Start(42).
+    Lang(moexiss.LangEn).
+    Build()
+result, err := client.HistoryListing.
+    GetListingByBoardGroup(context.Background(), engine, market, boardGroupId, opt)
+```
