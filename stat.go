@@ -1,6 +1,7 @@
 package moexiss
 
 import (
+	"github.com/buger/jsonparser"
 	"path"
 	"unicode/utf8"
 )
@@ -82,6 +83,33 @@ func (s *StatsService) getUrl(engine EngineName, market string, opt *StatRequest
 	gotURL := addStatRequestOptions(url, opt)
 	return gotURL.String(), nil
 }
+
+func parseSecStat(data []byte, ss *[]SecStat) (err error) {
+
+	var errInCb error
+	_, err = jsonparser.ArrayEach(data, func(secStatItemData []byte, dataType jsonparser.ValueType, offset int, errCb error) {
+		if errInCb != nil {
+			return
+		}
+		if dataType != jsonparser.Object {
+			errInCb = ErrUnexpectedDataType
+			return
+		}
+
+		secStat := SecStat{}
+		errInCb = parseSecStatItem(secStatItemData, &secStat)
+		if errInCb != nil {
+			return
+		}
+		*ss = append(*ss, secStat)
+
+	})
+	if err == nil && errInCb != nil {
+		err = errInCb
+	}
+	return
+}
+
 
 func parseSecStatItem(data []byte, ss *SecStat) (err error) {
 
