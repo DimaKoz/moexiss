@@ -149,3 +149,15 @@ func TestParseSecStat(t *testing.T) {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
+
+func TestParseSecStatUnexpectedDataTypeError(t *testing.T) {
+
+	var incomeJSON = `
+[
+      []
+]`
+	secSt := make([]SecStat, 0)
+	if got, expected := parseSecStat([]byte(incomeJSON), &secSt), ErrUnexpectedDataType; got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}

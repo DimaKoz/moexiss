@@ -110,7 +110,6 @@ func parseSecStat(data []byte, ss *[]SecStat) (err error) {
 	return
 }
 
-
 func parseSecStatItem(data []byte, ss *SecStat) (err error) {
 
 	ticker, err := parseStringWithDefaultValueByKey(data, secStatKeyTicker, "")
