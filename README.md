@@ -161,6 +161,38 @@ Build()
 result, err := client.Turnovers.GetTurnovers(context.Background(), options)
 ```
 
+### Listing of securities ###
+
+- Getting information on when securities were traded on which boards:
+
+```go
+client := moexiss.NewClient(nil)
+engine := moexiss.EngineStock
+market := "shares"
+result, err := client.HistoryListing.
+	GetListing(context.Background(), engine, market, nil)
+```
+- Getting data on the listing of securities for a given board:
+
+```go
+client := moexiss.NewClient(nil)
+engine := moexiss.EngineStock
+market := "shares"
+board := "TQTD"
+result, err := client.HistoryListing.
+   GetListingByBoard(context.Background(), engine, market, board, nil)
+```
+- Getting data on the listing of securities for a given group of boards:
+
+```go
+client := moexiss.NewClient(nil)
+engine := moexiss.EngineStock
+market := "shares"
+boardGroupId := "6"
+result, err := client.HistoryListing.
+	GetListingByBoardGroup(context.Background(), engine, market, boardGroupId, nil)
+```
+
 
 ## Использование ##
 
