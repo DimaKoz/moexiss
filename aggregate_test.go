@@ -290,7 +290,7 @@ func TestParseAggregatesError(t *testing.T) {
 func TestAggregatesNilContextError(t *testing.T) {
 	c := NewClient(nil)
 	var ctx context.Context = nil
-	_, err := c.Aggregates.Aggregates(ctx, "SBERP", nil)
+	_, err := c.Aggregates.GetAggregates(ctx, "SBERP", nil)
 	if got, expected := err, ErrNonNilContext; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
 	}
@@ -310,7 +310,7 @@ func TestAggregatesKeyPathNotFound(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL + "/")
-	_, err := c.Aggregates.Aggregates(context.Background(), "jhgsd", nil)
+	_, err := c.Aggregates.GetAggregates(context.Background(), "jhgsd", nil)
 	if got, expected := err, jsonparser.KeyPathNotFoundError; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
 	}
@@ -325,7 +325,7 @@ func TestAggregateService_AggregatesBadUrl(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL)
-	_, err := c.Aggregates.Aggregates(context.Background(), "sber", nil)
+	_, err := c.Aggregates.GetAggregates(context.Background(), "sber", nil)
 	if got, expected := err, "BaseURL must have a trailing slash, but \""+srv.URL+"\" does not"; got == nil || got.Error() != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -340,7 +340,7 @@ func TestAggregateService_AggregatesBadSecurityParam(t *testing.T) {
 	c := NewClient(httpClient)
 
 	c.BaseURL, _ = url.Parse(srv.URL)
-	_, err := c.Aggregates.Aggregates(context.Background(), "", nil)
+	_, err := c.Aggregates.GetAggregates(context.Background(), "", nil)
 	if got, expected := err, ErrBadSecurityParameter; got == nil || got != expected {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
@@ -372,7 +372,7 @@ func TestAggregateService_Aggregates(t *testing.T) {
 
 	c := NewClient(httpClient)
 	c.BaseURL, _ = url.Parse(srv.URL + "/")
-	result, err := c.Aggregates.Aggregates(context.Background(), "SBERP", nil)
+	result, err := c.Aggregates.GetAggregates(context.Background(), "SBERP", nil)
 	if err != nil {
 		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
 	}

@@ -89,7 +89,7 @@ Getting aggregated trading results for the date by market:
 ```go
 client := moexiss.NewClient(nil)
 ticker := "sberp"
-result, err := client.Aggregates.Aggregates(context.Background(), ticker, nil)
+result, err := client.Aggregates.GetAggregates(context.Background(), ticker, nil)
 ```
 
 Optional query parameters:
@@ -105,7 +105,7 @@ opt := moexiss.NewAggregateReqOptionsBuilder().
 Lang(moexiss.LangEn).
 Date(time.Date(2021/*year*/, 2/*month*/, 24/*day*/, 12, 0, 0, 0, time.UTC)).
 Build()
-result, err := client.Aggregates.Aggregates(context.Background(), ticker, opt)
+result, err := client.Aggregates.GetAggregates(context.Background(), ticker, opt)
 ```
 
 ### Getting a list of indices that include a security  ###
@@ -277,7 +277,7 @@ result, err := client.Index.List(context.Background(), options)
 ```go
 client := moexiss.NewClient(nil)
 ticker := "sberp"
-result, err := client.Aggregates.Aggregates(context.Background(), ticker, nil)
+result, err := client.Aggregates.GetAggregates(context.Background(), ticker, nil)
 ```
 
 Опции запроса(не являются обязательными):
@@ -293,7 +293,7 @@ opt := moexiss.NewAggregateReqOptionsBuilder().
 Lang(moexiss.LangEn).
 Date(time.Date(2021/*год*/, 2/*месяц*/, 24/*день*/, 12, 0, 0, 0, time.UTC)).
 Build()
-result, err := client.Aggregates.Aggregates(context.Background(), ticker, opt)
+result, err := client.Aggregates.GetAggregates(context.Background(), ticker, opt)
 ```
 
 ### Получение списка индексов по бумаге ###

@@ -55,8 +55,8 @@ const (
 // MoEx ISS API docs: https://iss.moex.com/iss/reference/214
 type AggregateService service
 
-//Aggregates provides Aggregates of MoEx ISS
-func (a *AggregateService) Aggregates(ctx context.Context, security string, opt *AggregateRequestOptions) (*AggregatesResponse, error) {
+//GetAggregates provides GetAggregates of MoEx ISS
+func (a *AggregateService) GetAggregates(ctx context.Context, security string, opt *AggregateRequestOptions) (*AggregatesResponse, error) {
 
 	url, err := a.getUrl(security, opt)
 	if err != nil {
