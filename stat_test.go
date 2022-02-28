@@ -177,3 +177,82 @@ func TestParseSecStatError(t *testing.T) {
 		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
 	}
 }
+
+func TestParseSecStatResponse(t *testing.T) {
+
+	var incomeJSON = `
+[
+  {"charsetinfo": {"name": "utf-8"}},
+  {
+    "secstats": [
+      {"SECID": "GAZP", "BOARDID": "SMAL", "TRADINGSESSION": "1", "TIME": "09:40:08", "PRICEMINUSPREVWAPRICE": -23.27, "VOLTODAY": 25, "VALTODAY": 6654, "HIGHBID": 270.42, "LOWOFFER": 258.12, "LASTOFFER": 271.29, "LASTBID": 261, "OPEN": 258.12, "LOW": 258.12, "HIGH": 287.99, "LAST": 260, "LCLOSEPRICE": null, "NUMTRADES": 16, "WAPRICE": 264.41, "ADMITTEDQUOTE": null, "MARKETPRICE2": null, "LCURRENTPRICE": null, "CLOSINGAUCTIONPRICE": null},
+      {"SECID": "SBERP", "BOARDID": "TQBR", "TRADINGSESSION": "0", "TIME": "09:49:57", "PRICEMINUSPREVWAPRICE": -17.85, "VOLTODAY": 9160070, "VALTODAY": 1768007018, "HIGHBID": 221.66, "LOWOFFER": 175.23, "LASTOFFER": 192.47, "LASTBID": 192.27, "OPEN": 194.8, "LOW": 184, "HIGH": 199.87, "LAST": 192.39, "LCLOSEPRICE": null, "NUMTRADES": 38395, "WAPRICE": 193.01, "ADMITTEDQUOTE": null, "MARKETPRICE2": null, "LCURRENTPRICE": 190.91, "CLOSINGAUCTIONPRICE": null}]}
+]
+`
+	expectedResponse := SecStatResponse{
+		SecStats: []SecStat{
+			{
+				Ticker:    "GAZP",
+				BoardId:   "SMAL",
+				TrSession: TradingSessionMain,
+				Time: "09:40:08",
+				PriceMinusPrevPr: -23.27,
+				VolToday: 25,
+				ValToday: 6654,
+				HighBid: 270.42,
+				LowOffer: 258.12,
+				LastOffer: 271.29,
+				LastBid: 261,
+				Open: 258.12,
+				Low: 258.12,
+				High: 287.99,
+				Last: 260,
+				LClosePrice: 0,
+				NumTrades: 16,
+				WaPrice: 264.41,
+				AdmittedQuote: 0,
+				MarketPrice: 0,
+				LCurrentPrice: 0,
+				ClosingAucPrice: 0,
+			},
+			{
+				Ticker:    "SBERP",
+				BoardId:   "TQBR",
+				TrSession: TradingSessionUndefined,
+				Time: "09:49:57",
+				PriceMinusPrevPr: -17.85,
+				VolToday: 9160070,
+				ValToday: 1768007018,
+				HighBid: 221.66,
+				LowOffer: 175.23,
+				LastOffer: 192.47,
+				LastBid: 192.27,
+				Open: 194.8,
+				Low: 184,
+				High: 199.87,
+				Last: 192.39,
+				LClosePrice: 0,
+				NumTrades: 38395,
+				WaPrice: 193.01,
+				AdmittedQuote: 0,
+				MarketPrice: 0,
+				LCurrentPrice: 190.91,
+				ClosingAucPrice: 0,
+			},
+		},
+	}
+	secStatR := SecStatResponse{}
+	var err error = nil
+	if got, expected := parseSecStatResponse([]byte(incomeJSON), &secStatR), err; got != expected {
+		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+	if got, expected := len(secStatR.SecStats), len(secStatR.SecStats); got != expected {
+		t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+	for i, gotItem := range secStatR.SecStats {
+		if got, expected := gotItem, expectedResponse.SecStats[i]; got != expected {
+			t.Fatalf("Error: expecting: \n %v \ngot:\n %v \ninstead", expected, got)
+		}
+	}
+
+}

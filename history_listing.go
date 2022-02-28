@@ -9,7 +9,7 @@ import (
 	"unicode/utf8"
 )
 
-//Listing struct represents listing of the security
+// Listing struct represents listing of the security
 type Listing struct {
 	Ticker    string // "SECID"
 	ShortName string // "SHORTNAME"
@@ -20,7 +20,7 @@ type Listing struct {
 	Till      string // "history_till"
 }
 
-//ListingResponse struct represents a response with listing of the security
+// ListingResponse struct represents a response with listing of the security
 type ListingResponse struct {
 	Engine       EngineName
 	Market       string

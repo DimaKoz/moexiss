@@ -31,6 +31,8 @@ const (
 	secStatKeyMarketPrice      = "MARKETPRICE2"
 	secStatKeyLCurrentPrice    = "LCURRENTPRICE"
 	secStatKeyClosingAucPrice  = "CLOSINGAUCTIONPRICE"
+
+	secStatKeySecStats = "secstats"
 )
 
 // SecStat struct represents intermediate day summary
@@ -60,6 +62,13 @@ type SecStat struct {
 	ClosingAucPrice  float64        // "CLOSINGAUCTIONPRICE"
 }
 
+// SecStatResponse struct represents a response with intermediate day summary
+type SecStatResponse struct {
+	Engine   EngineName
+	Market   string
+	SecStats []SecStat
+}
+
 // StatsService gets intermediate day summary
 // from the MoEx ISS API.
 //
@@ -82,6 +91,30 @@ func (s *StatsService) getUrl(engine EngineName, market string, opt *StatRequest
 	url.Path = path.Join(url.Path, engine.String(), marketsPartOfPath, market, statsPartsUrl)
 	gotURL := addStatRequestOptions(url, opt)
 	return gotURL.String(), nil
+}
+
+func parseSecStatResponse(byteData []byte, secStatResponse *SecStatResponse) error {
+	var err error
+	if secStatResponse == nil {
+		err = ErrNilPointer
+		return err
+	}
+	var errInCb error
+	_, err = jsonparser.ArrayEach(byteData, func(secStatBytes []byte, _ jsonparser.ValueType, offset int, errCb error) {
+		var data []byte
+		var dataType jsonparser.ValueType
+		data, dataType, _, errInCb = jsonparser.Get(secStatBytes, secStatKeySecStats)
+		if errInCb == nil && data != nil && dataType == jsonparser.Array {
+			errInCb = parseSecStat(data, &secStatResponse.SecStats)
+			if errInCb != nil {
+				return
+			}
+		}
+	})
+	if err == nil && errInCb != nil {
+		err = errInCb
+	}
+	return err
 }
 
 func parseSecStat(data []byte, ss *[]SecStat) (err error) {
