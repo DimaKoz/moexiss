@@ -106,7 +106,6 @@ func (s *StatsService) GetSecStats(ctx context.Context, engine EngineName, marke
 	return &ssr, nil
 }
 
-
 // getUrl provides an url to get intermediate day summary
 // opt *StatRequestOptions can be nil, it is safe
 func (s *StatsService) getUrl(engine EngineName, market string, opt *StatRequestOptions) (string, error) {
