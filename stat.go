@@ -1,6 +1,9 @@
 package moexiss
 
 import (
+	"bufio"
+	"bytes"
+	"context"
 	"github.com/buger/jsonparser"
 	"path"
 	"unicode/utf8"
@@ -74,6 +77,35 @@ type SecStatResponse struct {
 //
 // MoEx ISS API docs: https://iss.moex.com/iss/reference/823
 type StatsService service
+
+// GetSecStats provides an intermediate day summary
+func (s *StatsService) GetSecStats(ctx context.Context, engine EngineName, market string, opt *StatRequestOptions) (*SecStatResponse, error) {
+	url, err := s.getUrl(engine, market, opt)
+	if err != nil {
+		return nil, err
+	}
+	req, err := s.client.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var b bytes.Buffer
+	w := bufio.NewWriter(&b)
+
+	_, err = s.client.Do(ctx, req, w)
+	if err != nil {
+		return nil, err
+	}
+	ssr := SecStatResponse{}
+	err = parseSecStatResponse(b.Bytes(), &ssr)
+	if err != nil {
+		return nil, err
+	}
+	ssr.Engine = engine
+	ssr.Market = market
+	return &ssr, nil
+}
+
 
 // getUrl provides an url to get intermediate day summary
 // opt *StatRequestOptions can be nil, it is safe

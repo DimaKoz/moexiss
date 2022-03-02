@@ -1,7 +1,12 @@
 package moexiss
 
 import (
+	"context"
+	"fmt"
 	"github.com/buger/jsonparser"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
 	"testing"
 )
 
@@ -280,5 +285,34 @@ func TestParseSecStatResponseError(t *testing.T) {
 
 	if got, expected := parseSecStatResponse([]byte(incomeJSON), &secStatR), jsonparser.KeyPathNotFoundError; got != expected {
 		t.Fatalf("Error: expecting error: \n %v \ngot:\n %v \ninstead", expected, got)
+	}
+}
+
+func TestStatsService_GetSecStats(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		byteValueResult, err := getTestingData("secstats.json")
+		if err != nil {
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		_, err = w.Write(byteValueResult)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+	c.BaseURL, _ = url.Parse(srv.URL + "/")
+	result, err := c.Stats.GetSecStats(context.Background(), EngineStock, "shares", nil)
+	if err != nil {
+		t.Fatalf("Error: expecting <nil> error: \ngot %v \ninstead", err)
+	}
+	if got, expected := len(result.SecStats), 6; got != expected {
+		t.Fatalf("Error: expecting: \n %v items\ngot:\n %v items\ninstead", expected, got)
 	}
 }
