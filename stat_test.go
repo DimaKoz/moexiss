@@ -316,3 +316,38 @@ func TestStatsService_GetSecStats(t *testing.T) {
 		t.Fatalf("Error: expecting: \n %v items\ngot:\n %v items\ninstead", expected, got)
 	}
 }
+
+func TestStatsService_GetSecStats_KeyPathNotFound(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		str := `[
+  {}]
+`
+		_, _ = w.Write([]byte(str))
+	}))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+
+	c.BaseURL, _ = url.Parse(srv.URL + "/")
+	_, err := c.Stats.GetSecStats(context.Background(), EngineStock, "shares", nil)
+	if got, expected := err, jsonparser.KeyPathNotFoundError; got == nil || got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
+	}
+}
+
+func TestStatsService_GetSecStats_BadUrl(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+
+	c.BaseURL, _ = url.Parse(srv.URL)
+	_, err := c.Stats.GetSecStats(context.Background(), EngineStock, "shares", nil)
+	if got, expected := err, "BaseURL must have a trailing slash, but \""+srv.URL+"\" does not"; got == nil || got.Error() != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
