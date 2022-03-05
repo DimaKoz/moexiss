@@ -318,12 +318,7 @@ func TestStatsService_GetSecStats(t *testing.T) {
 }
 
 func TestStatsService_GetSecStats_KeyPathNotFound(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		str := `[
-  {}]
-`
-		_, _ = w.Write([]byte(str))
-	}))
+	srv := getEmptySrv()
 	defer srv.Close()
 
 	httpClient := srv.Client()
@@ -338,7 +333,7 @@ func TestStatsService_GetSecStats_KeyPathNotFound(t *testing.T) {
 }
 
 func TestStatsService_GetSecStats_BadUrl(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	srv := getEmptySrv()
 	defer srv.Close()
 
 	httpClient := srv.Client()

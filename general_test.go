@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/buger/jsonparser"
 	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"testing"
@@ -122,4 +124,13 @@ func getTestingData(fileName string) ([]byte, error) {
 		return nil, err
 	}
 	return byteValueResult, nil
+}
+
+func emptyHandler(w http.ResponseWriter, _ *http.Request) {
+	str := `[{}]`
+	_, _ = w.Write([]byte(str))
+}
+
+func getEmptySrv() *httptest.Server {
+	return httptest.NewServer(http.HandlerFunc(emptyHandler))
 }

@@ -324,7 +324,7 @@ func TestHistoryListingService_Listing(t *testing.T) {
 }
 
 func TestHistoryListingService_ListingBadEngineParam(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	srv := getEmptySrv()
 	defer srv.Close()
 
 	httpClient := srv.Client()
@@ -339,7 +339,7 @@ func TestHistoryListingService_ListingBadEngineParam(t *testing.T) {
 }
 
 func TestHistoryListingService_ListingBadMarketParam(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	srv := getEmptySrv()
 	defer srv.Close()
 
 	httpClient := srv.Client()
@@ -354,7 +354,7 @@ func TestHistoryListingService_ListingBadMarketParam(t *testing.T) {
 }
 
 func TestHistoryListingService_BadUrl(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	srv := getEmptySrv()
 	defer srv.Close()
 
 	httpClient := srv.Client()
@@ -369,10 +369,7 @@ func TestHistoryListingService_BadUrl(t *testing.T) {
 }
 
 func TestHistoryListingKeyPathNotFound(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		str := `[{}]`
-		_, _ = w.Write([]byte(str))
-	}))
+	srv := getEmptySrv()
 	defer srv.Close()
 
 	httpClient := srv.Client()
@@ -436,10 +433,7 @@ func TestHistoryListingByBoardNilContextError(t *testing.T) {
 }
 
 func TestHistoryListingByBoardKeyPathNotFound(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		str := `[{}]`
-		_, _ = w.Write([]byte(str))
-	}))
+	srv := getEmptySrv()
 	defer srv.Close()
 
 	httpClient := srv.Client()
@@ -454,7 +448,7 @@ func TestHistoryListingByBoardKeyPathNotFound(t *testing.T) {
 }
 
 func TestHistoryListingByBoardService_BadUrl(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	srv := getEmptySrv()
 	defer srv.Close()
 
 	httpClient := srv.Client()
@@ -469,7 +463,7 @@ func TestHistoryListingByBoardService_BadUrl(t *testing.T) {
 }
 
 func TestHistoryListingService_ListingBadBoardParam(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	srv := getEmptySrv()
 	defer srv.Close()
 
 	httpClient := srv.Client()
@@ -484,7 +478,7 @@ func TestHistoryListingService_ListingBadBoardParam(t *testing.T) {
 }
 
 func TestHistoryListingService_ListingBadBoardGroupParam(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	srv := getEmptySrv()
 	defer srv.Close()
 
 	httpClient := srv.Client()
@@ -499,7 +493,7 @@ func TestHistoryListingService_ListingBadBoardGroupParam(t *testing.T) {
 }
 
 func TestHistoryListingByBoardGroupService_BadUrl(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	srv := getEmptySrv()
 	defer srv.Close()
 
 	httpClient := srv.Client()
@@ -514,10 +508,7 @@ func TestHistoryListingByBoardGroupService_BadUrl(t *testing.T) {
 }
 
 func TestHistoryListingByBoardGroupKeyPathNotFound(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		str := `[{}]`
-		_, _ = w.Write([]byte(str))
-	}))
+	srv := getEmptySrv()
 	defer srv.Close()
 
 	httpClient := srv.Client()

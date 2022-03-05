@@ -189,7 +189,7 @@ func TestParseIndicesResponseError(t *testing.T) {
 }
 
 func TestIndicesService_BadSecurityParam(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	srv := getEmptySrv()
 	defer srv.Close()
 
 	httpClient := srv.Client()
@@ -204,7 +204,7 @@ func TestIndicesService_BadSecurityParam(t *testing.T) {
 }
 
 func TestIndicesService_BadUrl(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {}))
+	srv := getEmptySrv()
 	defer srv.Close()
 
 	httpClient := srv.Client()
@@ -219,10 +219,7 @@ func TestIndicesService_BadUrl(t *testing.T) {
 }
 
 func TestIndicesKeyPathNotFound(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		str := `[{}]`
-		_, _ = w.Write([]byte(str))
-	}))
+	srv := getEmptySrv()
 	defer srv.Close()
 
 	httpClient := srv.Client()

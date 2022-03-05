@@ -289,15 +289,7 @@ func TestTurnoversNilContextError(t *testing.T) {
 }
 
 func TestTurnoversKeyPathNotFound(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		str := `[
-  {
-    "turnovers": [
-      { "ID": null, "VALTODAY": 4157103.05631, "VALTODAY_USD": 56189.7489881, "NUMTRADES": 4315419, "UPDATETIME": "2021-02-24 23:50:29", "TITLE": "Total on Moscow Exchange"}]}
-]
-`
-		_, _ = w.Write([]byte(str))
-	}))
+	srv := getEmptySrv()
 	defer srv.Close()
 
 	httpClient := srv.Client()
