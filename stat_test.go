@@ -346,3 +346,27 @@ func TestStatsService_GetSecStats_BadUrl(t *testing.T) {
 		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
 	}
 }
+
+func TestStatsService_GetSecStats_EmptyEngine(t *testing.T) {
+	srv := getEmptySrv()
+	defer srv.Close()
+
+	httpClient := srv.Client()
+
+	c := NewClient(httpClient)
+
+	c.BaseURL, _ = url.Parse(srv.URL)
+	_, err := c.Stats.GetSecStats(context.Background(), "", "shares", nil)
+	if got, expected := err, ErrBadEngineParameter; got == nil || got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v  \ninstead", expected, got)
+	}
+}
+
+func TestStatsServiceNilContextError(t *testing.T) {
+	c := NewClient(nil)
+	var ctx context.Context = nil
+	_, err := c.Stats.GetSecStats(ctx, EngineStock, "shares", nil)
+	if got, expected := err, ErrNonNilContext; got == nil || got != expected {
+		t.Fatalf("Error: expecting %v error \ngot %v \ninstead", expected, got)
+	}
+}
